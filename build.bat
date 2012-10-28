@@ -1,2 +1,6 @@
-gsc -exe -cc-options "-IC:/Github/Scheme-Experimentations/dependencies/headers/" -ld-options "-LC:/Github/Scheme-Experimentations/dependencies/libraries/ -lsqlite3" -o C:\Github\Scheme-Experimentations\build\build.exe dependencies\srfi\srfi-1.scm sources\infrastructure\sqlite\sqlite.scm
+
+csc -Idependencies/headers -c sources/infrastructure/sqlite/sqlite.scm 
+
+csc -LC:/Github/Scheme-Experimentations/dependencies/libraries/ -lsqlite3 sources/infrastructure/sqlite/sqlite.o -o build\build.exe
+
 copy dependencies\libraries\sqlite3.dll build\
