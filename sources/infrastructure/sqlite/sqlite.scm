@@ -3,39 +3,39 @@
 
 #include <sqlite3.h>
 
-/*
- * helper functions for the sqlite3 pointers
- */
+// allocates a sqlite3* on the heap
 sqlite3** malloc_sqlite3_pointer()
 {
   sqlite3** sqlite3_pointer = sqlite3_malloc(sizeof(sqlite3*));
   return sqlite3_pointer;
 }
 
+// indirects the specified sqlite3**
 sqlite3* indirect_sqlite3_pointer_pointer(sqlite3** sqlite3_pointer)
 {
   return *sqlite3_pointer;
 }
 
+// frees the specified sqlite3*
 void free_sqlite3_pointer(sqlite3** sqlite3_pointer)
 {
   sqlite3_free(sqlite3_pointer);
 }
 
-/*
- * helper functions for the sqlite3_stmt pointers
- */
+// allocates a sqlite3_stmt* on the heap
 sqlite3_stmt** malloc_sqlite3_stmt_pointer()
 {
   sqlite3_stmt** sqlite3_stmt_pointer = sqlite3_malloc(sizeof(sqlite3_stmt*));
   return sqlite3_stmt_pointer;
 }
 
+// indirects the specified sqlite3_stmt**
 sqlite3_stmt* indirect_sqlite3_stmt_pointer_pointer(sqlite3_stmt** sqlite3_stmt_pointer)
 {
   return *sqlite3_stmt_pointer;
 }
 
+// frees the specified sqlite3_stmt*
 void free_sqlite3_stmt_pointer(sqlite3_stmt** sqlite3_stmt_pointer)
 {
   sqlite3_free(sqlite3_stmt_pointer);
@@ -43,56 +43,58 @@ void free_sqlite3_stmt_pointer(sqlite3_stmt** sqlite3_stmt_pointer)
 
 ")
 
-; definitions for the sqlite3 pointers
+; sqlite3 pointers definitions
 (define-foreign-type sqlite3 "sqlite3")
 (define-foreign-type sqlite3* (c-pointer sqlite3))
 (define-foreign-type sqlite3** (c-pointer sqlite3*))
 
-; definitions for the sqlite3_stmt pointers
+; sqlite3-stmt pointers definitions
 (define-foreign-type sqlite3-stmt "sqlite3_stmt")
 (define-foreign-type sqlite3-stmt* (c-pointer sqlite3-stmt))
 (define-foreign-type sqlite3-stmt** (c-pointer sqlite3-stmt*))
 
-; helpers for the sqlite3 pointers
+; sqlite3 pointers memory management
 (define malloc-sqlite3* (foreign-lambda sqlite3** "malloc_sqlite3_pointer"))
 (define indirect-sqlite3** (foreign-lambda sqlite3* "indirect_sqlite3_pointer_pointer" sqlite3**))
 (define free-sqlite3* (foreign-lambda void "free_sqlite3_pointer" sqlite3**))
 
-; helpers for the sqlite3_stmt pointers
+; sqlite3-stmt pointers memory management
 (define malloc-sqlite3-stmt* (foreign-lambda sqlite3-stmt** "malloc_sqlite3_stmt_pointer"))
 (define indirect-sqlite3-stmt** (foreign-lambda sqlite3-stmt* "indirect_sqlite3_stmt_pointer_pointer" sqlite3-stmt**))
 (define free-sqlite3-stmt* (foreign-lambda void "free_sqlite3_stmt_pointer" sqlite3-stmt**))
 
-; opens a database connection
+; special destructor behaviors
+(define sqlite3-static (foreign-value "SQLITE_STATIC" (function void (c-pointer))))
+(define sqlite3-transient (foreign-value "SQLITE_TRANSIENT" (function void (c-pointer))))
+
+; opens a new database connection
 (define sqlite3-open (foreign-lambda int "sqlite3_open" (const c-string) sqlite3**))
 
-; prepares a sql statement
+; compiles a sql statement
 (define sqlite3-prepare-v2 (foreign-lambda int "sqlite3_prepare_v2" sqlite3* (const c-string) int sqlite3-stmt** (const (c-pointer c-string))))
 
-; executes a sql statement
+; evaluates a sql statement
 (define sqlite3-step (foreign-lambda int "sqlite3_step" sqlite3-stmt*))
 
-; returns the number of columns returned by a sql statement
+; number of columns in a result set
 (define sqlite3-column-count (foreign-lambda int "sqlite3_column_count" sqlite3-stmt*))
 
-; returns the type of the column at the specified index
+; result values from a query
 (define sqlite3-column-type (foreign-lambda int "sqlite3_column_type" sqlite3-stmt* int))
-
-; returns the value of the column at the specified index
 (define sqlite3-column-int (foreign-lambda int "sqlite3_column_int" sqlite3-stmt* int))
 (define sqlite3-column-double (foreign-lambda double "sqlite3_column_double" sqlite3-stmt* int))
 (define sqlite3-column-text (foreign-lambda unsigned-c-string "sqlite3_column_text" sqlite3-stmt* int))
 
-; binds the value of the parameter at the specified index
+; binding values to prepared statements
 (define sqlite3-bind-int (foreign-lambda int "sqlite3_bind_int" sqlite3-stmt* int int))
 (define sqlite3-bind-double (foreign-lambda int "sqlite3_bind_double" sqlite3-stmt* int double))
-;(define sqlite3-bind-text (foreign-lambda int "sqlite3_bind_text" sqlite3-stmt* int (const c-string) int ))
+(define sqlite3-bind-text (foreign-lambda int "sqlite3_bind_text" sqlite3-stmt* int (const c-string) int (function void (c-pointer))))
 (define sqlite3-bind-null (foreign-lambda int "sqlite3_bind_null" sqlite3-stmt* int))
 
-; finalizes a sql statement
+; destroy a prepared statement object
 (define sqlite3-finalize (foreign-lambda int "sqlite3_finalize" sqlite3-stmt*))
 
-; closes a database connection
+; closing a database connection
 (define sqlite3-close-v2 (foreign-lambda int "sqlite3_close_v2" sqlite3*))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -130,8 +132,13 @@ void free_sqlite3_stmt_pointer(sqlite3_stmt** sqlite3_stmt_pointer)
 
     ; prepare the sql statement
     (display "sqlite3-prepare-v2: ")
-    (display (sqlite3-prepare-v2 (indirect-sqlite3** sqlite3**) "INSERT INTO Customers VALUES (1, 1.2, 'A');" -1 sqlite3-stmt** #f))
+    (display (sqlite3-prepare-v2 (indirect-sqlite3** sqlite3**) "INSERT INTO Customers VALUES (?1, ?2, ?3);" -1 sqlite3-stmt** #f))
     (display "\n")
+
+    ; bind the sql parameters
+    (sqlite3-bind-int (indirect-sqlite3-stmt** sqlite3-stmt**) 1 1)
+    (sqlite3-bind-double (indirect-sqlite3-stmt** sqlite3-stmt**) 2 1.2)
+    (sqlite3-bind-text (indirect-sqlite3-stmt** sqlite3-stmt**) 3 "A" -1 sqlite3-transient)
 
     ; execute the sql statement
     (display "sqlite3-step: ")
