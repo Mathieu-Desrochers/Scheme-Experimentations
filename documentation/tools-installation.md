@@ -27,12 +27,6 @@ Installing Chicken Scheme
 Installing Sqlite3
 ------------------
 
-- Open tools/sqlite/sqlite-amalgamation-3071401.zip
-- Copy sqlite3.h to the following folder:
- - dependencies/headers
-- Open tools/sqlite/sqlite-dll-win32-x86-3071401.zip
-- Copy sqlite3.dll to the following folder:
- - dependencies/libraries
 - Open tools/sqlite/sqlite-shell-win32-x86-3071401.zip
 - Copy sqlite3.exe to the following folder:
  - C:\Program Files (x86)\sqlite

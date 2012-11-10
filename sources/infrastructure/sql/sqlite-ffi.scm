@@ -65,10 +65,6 @@ void free_sqlite3_stmt_pointer(sqlite3_stmt** sqlite3_stmt_pointer)
 (define indirect-sqlite3-stmt** (foreign-lambda sqlite3-stmt* "indirect_sqlite3_stmt_pointer_pointer" sqlite3-stmt**))
 (define free-sqlite3-stmt* (foreign-lambda void "free_sqlite3_stmt_pointer" sqlite3-stmt**))
 
-; special destructor behaviors
-(define sqlite3-static (foreign-value "SQLITE_STATIC" (function void (c-pointer))))
-(define sqlite3-transient (foreign-value "SQLITE_TRANSIENT" (function void (c-pointer))))
-
 ; opens a new database connection
 (define sqlite3-open (foreign-lambda int "sqlite3_open" (const c-string) sqlite3**))
 
@@ -98,3 +94,17 @@ void free_sqlite3_stmt_pointer(sqlite3_stmt** sqlite3_stmt_pointer)
 
 ; closing a database connection
 (define sqlite3-close-v2 (foreign-lambda int "sqlite3_close_v2" sqlite3*))
+
+; result codes
+(define sqlite3-result-row (foreign-value "SQLITE_ROW" int))
+(define sqlite3-result-done (foreign-value "SQLITE_DONE" int))
+
+; fundamental datatypes
+(define sqlite3-type-integer (foreign-value "SQLITE_INTEGER" int))
+(define sqlite3-type-float (foreign-value "SQLITE_FLOAT" int))
+(define sqlite3-type-text (foreign-value "SQLITE_TEXT" int))
+(define sqlite3-type-null (foreign-value "SQLITE_NULL" int))
+
+; special destructor behaviors
+(define sqlite3-static (foreign-value "SQLITE_STATIC" (function void (c-pointer))))
+(define sqlite3-transient (foreign-value "SQLITE_TRANSIENT" (function void (c-pointer))))
