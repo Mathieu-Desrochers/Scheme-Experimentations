@@ -12,11 +12,11 @@
   (let ((sqlite3** (malloc-sqlite3*)))
     (sqlite3-open database-name sqlite3**)
     (let* ((sqlite3* (indirect-sqlite3** sqlite3**))
-           (sql-connection (make-sql-connection sqlite3*)))
-      (let ((procedure-result (procedure sql-connection)))
+           (sql-connection (make-sql-connection sqlite3*))
+           (procedure-result (procedure sql-connection)))
         (sqlite3-close-v2 sqlite3*)
         (free-sqlite3* sqlite3**)
-        procedure-result))))
+        procedure-result)))
 
 ; executes a sql statement
 (define (sql-execute sql-connection statement . parameter-values)
