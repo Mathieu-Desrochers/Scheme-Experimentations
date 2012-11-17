@@ -5,23 +5,30 @@
 (define-syntax define-table
   (er-macro-transformer
     (lambda (exp rename compare)
-      (let ((table-name (cadr exp))
-            (row-name (caddr exp))
-            (columns-name (cadddr exp)))
+      (let* ((table-symbol (list-ref exp 1))
+             (table-name (list-ref exp 2))
+             (row-symbol (list-ref exp 3))
+             (columns-name (list-ref exp 4))
+             (id-column-symbol (string->symbol (car columns-name)))
+             (id-column-name (car columns-name)))
         `(begin
 
           ;; encapsulates a row
-          (define-record ,(symbol-append row-name '-row) ,@columns-name)
+          (define-record ,row-symbol
+            ,@(map
+              (lambda (column-name)
+                (string->symbol column-name))
+              columns-name))
 
           ;; inserts a row
-          (define (,(symbol-append table-name '-table-insert) sql-connection ,(symbol-append row-name '-row))
+          (define (,(symbol-append table-symbol '-insert) sql-connection ,row-symbol)
             (sql-execute sql-connection
               (string-append
-                "INSERT INTO \"" ,(symbol->string table-name) "\" ("
+                "INSERT INTO \"" ,table-name "\" ("
                 ,(string-join
                   (map
                     (lambda (column-name)
-                      (string-append "\"" (symbol->string column-name) "\""))
+                      (string-append "\"" column-name "\""))
                     columns-name)
                   ", ")
                 ") VALUES ("
@@ -34,44 +41,44 @@
                 ");")
               ,@(map
                 (lambda (column-name)
-                  `(,(symbol-append row-name '-row- column-name) ,(symbol-append row-name '-row)))
+                  `(,(symbol-append row-symbol '- (string->symbol column-name)) ,row-symbol))
                 columns-name)))
 
           ;; selects a row by id
-          (define (,(symbol-append table-name '-table-select-by- (car columns-name)) sql-connection ,(car columns-name)) 
+          (define (,(symbol-append table-symbol '-select-by- id-column-symbol) sql-connection ,id-column-symbol)
             (map
               (lambda (row)
-                (apply ,(symbol-append 'make- row-name '-row) row))
+                (apply ,(symbol-append 'make- row-symbol) row))
               (sql-read sql-connection
                 ,(string-append
-                  "SELECT * FROM \"" (symbol->string table-name) "\" "
-                  "WHERE \"" (symbol->string (car columns-name)) "\" = ?1;")
-                ,(car columns-name))))
+                  "SELECT * FROM \"" table-name "\" "
+                  "WHERE \"" id-column-name "\" = ?1;")
+                ,id-column-symbol)))
 
           ;; updates a row
-          (define (,(symbol-append table-name '-table-update) sql-connection ,(symbol-append row-name '-row))
+          (define (,(symbol-append table-symbol '-update) sql-connection ,row-symbol)
             (sql-execute sql-connection
               (string-append
-                "UPDATE \"" ,(symbol->string table-name) "\" SET "
+                "UPDATE \"" ,table-name "\" SET "
                 ,(string-join
                   (map
                     (lambda (column-index)
                       (let ((column-number (+ column-index 1)))
                         (string-append
-                          "\"" (symbol->string (list-ref columns-name column-index)) "\" = "
+                          "\"" (list-ref columns-name column-index) "\" = "
                           "?" (number->string column-number))))
                     (iota (- (length columns-name) 1) 1))
                   ", ")
-                " WHERE \"" ,(symbol->string (car columns-name)) "\" = ?1;")
+                " WHERE \"" ,id-column-name "\" = ?1;")
               ,@(map
                 (lambda (column-name)
-                  `(,(symbol-append row-name '-row- column-name) ,(symbol-append row-name '-row)))
+                  `(,(symbol-append row-symbol '- (string->symbol column-name)) ,row-symbol))
                 columns-name)))
 
           ;; deletes a row
-          (define (,(symbol-append table-name '-table-delete) sql-connection ,(symbol-append row-name '-row))
+          (define (,(symbol-append table-symbol '-delete) sql-connection ,row-symbol)
             (sql-execute sql-connection
               (string-append
-                "DELETE FROM \"" ,(symbol->string table-name) "\" "
-                "WHERE \"" ,(symbol->string (car columns-name)) "\" = ?1;")
-              (,(symbol-append row-name '-row- (car columns-name)) ,(symbol-append row-name '-row)))))))))
+                "DELETE FROM \"" ,table-name "\" "
+                "WHERE \"" ,id-column-name "\" = ?1;")
+              (,(symbol-append row-symbol '- id-column-symbol) ,row-symbol))))))))
