@@ -1,45 +1,13 @@
 
-(declare (uses sql))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Public bindings
+;; Table definition
 
-;; encapsulates a customer row
-(define-record customer-row customer-id first-name last-name)
-
-;; inserts a customer row
-(define (customers-table-insert sql-connection customer-row)
-  (sql-execute sql-connection
-    "INSERT INTO \"customers\" (\"customer-id\", \"first-name\", \"last-name\") VALUES (?1, ?2, ?3);"
-    (customer-row-customer-id customer-row)
-    (customer-row-first-name customer-row)
-    (customer-row-last-name customer-row)))
-
-;; selects customer rows by customer id
-(define (customers-table-select-by-customer-id sql-connection customer-id)
-  (map
-    (lambda (row)
-      (apply make-customer-row row))
-    (sql-read sql-connection
-      "SELECT * FROM \"customers\" WHERE \"customer-id\" = ?1;"
-      customer-id)))
-
-;; updates a customer row
-(define (customers-table-update sql-connection customer-row)
-  (sql-execute sql-connection
-    "UPDATE \"customers\" SET \"first-name\" = ?2, \"last-name\" = ?3 WHERE \"customer-id\" = ?1;"
-    (customer-row-customer-id customer-row)
-    (customer-row-first-name customer-row)
-    (customer-row-last-name customer-row)))
-
-;; deletes a customer row
-(define (customers-table-delete sql-connection customer-row)
-  (sql-execute sql-connection
-    "DELETE FROM \"customers\" WHERE \"customer-id\" = ?1;"
-    (customer-row-customer-id customer-row)))
+(define-table customers customer (customer-id first-name last-name))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Test bindings
+
+(declare (uses sql))
 
 (define (display-customer-rows sql-connection)
   (define (display-customer-rows-iter customer-rows)
@@ -65,4 +33,5 @@
       (customers-table-update sql-connection customer-row)
       (display-customer-rows sql-connection)
       (customers-table-delete sql-connection customer-row)
-      (display-customer-rows sql-connection))))
+      (display-customer-rows sql-connection)
+      )))
