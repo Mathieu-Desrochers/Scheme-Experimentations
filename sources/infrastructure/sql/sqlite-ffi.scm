@@ -96,6 +96,7 @@ void free_sqlite3_stmt_pointer(sqlite3_stmt** sqlite3_stmt_pointer)
 (define sqlite3-close-v2 (foreign-lambda int "sqlite3_close_v2" sqlite3*))
 
 ; result codes
+(define sqlite3-result-ok (foreign-value "SQLITE_OK" int))
 (define sqlite3-result-row (foreign-value "SQLITE_ROW" int))
 (define sqlite3-result-done (foreign-value "SQLITE_DONE" int))
 
