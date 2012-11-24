@@ -1,11 +1,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Table definition
+;; table definition
 
 (define-table customers-table "customers" customer-row ("customer-id" "first-name" "last-name"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Test bindings
+;; test bindings
 
 (declare (uses sql))
 
@@ -20,12 +20,12 @@
         (display (customer-row-last-name customer-row))
         (newline)
         (display-customer-rows-iter (cdr customer-rows)))))
-  (let ((customer-rows (customers-table-select-by-customer-id sql-connection 1000)))
+  (let ((customer-rows (customers-table-select-all sql-connection)))
     (display-customer-rows-iter customer-rows)))
 
 (with-sql-connection "database.db"
   (lambda (sql-connection)
-    (let ((customer-row (make-customer-row 1000 "Mathieu" "Desrochers")))
+    (let ((customer-row (make-customer-row 0 "Mathieu" "Desrochers")))
       (customers-table-insert sql-connection customer-row)
       (display-customer-rows sql-connection)
       (customer-row-first-name-set! customer-row "Alice")

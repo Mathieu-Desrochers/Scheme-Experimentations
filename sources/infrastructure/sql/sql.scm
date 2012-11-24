@@ -5,7 +5,7 @@
 (declare (uses sqlite-ffi))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Public bindings
+;; public bindings
 
 ;; encapsulates a sql connection
 (define-record sql-connection sqlite3*)
@@ -53,7 +53,7 @@
         (sql-read-all-rows statement sqlite3-stmt*)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Private bindings
+;; private bindings
 
 ;; binds the parameters of a sqlite3-stmt*
 (define (sql-bind-parameters sqlite3-stmt* parameter-values)
