@@ -18,7 +18,6 @@
              (value-columns-symbol (strings->symbols value-columns-name)))
         `(begin
 
-          ; declarations
           (declare (unit ,table-symbol))
           (declare (uses sql))
 
