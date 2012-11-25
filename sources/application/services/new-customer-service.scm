@@ -7,16 +7,17 @@
 ;; service definition
 
 ;; encapsulates a request
-(define-record new-customer-request first-name last-name addresses birthdate)
-(define-record new-customer-subrequest-address address city state)
-(define-record new-customer-subrequest-birthdate year month day)
+(define-record new-customer-request first-name last-name addresses birthdate numbers)
+(define-record new-customer-request-address address city state)
+(define-record new-customer-request-birthdate year month day)
 
 ;; validates a request
 (define (validate-new-customer-request new-customer-request)
   (let ((first-name (new-customer-request-first-name new-customer-request))
         (last-name (new-customer-request-last-name new-customer-request))
         (addresses (new-customer-request-addresses new-customer-request))
-        (birthdate (new-customer-request-birthdate new-customer-request)))
+        (birthdate (new-customer-request-birthdate new-customer-request))
+        (numbers (new-customer-request-numbers new-customer-request)))
     (append
       (if (not (validate-string first-name))
         (list (cons 'invalid-first-name first-name))
@@ -26,17 +27,28 @@
         '())
       (if (not (validate-list addresses))
         (list (cons 'invalid-addresses addresses))
-        (fold append '()
-          (map validate-new-customer-subrequest-address addresses)))
+        (concatenate
+          (map
+            validate-new-customer-request-address
+            addresses)))
       (if (not birthdate)
         (list (cons 'invalid-birthdate birthdate))
-        (validate-new-customer-subrequest-birthdate birthdate)))))
+        (validate-new-customer-request-birthdate birthdate))
+      (if (not (validate-list numbers))
+        (list (cons 'invalid-numbers numbers))
+        (concatenate
+          (map
+            (lambda (number)
+              (if (not (validate-integer number))
+                (list (cons 'invalid-number number))
+                '()))
+            numbers))))))
 
-;; validates a subrequest address
-(define (validate-new-customer-subrequest-address new-customer-subrequest-address)
-  (let ((address (new-customer-subrequest-address-address new-customer-subrequest-address))
-        (city (new-customer-subrequest-address-city new-customer-subrequest-address))
-        (state (new-customer-subrequest-address-state new-customer-subrequest-address)))
+;; validates a request address
+(define (validate-new-customer-request-address new-customer-request-address)
+  (let ((address (new-customer-request-address-address new-customer-request-address))
+        (city (new-customer-request-address-city new-customer-request-address))
+        (state (new-customer-request-address-state new-customer-request-address)))
     (append
       (if (not (validate-string address))
         (list (cons 'invalid-address-address address))
@@ -49,10 +61,10 @@
         '()))))
 
 ;; validates a request birthdate
-(define (validate-new-customer-subrequest-birthdate new-customer-subrequest-birthdate)
-  (let ((year (new-customer-subrequest-birthdate-year new-customer-subrequest-birthdate))
-        (month (new-customer-subrequest-birthdate-month new-customer-subrequest-birthdate))
-        (day (new-customer-subrequest-birthdate-day new-customer-subrequest-birthdate)))
+(define (validate-new-customer-request-birthdate new-customer-request-birthdate)
+  (let ((year (new-customer-request-birthdate-year new-customer-request-birthdate))
+        (month (new-customer-request-birthdate-month new-customer-request-birthdate))
+        (day (new-customer-request-birthdate-day new-customer-request-birthdate)))
     (append
       (if (not (validate-integer year))
         (list (cons 'invalid-birthdate-year year))
@@ -86,6 +98,7 @@
       11
       "Desrochers"
       (list
-        (make-new-customer-subrequest-address 12 "city" "state")
-        (make-new-customer-subrequest-address "address" 23 "state"))
-      (make-new-customer-subrequest-birthdate 2000 14 "a"))))
+        (make-new-customer-request-address 1 2 3)
+        (make-new-customer-request-address "address" 23 "state"))
+      (make-new-customer-request-birthdate 2000 14 "a")
+      (list 1 "a" "3"))))
