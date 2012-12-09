@@ -7,16 +7,19 @@
     (lambda (exp rename compare)
 
       ;; validates a field
-      (define (validate-field field-symbol field-type-symbol)
-        `(if (not (,(symbol-append 'validate- field-type-symbol) ,field-symbol))
-          (list (cons ',(symbol-append 'invalid- field-symbol) ,field-symbol))
-          '()))
+      (define (validate-field field-symbol field-type field-details)
+        `(,(symbol-append 'validate-request- field-type) ,field-symbol ,@field-details ',(symbol-append 'invalid- field-symbol)))
 
       ;; parses the expression
       (let* ((request-symbol (cadr exp))
              (fields (cddr exp))
              (fields-symbol (map car fields)))
         `(begin
+
+          ;(use srfi-1)
+
+          ;(declare (unit ,request-symbol))
+          ;(declare (uses request-validation))
 
           ;; encapsulates a request
           (define-record ,request-symbol ,@fields-symbol)
@@ -31,7 +34,8 @@
               (append
                 ,@(map
                   (lambda (field)
-                    (let ((field-symbol (car field))
-                          (field-type-symbol (cadr field)))
-                      (validate-field field-symbol field-type-symbol)))
+                    (let* ((field-symbol (car field))
+                           (field-type (cadr field))
+                           (field-details (cddr field)))
+                      (validate-field field-symbol field-type field-details)))
                   fields)))))))))

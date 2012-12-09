@@ -4,46 +4,151 @@
 (declare (unit request-validation))
 (declare (uses validation))
 
-; validates a request field
-(define (validate-request-field value validation-procedure-and-parameters invalid-value-symbol)
-  (let ((validation-procedure (car validation-procedure-and-parameters))
-        (validation-parameters (cdr validation-procedure-and-parameters)))
+; validates a request value
+(define
+  (validate-request-value
+    value
+    validation-procedure
+    validation-parameters
+    invalid-value-symbol)
     (if (not (apply validation-procedure value validation-parameters))
       (list (cons invalid-value-symbol value))
-      '())))
+      '()))
 
-; validates a request integer field
-(define (validate-request-integer-field value required min-value max-value invalid-value-symbol)
-  (validate-request-field value (list validate-integer required min-value max-value) invalid-value-symbol))
+; validates a request integer
+(define
+  (validate-request-integer
+    value
+    required
+    min-value
+    max-value
+    invalid-value-symbol)
+    (validate-request-value
+      value
+      validate-integer
+      (list required min-value max-value)
+      invalid-value-symbol))
 
-; validates a request number field
-(define (validate-request-number-field value required min-value max-value invalid-value-symbol)
-  (validate-request-field value (list validate-number required min-value max-value) invalid-value-symbol))
+; validates a request number
+(define
+  (validate-request-number
+    value
+    required
+    min-value
+    max-value
+    invalid-value-symbol)
+    (validate-request-value
+      value
+      validate-number
+      (list required min-value max-value)
+      invalid-value-symbol))
 
-; validates a request string field
-(define (validate-request-string-field value required min-length max-length invalid-value-symbol)
-  (validate-request-field value (list validate-string required min-length max-length) invalid-value-symbol))
+; validates a request string
+(define
+  (validate-request-string
+    value
+    required
+    min-length
+    max-length
+    invalid-value-symbol)
+    (validate-request-value
+      value
+      validate-string
+      (list required min-length max-length)
+      invalid-value-symbol))
 
-;; validates a request field list
-(define (validate-request-field-list value required min-length max-length invalid-value-symbol element-validation-procedure . element-validation-parameters)
-  (if (not (validate-list value required min-length max-length))
-    (list (cons invalid-value-symbol value))
-    (if value
-      (concatenate
-        (map
-          (lambda (element-value)
-            (apply element-validation-procedure element-value element-validation-parameters))
-          value))
-      '())))
+;; validates a request list
+(define
+  (validate-request-list
+    value
+    required
+    min-length
+    max-length
+    invalid-value-symbol
+    element-validation-procedure)
+    (if (not (validate-list value required min-length max-length))
+      (list (cons invalid-value-symbol value))
+      (if value
+        (concatenate
+          (map
+            element-validation-procedure
+            value))
+        '())))
 
-; validates a request integer field list
-(define (validate-request-integer-field-list value required min-length max-length invalid-value-symbol element-required element-min-value element-max-value invalid-element-value-symbol)
-  (validate-request-field-list value required min-length max-length invalid-value-symbol validate-request-integer-field element-required element-min-value element-max-value invalid-element-value-symbol))
+; validates a request integers list
+(define
+  (validate-request-integers-list
+    value
+    required
+    min-length
+    max-length
+    invalid-value-symbol
+    element-required
+    element-min-value
+    element-max-value
+    invalid-element-value-symbol)
+    (validate-request-list
+      value
+      required
+      min-length
+      max-length
+      invalid-value-symbol
+      (lambda (element-value)
+        (validate-request-integer
+          element-value
+          element-required
+          element-min-value
+          element-max-value
+          invalid-element-value-symbol))))
 
-; validates a request number field list
-(define (validate-request-number-field-list value required min-length max-length invalid-value-symbol element-required element-min-value element-max-value invalid-element-value-symbol)
-  (validate-request-field-list value required min-length max-length invalid-value-symbol validate-request-number-field element-required element-min-value element-max-value invalid-element-value-symbol))
+; validates a request numbers list
+(define
+  (validate-request-numbers-list
+    value
+    required
+    min-length
+    max-length
+    invalid-value-symbol
+    element-required
+    element-min-value
+    element-max-value
+    invalid-element-value-symbol)
+    (validate-request-list
+      value
+      required
+      min-length
+      max-length
+      invalid-value-symbol
+      (lambda (element-value)
+        (validate-request-number
+          element-value
+          element-required
+          element-min-value
+          element-max-value
+          invalid-element-value-symbol))))
 
-; validates a request string field list
-(define (validate-request-string-field-list value required min-length max-length invalid-value-symbol element-required element-min-length element-max-length invalid-element-value-symbol)
-  (validate-request-field-list value required min-length max-length invalid-value-symbol validate-request-string-field element-required element-min-length element-max-length invalid-element-value-symbol))
+; validates a request strings list
+(define
+  (validate-request-strings-list
+    value
+    required
+    min-length
+    max-length
+    invalid-value-symbol
+    element-required
+    element-min-length
+    element-max-length
+    invalid-element-value-symbol)
+    (validate-request-list
+      value
+      required
+      min-length
+      max-length
+      invalid-value-symbol
+      (lambda (element-value)
+        (validate-request-string
+          element-value
+          element-required
+          element-min-length
+          element-max-length
+          invalid-element-value-symbol))))

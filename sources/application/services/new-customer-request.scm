@@ -10,18 +10,17 @@
   (numbers list integer))
 
 (define-request new-customer-request-address
-  (address string)
-  (city string)
-  (state string))
+  (address string #t 1 100)
+  (city string #t 1 100)
+  (state string #t 1 100))
 
 (define-request new-customer-request-birthdate
-  (year integer)
-  (month integer)
-  (day integer))
-
+  (year integer #t 1000 5000)
+  (month integer #t 1 12)
+  (day integer #t 1 31))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; tests
 
-(define new-customer-request-birthdate (make-new-customer-request-birthdate 2000 "a" "b"))
+(define new-customer-request-birthdate (make-new-customer-request-birthdate 2000 1 1))
 (validate-new-customer-request-birthdate new-customer-request-birthdate)
