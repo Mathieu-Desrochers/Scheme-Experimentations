@@ -5,8 +5,12 @@
 (define-syntax define-table
   (er-macro-transformer
     (lambda (exp rename compare)
+
+      ;; converts multiple string to symbols
       (define (strings->symbols strings)
         (map string->symbol strings))
+      
+      ;; parses the expression
       (let* ((table-symbol (list-ref exp 1))
              (table-name (list-ref exp 2))
              (row-symbol (list-ref exp 3))
