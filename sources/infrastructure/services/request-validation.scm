@@ -75,9 +75,9 @@
             value))
         '())))
 
-; validates a request integers list
+; validates a request integer list
 (define
-  (validate-request-integers-list
+  (validate-request-integer-list
     value
     required
     min-length
@@ -101,9 +101,9 @@
           element-max-value
           invalid-element-value-symbol))))
 
-; validates a request numbers list
+; validates a request number list
 (define
-  (validate-request-numbers-list
+  (validate-request-number-list
     value
     required
     min-length
@@ -127,9 +127,9 @@
           element-max-value
           invalid-element-value-symbol))))
 
-; validates a request strings list
+; validates a request string list
 (define
-  (validate-request-strings-list
+  (validate-request-string-list
     value
     required
     min-length

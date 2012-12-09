@@ -2,13 +2,39 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; request definition
 
+(use srfi-1)
+
 (define-syntax define-request
   (er-macro-transformer
     (lambda (exp rename compare)
 
       ;; validates a field
-      (define (validate-field field-symbol field-type field-details)
-        `(,(symbol-append 'validate-request- field-type) ,field-symbol ,@field-details ',(symbol-append 'invalid- field-symbol)))
+      (define (validate-field field)
+        (let ((field-symbol (list-ref field 0))
+              (field-type (list-ref field 1))
+              (field-validation-parameters (drop field 2)))
+        `(,(symbol-append 'validate-request- field-type)
+          ,field-symbol
+          ,@field-validation-parameters
+          ',(symbol-append 'invalid- field-symbol))))
+
+      ;; validates a list field
+      (define (validate-list-field field)
+        (let ((field-symbol (list-ref field 0))
+              (required (list-ref field 2))
+              (min-length (list-ref field 3))
+              (max-length (list-ref field 4))
+              (element-symbol (list-ref field 5))
+              (element-type (list-ref field 6))
+              (element-validation-parameters (drop field 7)))
+        `(,(symbol-append 'validate-request- element-type '-list)
+          ,field-symbol
+          ,required
+          ,min-length
+          ,max-length
+          ',(symbol-append 'invalid- field-symbol)
+          ,@element-validation-parameters
+          ',(symbol-append 'invalid- element-symbol))))
 
       ;; parses the expression
       (let* ((request-symbol (cadr exp))
@@ -34,8 +60,8 @@
               (append
                 ,@(map
                   (lambda (field)
-                    (let* ((field-symbol (car field))
-                           (field-type (cadr field))
-                           (field-details (cddr field)))
-                      (validate-field field-symbol field-type field-details)))
+                    (let* ((field-type (cadr field)))
+                      (if (eq? field-type 'list)
+                        (validate-list-field field)
+                        (validate-field field))))
                   fields)))))))))

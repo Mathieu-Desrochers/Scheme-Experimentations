@@ -15,12 +15,12 @@
   (state string #t 1 100))
 
 (define-request new-customer-request-birthdate
-  (year integer #t 1000 5000)
+  (years list #t 1 5 year integer #t 1000 5000)
   (month integer #t 1 12)
   (day integer #t 1 31))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; tests
 
-(define new-customer-request-birthdate (make-new-customer-request-birthdate 2000 1 1))
+(define new-customer-request-birthdate (make-new-customer-request-birthdate '(2000 2012) 1 1))
 (validate-new-customer-request-birthdate new-customer-request-birthdate)
