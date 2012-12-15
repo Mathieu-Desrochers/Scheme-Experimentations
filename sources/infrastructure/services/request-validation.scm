@@ -67,7 +67,9 @@
     invalid-value-symbol
     element-validation-procedure)
     (if (not (validate-list value required min-length max-length))
-      (list (cons invalid-value-symbol value))
+      (if (list? value)
+        (list (cons (symbol-append invalid-value-symbol '-length) (length value)))
+        (list (cons invalid-value-symbol value)))
       (if value
         (concatenate
           (map
@@ -83,7 +85,6 @@
     min-length
     max-length
     invalid-value-symbol
-    element-required
     element-min-value
     element-max-value
     invalid-element-value-symbol)
@@ -96,7 +97,7 @@
       (lambda (element-value)
         (validate-request-integer
           element-value
-          element-required
+          #t
           element-min-value
           element-max-value
           invalid-element-value-symbol))))
@@ -109,7 +110,6 @@
     min-length
     max-length
     invalid-value-symbol
-    element-required
     element-min-value
     element-max-value
     invalid-element-value-symbol)
@@ -122,7 +122,7 @@
       (lambda (element-value)
         (validate-request-number
           element-value
-          element-required
+          #t
           element-min-value
           element-max-value
           invalid-element-value-symbol))))
@@ -135,7 +135,6 @@
     min-length
     max-length
     invalid-value-symbol
-    element-required
     element-min-length
     element-max-length
     invalid-element-value-symbol)
@@ -148,7 +147,7 @@
       (lambda (element-value)
         (validate-request-string
           element-value
-          element-required
+          #t
           element-min-length
           element-max-length
           invalid-element-value-symbol))))

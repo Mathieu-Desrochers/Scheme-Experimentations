@@ -12,7 +12,7 @@
       (define (validate-field field)
         (let ((field-symbol (list-ref field 0))
               (field-type (list-ref field 1)))
-          (if (eq? field-type 'request)
+          (if (eq? field-type 'subrequest)
             (let ((request-type (list-ref field 2)))
               `(,(symbol-append 'validate- request-type)
                 ,field-symbol))
