@@ -11,12 +11,16 @@
       ;; validates a field
       (define (validate-field field)
         (let ((field-symbol (list-ref field 0))
-              (field-type (list-ref field 1))
-              (field-validation-parameters (drop field 2)))
-        `(,(symbol-append 'validate-request- field-type)
-          ,field-symbol
-          ,@field-validation-parameters
-          ',(symbol-append 'invalid- field-symbol))))
+              (field-type (list-ref field 1)))
+          (if (eq? field-type 'request)
+            (let ((request-type (list-ref field 2)))
+              `(,(symbol-append 'validate- request-type)
+                ,field-symbol))
+            (let ((field-validation-parameters (drop field 2)))
+              `(,(symbol-append 'validate-request- field-type)
+                ,field-symbol
+                ,@field-validation-parameters
+                ',(symbol-append 'invalid- field-symbol))))))
 
       ;; validates a list field
       (define (validate-list-field field)
@@ -60,7 +64,7 @@
               (append
                 ,@(map
                   (lambda (field)
-                    (let* ((field-type (cadr field)))
+                    (let ((field-type (cadr field)))
                       (if (eq? field-type 'list)
                         (validate-list-field field)
                         (validate-field field))))
