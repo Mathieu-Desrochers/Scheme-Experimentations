@@ -4,7 +4,7 @@
 (declare (unit request-validation))
 (declare (uses validation))
 
-; validates a request value
+;; validates a request value
 (define
   (validate-request-value
     value
@@ -15,7 +15,7 @@
       (list (cons invalid-value-symbol value))
       '()))
 
-; validates a request integer
+;; validates a request integer
 (define
   (validate-request-integer
     value
@@ -29,7 +29,7 @@
       (list required min-value max-value)
       invalid-value-symbol))
 
-; validates a request number
+;; validates a request number
 (define
   (validate-request-number
     value
@@ -43,7 +43,7 @@
       (list required min-value max-value)
       invalid-value-symbol))
 
-; validates a request string
+;; validates a request string
 (define
   (validate-request-string
     value
@@ -65,11 +65,12 @@
     min-length
     max-length
     invalid-value-symbol
+    invalid-length-symbol
     element-validation-procedure)
     (if (not (validate-list value required min-length max-length))
-      (if (list? value)
-        (list (cons (symbol-append invalid-value-symbol '-length) (length value)))
-        (list (cons invalid-value-symbol value)))
+      (if (not (list? value))
+        (list (cons invalid-value-symbol value))
+        (list (cons invalid-length-symbol (length value))))
       (if value
         (concatenate
           (map
@@ -77,7 +78,7 @@
             value))
         '())))
 
-; validates a request integer list
+;; validates a request integer list
 (define
   (validate-request-integer-list
     value
@@ -85,6 +86,7 @@
     min-length
     max-length
     invalid-value-symbol
+    invalid-length-symbol
     element-min-value
     element-max-value
     invalid-element-value-symbol)
@@ -94,6 +96,7 @@
       min-length
       max-length
       invalid-value-symbol
+      invalid-length-symbol
       (lambda (element-value)
         (validate-request-integer
           element-value
@@ -102,7 +105,7 @@
           element-max-value
           invalid-element-value-symbol))))
 
-; validates a request number list
+;; validates a request number list
 (define
   (validate-request-number-list
     value
@@ -110,6 +113,7 @@
     min-length
     max-length
     invalid-value-symbol
+    invalid-length-symbol
     element-min-value
     element-max-value
     invalid-element-value-symbol)
@@ -119,6 +123,7 @@
       min-length
       max-length
       invalid-value-symbol
+      invalid-length-symbol
       (lambda (element-value)
         (validate-request-number
           element-value
@@ -127,7 +132,7 @@
           element-max-value
           invalid-element-value-symbol))))
 
-; validates a request string list
+;; validates a request string list
 (define
   (validate-request-string-list
     value
@@ -135,6 +140,7 @@
     min-length
     max-length
     invalid-value-symbol
+    invalid-length-symbol
     element-min-length
     element-max-length
     invalid-element-value-symbol)
@@ -144,6 +150,7 @@
       min-length
       max-length
       invalid-value-symbol
+      invalid-length-symbol
       (lambda (element-value)
         (validate-request-string
           element-value
@@ -151,3 +158,17 @@
           element-min-length
           element-max-length
           invalid-element-value-symbol))))
+
+;; validates a subrequest
+(define
+  (validate-subrequest
+    value
+    required
+    record-validation-procedure
+    subrequest-validation-procedure
+    invalid-value-symbol)
+    (if (not (validate-record value required record-validation-procedure))
+      (list (cons invalid-value-symbol value))
+      (if value
+        (subrequest-validation-procedure value)
+        '())))

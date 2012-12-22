@@ -1,7 +1,7 @@
 
 (declare (unit validation))
 
-; validates an integer
+;; validates an integer
 (define (validate-integer value required min-value max-value)
   (cond ((not value) (not required))
         ((not (integer? value)) #f)
@@ -9,7 +9,7 @@
         ((> value max-value) #f)
         (else #t)))
 
-; validates a number
+;; validates a number
 (define (validate-number value required min-value max-value)
   (cond ((not value) (not required))
         ((not (number? value)) #f)
@@ -31,4 +31,10 @@
         ((not (list? value)) #f)
         ((< (length value) min-length) #f)
         ((> (length value) max-length) #f)
+        (else #t)))
+
+;; validates a record
+(define (validate-record value required record-validation-procedure)
+  (cond ((not value) (not required))
+        ((not (record-validation-procedure value)) #f)
         (else #t)))

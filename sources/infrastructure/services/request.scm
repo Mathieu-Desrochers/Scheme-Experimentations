@@ -11,16 +11,12 @@
       ;; validates a field
       (define (validate-field field)
         (let ((field-symbol (list-ref field 0))
-              (field-type (list-ref field 1)))
-          (if (eq? field-type 'subrequest)
-            (let ((request-type (list-ref field 2)))
-              `(,(symbol-append 'validate- request-type)
-                ,field-symbol))
-            (let ((field-validation-parameters (drop field 2)))
-              `(,(symbol-append 'validate-request- field-type)
-                ,field-symbol
-                ,@field-validation-parameters
-                ',(symbol-append 'invalid- field-symbol))))))
+              (field-type (list-ref field 1))
+              (field-validation-parameters (drop field 2)))
+          `(,(symbol-append 'validate-request- field-type)
+            ,field-symbol
+            ,@field-validation-parameters
+            ',(symbol-append 'invalid- field-symbol))))
 
       ;; validates a list field
       (define (validate-list-field field)
@@ -37,8 +33,21 @@
           ,min-length
           ,max-length
           ',(symbol-append 'invalid- field-symbol)
+          ',(symbol-append 'invalid- field-symbol '-length)
           ,@element-validation-parameters
           ',(symbol-append 'invalid- element-symbol))))
+
+      ;; validates a subrequest field
+      (define (validate-subrequest-field field)
+        (let ((field-symbol (list-ref field 0))
+              (required (list-ref field 2))
+              (request-type (list-ref field 3)))
+          `(validate-subrequest
+            ,field-symbol
+            ,required
+            ,(symbol-append request-type '?)
+            ,(symbol-append 'validate- request-type)
+            ',(symbol-append 'invalid- field-symbol))))
 
       ;; parses the expression
       (let* ((request-symbol (cadr exp))
@@ -64,8 +73,9 @@
               (append
                 ,@(map
                   (lambda (field)
-                    (let ((field-type (cadr field)))
-                      (if (eq? field-type 'list)
-                        (validate-list-field field)
-                        (validate-field field))))
+                    (let ((field-type (cadr field))
+                          (field-subtype (caddr field)))
+                      (cond ((eq? field-type 'list) (validate-list-field field))
+                            ((eq? field-type 'request) (validate-subrequest-field field))
+                            (else (validate-field field)))))
                   fields)))))))))
