@@ -4,7 +4,7 @@ Simple fields
 
 __Definition__
 
-    (define-request customer-request
+    (define-request new-customer-request
       (name string #t 1 100)
       (credit-score integer #t 1 10)
       (credit-limit number #f 0.00 10000.00))
@@ -15,10 +15,10 @@ __Definition__
 
 __Contructor and selectors__
 
-    (define customer-request (make-customer-request "Alice" 8 5000.00))
-    (customer-request-name customer-request)
-    (customer-request-credit-score customer-request)
-    (customer-request-credit-limit customer-request)
+    (define new-customer-request (make-new-customer-request "Alice" 8 5000.00))
+    (new-customer-request-name new-customer-request)
+    (new-customer-request-credit-score new-customer-request)
+    (new-customer-request-credit-limit new-customer-request)
 
 - "Alice"
 - 8
@@ -26,8 +26,8 @@ __Contructor and selectors__
 
 __Validation__
 
-    (validate-customer-request
-      (make-customer-request "Alice" #f 12000.00))
+    (validate-new-customer-request
+      (make-new-customer-request "Alice" #f 12000.00))
 
 - ((invalid-credit-score . #f) (invalid-credit-limit . 12000.))
 
@@ -66,10 +66,10 @@ Subrequest fields
 
 __Definition__
 
-    (define-request customer-request
-      (address request #t customer-request-address-subrequest))
+    (define-request new-customer-request
+      (address request #t new-customer-request-address-subrequest))
 
-    (define-request customer-request-address-subrequest
+    (define-request new-customer-request-address-subrequest
       (street string #t 1 100)
       (city string #t 1 100)
       (postal-code string #f 1 10))
@@ -81,18 +81,57 @@ __Definition__
 
 __Request validation__
 
-    (validate-customer-request
-      (make-customer-request #f))
+    (validate-new-customer-request
+      (make-new-customer-request #f))
 
 - ((invalid-address . #f))
 
 __Subrequest validation__
 
-    (validate-customer-request
-      (make-customer-request
-        (make-customer-request-address-subrequest
+    (validate-new-customer-request
+      (make-new-customer-request
+        (make-new-customer-request-address-subrequest
           ""
           "Montreal"
           "H2J 4R1 A124")))
 
 - ((invalid-street . "") (invalid-postal-code "H2J 4R1 A124"))
+
+Subrequest list fields
+----------------------
+
+__Definition__
+
+    (define-request new-product-request
+      (suppliers list request #t 1 3 supplier new-product-request-supplier-subrequest))
+
+    (define-request new-product-request-supplier-subrequest
+      (name string #t 1 100)
+      (price number #t 0.00 100000.00))
+
+- A required list of 1 to 3 supplier subrequests composed of:
+ - A required name of type string between 1 and 100 characters long
+ - A required price of type number between 0.00 and 100000.00
+
+__List validation__
+
+    (validate-new-product-request
+      (make-new-product-request
+        (list
+          (make-new-product-request-supplier-subrequest "Supplier1" 100.00)
+          (make-new-product-request-supplier-subrequest "Supplier2" 200.00)
+          (make-new-product-request-supplier-subrequest "Supplier3" 300.00)
+          (make-new-product-request-supplier-subrequest "Supplier4" 400.00))))
+
+- ((invalid-suppliers-length . 4))
+
+__Elements validation__
+
+    (validate-new-product-request
+      (make-new-product-request
+        (list
+          "Supplier1"
+          (make-new-product-request-supplier-subrequest "" 100.00)
+          (make-new-product-request-supplier-subrequest "Supplier3" 200000.00))))
+
+- ((invalid-supplier . "Supplier1") (invalid-name . "") (invalid-price . 200000.))

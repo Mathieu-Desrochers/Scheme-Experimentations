@@ -49,6 +49,25 @@
             ,(symbol-append 'validate- request-type)
             ',(symbol-append 'invalid- field-symbol))))
 
+      ;; validates a subrequest list field
+      (define (validate-subrequest-list-field field)
+        (let ((field-symbol (list-ref field 0))
+              (required (list-ref field 3))
+              (min-length (list-ref field 4))
+              (max-length (list-ref field 5))
+              (element-symbol (list-ref field 6))
+              (request-type (list-ref field 7)))
+          `(validate-subrequest-list
+            ,field-symbol
+            ,required
+            ,min-length
+            ,max-length
+            ',(symbol-append 'invalid- field-symbol)
+            ',(symbol-append 'invalid- field-symbol '-length)
+            ,(symbol-append request-type '?)
+            ,(symbol-append 'validate- request-type)
+            ',(symbol-append 'invalid- element-symbol))))
+
       ;; parses the expression
       (let* ((request-symbol (cadr exp))
              (fields (cddr exp))
@@ -75,7 +94,12 @@
                   (lambda (field)
                     (let ((field-type (cadr field))
                           (field-subtype (caddr field)))
-                      (cond ((eq? field-type 'list) (validate-list-field field))
-                            ((eq? field-type 'request) (validate-subrequest-field field))
-                            (else (validate-field field)))))
+                      (cond ((and (eq? field-type 'list) (eq? field-subtype 'request))
+                              (validate-subrequest-list-field field))
+                            ((eq? field-type 'list)
+                              (validate-list-field field))
+                            ((eq? field-type 'request)
+                              (validate-subrequest-field field))
+                            (else
+                              (validate-field field)))))
                   fields)))))))))

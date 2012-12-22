@@ -172,3 +172,30 @@
       (if value
         (subrequest-validation-procedure value)
         '())))
+
+;; validates a subrequest list
+(define
+  (validate-subrequest-list
+    value
+    required
+    min-length
+    max-length
+    invalid-value-symbol
+    invalid-length-symbol
+    record-validation-procedure
+    subrequest-validation-procedure
+    invalid-element-value-symbol)
+    (validate-request-list
+      value
+      required
+      min-length
+      max-length
+      invalid-value-symbol
+      invalid-length-symbol
+      (lambda (element-value)
+        (validate-subrequest
+          element-value
+          #t
+          record-validation-procedure
+          subrequest-validation-procedure
+          invalid-element-value-symbol))))
