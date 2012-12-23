@@ -1,12 +1,12 @@
 
-CREATE TABLE "customer"
+CREATE TABLE "customers"
 (
 	"customer-id" INTEGER PRIMARY KEY,
 	"first-name" TEXT,
 	"last-name" TEXT
 );
 
-CREATE TABLE "customer-address"
+CREATE TABLE "customer-addresses"
 (
 	"customer-address-id" INTEGER PRIMARY KEY,
 	"customer-id" INTEGER,

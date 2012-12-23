@@ -6,15 +6,15 @@
   (er-macro-transformer
     (lambda (exp rename compare)
 
-      ;; converts multiple string to symbols
+      ;; converts multiple strings to symbols
       (define (strings->symbols strings)
         (map string->symbol strings))
       
       ;; parses the expression
-      (let* ((table-symbol (list-ref exp 1))
-             (table-name (list-ref exp 2))
-             (row-symbol (list-ref exp 3))
-             (columns-name (list-ref exp 4))
+      (let* ((table-symbol (car (list-ref exp 1)))
+             (table-name (cadr (list-ref exp 1)))
+             (row-symbol (car (list-ref exp 2)))
+             (columns-name (cdr (list-ref exp 2)))
              (columns-symbol (strings->symbols columns-name))
              (id-column-name (car columns-name))
              (id-column-symbol (string->symbol id-column-name))
@@ -50,11 +50,9 @@
                 (lambda (value-column-symbol)
                   `(,(symbol-append row-symbol '- value-column-symbol) ,row-symbol))
                 value-columns-symbol))
-            (let ((id-column-value
-                    (caar
-                      (sql-read sql-connection
-                        "SELECT last_insert_rowid();"))))
-              (,(symbol-append row-symbol '- id-column-symbol '-set!) ,row-symbol id-column-value)))
+            (caar
+              (sql-read sql-connection
+                "SELECT last_insert_rowid();")))
 
           ;; selects a row by id
           (define (,(symbol-append table-symbol '-select-by- id-column-symbol) sql-connection ,id-column-symbol)
