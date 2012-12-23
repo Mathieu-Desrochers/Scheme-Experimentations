@@ -2,8 +2,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; request definition
 
-(use srfi-1)
-
 (define-syntax define-request
   (er-macro-transformer
     (lambda (exp rename compare)
@@ -74,10 +72,9 @@
              (fields-symbol (map car fields)))
         `(begin
 
-          ;(use srfi-1)
+          (use srfi-1)
 
-          ;(declare (unit ,request-symbol))
-          ;(declare (uses request-validation))
+          (declare (uses request-validation))
 
           ;; encapsulates a request
           (define-record ,request-symbol ,@fields-symbol)

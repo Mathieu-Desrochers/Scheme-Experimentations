@@ -1,4 +1,6 @@
 
+(declare (unit customer-address-table))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; table definition
 

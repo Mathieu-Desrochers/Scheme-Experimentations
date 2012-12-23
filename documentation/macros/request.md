@@ -131,7 +131,7 @@ __Elements validation__
       (make-new-product-request
         (list
           "Supplier1"
-          (make-new-product-request-supplier-subrequest "" 100.00)
-          (make-new-product-request-supplier-subrequest "Supplier3" 200000.00))))
+          (make-new-product-request-supplier-subrequest "" 200.00)
+          (make-new-product-request-supplier-subrequest "Supplier3" 300000.00))))
 
-- ((invalid-supplier . "Supplier1") (invalid-name . "") (invalid-price . 200000.))
+- ((invalid-supplier . "Supplier1") (invalid-name . "") (invalid-price . 300000.))

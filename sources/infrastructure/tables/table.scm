@@ -22,7 +22,6 @@
              (value-columns-symbol (strings->symbols value-columns-name)))
         `(begin
 
-          (declare (unit ,table-symbol))
           (declare (uses sql))
 
           ;; encapsulates a row
