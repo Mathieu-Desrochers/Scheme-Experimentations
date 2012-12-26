@@ -19,18 +19,14 @@
       ;; validates a list field
       (define (validate-list-field field)
         (let* ((field-symbol (list-ref field 0))
-               (field-required (list-ref field 2))
-               (field-min-length (list-ref field 3))
-               (field-max-length (list-ref field 4))
+               (field-validation-parameters (take (drop field 2) 3))
                (element-field (list-ref field 5))
                (element-field-symbol (list-ref element-field 0))
                (element-field-type (list-ref element-field 1))
                (element-field-validation-parameters (drop element-field 2)))
         `(,(symbol-append 'validate-request- element-field-type '-list)
           ,field-symbol
-          ,field-required
-          ,field-min-length
-          ,field-max-length
+          ,@field-validation-parameters
           ',(symbol-append 'invalid- field-symbol)
           ',(symbol-append 'invalid- field-symbol '-length)
           ,@element-field-validation-parameters
@@ -39,11 +35,11 @@
       ;; validates a subrequest field
       (define (validate-subrequest-field field)
         (let ((field-symbol (list-ref field 0))
-              (field-required (list-ref field 2))
+              (field-validation-parameters (take (drop field 2) 1))
               (field-subrequest-type (list-ref field 3)))
           `(validate-subrequest
             ,field-symbol
-            ,field-required
+            ,@field-validation-parameters
             ,(symbol-append field-subrequest-type '?)
             ,(symbol-append 'validate- field-subrequest-type)
             ',(symbol-append 'invalid- field-symbol))))
@@ -51,21 +47,17 @@
       ;; validates a subrequest list field
       (define (validate-subrequest-list-field field)
         (let* ((field-symbol (list-ref field 0))
-               (field-required (list-ref field 2))
-               (field-min-length (list-ref field 3))
-               (field-max-length (list-ref field 4))
+               (field-validation-parameters (take (drop field 2) 3))
                (element-field (list-ref field 5))
                (element-field-symbol (list-ref element-field 0))
-               (element-field-required (list-ref element-field 2))
+               (element-field-validation-parameters (take (drop element-field 2) 1))
                (element-field-subrequest-type (list-ref element-field 3)))
           `(validate-subrequest-list
             ,field-symbol
-            ,field-required
-            ,field-min-length
-            ,field-max-length
+            ,@field-validation-parameters
             ',(symbol-append 'invalid- field-symbol)
             ',(symbol-append 'invalid- field-symbol '-length)
-            ,element-field-required
+            ,@element-field-validation-parameters
             ,(symbol-append element-field-subrequest-type '?)
             ,(symbol-append 'validate- element-field-subrequest-type)
             ',(symbol-append 'invalid- element-field-symbol))))
