@@ -37,8 +37,8 @@ List fields
 __Definition__
 
     (define-request new-product-request
-      (sizes list #t 1 5 size integer 1 25)
-      (colors list #t 1 10 color string 1 100))
+      (sizes list #t 1 5 (size integer #t 1 25))
+      (colors list #t 1 10 (color string #t 1 100)))
 
 - A required list of 1 to 5 sizes of type integer between the values of 1 and 25
 - A required list of 1 to 10 colors of type string between 1 and 100 characters long
@@ -67,7 +67,7 @@ Subrequest fields
 __Definition__
 
     (define-request new-customer-request
-      (address request #t new-customer-request-address-subrequest))
+      (address subrequest #t new-customer-request-address-subrequest))
 
     (define-request new-customer-request-address-subrequest
       (street string #t 1 100)
@@ -103,7 +103,7 @@ Subrequest list fields
 __Definition__
 
     (define-request new-product-request
-      (suppliers list request #t 1 3 supplier new-product-request-supplier-subrequest))
+      (suppliers list #t 1 3 (supplier subrequest #t new-product-request-supplier-subrequest)))
 
     (define-request new-product-request-supplier-subrequest
       (name string #t 1 100)

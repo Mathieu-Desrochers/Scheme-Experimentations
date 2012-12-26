@@ -87,6 +87,7 @@
     max-length
     invalid-value-symbol
     invalid-length-symbol
+    element-required
     element-min-value
     element-max-value
     invalid-element-value-symbol)
@@ -100,7 +101,7 @@
       (lambda (element-value)
         (validate-request-integer
           element-value
-          #t
+          element-required
           element-min-value
           element-max-value
           invalid-element-value-symbol))))
@@ -114,6 +115,7 @@
     max-length
     invalid-value-symbol
     invalid-length-symbol
+    element-required
     element-min-value
     element-max-value
     invalid-element-value-symbol)
@@ -127,7 +129,7 @@
       (lambda (element-value)
         (validate-request-number
           element-value
-          #t
+          element-required
           element-min-value
           element-max-value
           invalid-element-value-symbol))))
@@ -141,6 +143,7 @@
     max-length
     invalid-value-symbol
     invalid-length-symbol
+    element-required
     element-min-length
     element-max-length
     invalid-element-value-symbol)
@@ -154,7 +157,7 @@
       (lambda (element-value)
         (validate-request-string
           element-value
-          #t
+          element-required
           element-min-length
           element-max-length
           invalid-element-value-symbol))))
@@ -182,6 +185,7 @@
     max-length
     invalid-value-symbol
     invalid-length-symbol
+    element-required
     record-validation-procedure
     subrequest-validation-procedure
     invalid-element-value-symbol)
@@ -195,7 +199,7 @@
       (lambda (element-value)
         (validate-subrequest
           element-value
-          #t
+          element-required
           record-validation-procedure
           subrequest-validation-procedure
           invalid-element-value-symbol))))
