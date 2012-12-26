@@ -60,7 +60,7 @@
   (define (sql-bind-parameter parameter-index)
     (let ((parameter-number (+ parameter-index 1))
           (parameter-value (list-ref parameter-values parameter-index)))
-      (cond ((integer? parameter-value)
+      (cond ((and (integer? parameter-value) (exact? parameter-value))
              (sqlite3-bind-int sqlite3-stmt* parameter-number parameter-value))
             ((number? parameter-value)
              (sqlite3-bind-double sqlite3-stmt* parameter-number parameter-value))
