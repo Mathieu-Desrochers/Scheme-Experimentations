@@ -31,6 +31,16 @@ __Validation__
 
 - ((invalid-credit-score . #f) (invalid-credit-limit . 12000.))
 
+__Parsing__
+
+    (parse-new-customer-request
+      (string-append
+        "{"
+          "\"name\": \"Alice\","
+          "\"credit-score\": \"8\","
+          "\"credit-limit\": \"5000.00\""
+        "}"))
+
 List fields
 -----------
 

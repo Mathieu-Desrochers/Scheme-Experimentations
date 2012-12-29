@@ -33,7 +33,13 @@ void free_json_error(json_error_t* json_error)
 (define free-json-error (foreign-lambda void "free_json_error" json-error*))
 
 ;; decodes the json string input
-(define json-loads (foreign-lambda json* "json_loads" (const c-string) unsigned-integer json-error*))
+(define json-loads (foreign-lambda json* "json_loads" c-string unsigned-integer json-error*))
+
+;; get a value corresponding to key from object
+(define json-object-get (foreign-lambda json* "json_object_get" json* c-string))
+
+;; returns the associated value of string
+(define json-string-value (foreign-lambda c-string "json_string_value" json*))
 
 ;; decrements the reference count
 (define json-decref (foreign-lambda void "json_decref" json*))
