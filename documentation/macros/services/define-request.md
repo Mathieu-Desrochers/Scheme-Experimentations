@@ -67,9 +67,9 @@ Subrequest fields
 __Definition__
 
     (define-request new-customer-request
-      (address subrequest #t new-customer-request-address-subrequest))
+      (address subrequest #t new-customer-address-subrequest))
 
-    (define-request new-customer-request-address-subrequest
+    (define-request new-customer-address-subrequest
       (street string #t 1 100)
       (city string #t 1 100)
       (postal-code string #f 1 10))
@@ -90,7 +90,7 @@ __Subrequest validation__
 
     (validate-new-customer-request
       (make-new-customer-request
-        (make-new-customer-request-address-subrequest
+        (make-new-customer-address-subrequest
           ""
           "Montreal"
           "H2J 4R1 A124")))
@@ -103,9 +103,9 @@ Subrequest list fields
 __Definition__
 
     (define-request new-product-request
-      (suppliers list #t 1 3 (supplier subrequest #t new-product-request-supplier-subrequest)))
+      (suppliers list #t 1 3 (supplier subrequest #t new-product-supplier-subrequest)))
 
-    (define-request new-product-request-supplier-subrequest
+    (define-request new-product-supplier-subrequest
       (name string #t 1 100)
       (price number #t 0.00 100000.00))
 
@@ -118,10 +118,10 @@ __List validation__
     (validate-new-product-request
       (make-new-product-request
         (list
-          (make-new-product-request-supplier-subrequest "Supplier1" 100.00)
-          (make-new-product-request-supplier-subrequest "Supplier2" 200.00)
-          (make-new-product-request-supplier-subrequest "Supplier3" 300.00)
-          (make-new-product-request-supplier-subrequest "Supplier4" 400.00))))
+          (make-new-product-supplier-subrequest "Supplier1" 100.00)
+          (make-new-product-supplier-subrequest "Supplier2" 200.00)
+          (make-new-product-supplier-subrequest "Supplier3" 300.00)
+          (make-new-product-supplier-subrequest "Supplier4" 400.00))))
 
 - ((invalid-suppliers-length . 4))
 
@@ -131,7 +131,7 @@ __Elements validation__
       (make-new-product-request
         (list
           "Supplier1"
-          (make-new-product-request-supplier-subrequest "" 200.00)
-          (make-new-product-request-supplier-subrequest "Supplier3" 300000.00))))
+          (make-new-product-supplier-subrequest "" 200.00)
+          (make-new-product-supplier-subrequest "Supplier3" 300000.00))))
 
 - ((invalid-supplier . "Supplier1") (invalid-name . "") (invalid-price . 300000.))
