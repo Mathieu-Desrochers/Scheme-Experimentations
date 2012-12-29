@@ -1,13 +1,7 @@
 
-(declare (uses new-customer-service))
+(declare (uses jansson-ffi))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; tests
-
-(display
-  (validate-new-customer-request
-    (make-new-customer-request
-      "Mathieu"
-      "Desrochers"
-      (list
-        (make-new-customer-request-address-subrequest "Street" "City" 1)))))
+(let ((json-error* (malloc-json-error)))
+  (let ((json* (json-loads "{\"name\":\"Mathieu\"")))
+    (display "yeah"))
+  (free-json-error json-error*))

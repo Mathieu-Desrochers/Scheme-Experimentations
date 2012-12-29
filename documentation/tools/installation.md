@@ -33,8 +33,9 @@ Building Jansson
  - ./configure --prefix=C:/Jansson/build
  - make
  - make install
-- Recuperate the following files:
- - include/jansson.h
- - bin/libjansson-4.dll
+- Recover the following files:
+ - build/include/jansson.h
+ - build/include/jansson_config.h
+ - build/bin/libjansson-4.dll
 - Delete the following folder:
  - C:/Jansson
