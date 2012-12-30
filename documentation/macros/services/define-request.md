@@ -33,13 +33,7 @@ __Validation__
 
 __Parsing__
 
-    (parse-new-customer-request
-      (string-append
-        "{"
-          "\"name\": \"Alice\","
-          "\"credit-score\": \"8\","
-          "\"credit-limit\": \"5000.00\""
-        "}"))
+    (parse-new-customer-request json-object)
 
 List fields
 -----------

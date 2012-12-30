@@ -1,9 +1,10 @@
 
 (declare (uses jansson-ffi))
+(declare (uses json))
 
-(let* ((json-error* (malloc-json-error))
-       (json-root* (json-loads "{\"name\":\"Mathieu\"}" 0 json-error*))
-       (json-name* (json-object-get json-root* "name")))
-  (display (json-string-value json-name*))
-  (json-decref json-root*)
-  (free-json-error json-error*))
+(let* ((jansson-error* (malloc-jansson-error))
+       (json-object (make-json-object (jansson-loads "{\"name\":\"value\"}" 0 jansson-error*)))
+       (value (json-property-value json-object "name")))
+  (display value)
+  (jansson-decref (json-object-jansson* json-object))
+  (free-jansson-error jansson-error*))
