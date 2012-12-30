@@ -12,26 +12,25 @@
 
 ;; invokes a procedure with a sql connection
 (define (with-sql-connection database-name procedure)
-  (define (close-sqlite3* sqlite3**)
-    (sqlite3-close-v2 (indirect-sqlite3** sqlite3**))
-    (free-sqlite3* sqlite3**))
   (let ((sqlite3** (malloc-sqlite3*)))
     (when (not sqlite3**)
       (abort "could not allocate sqlite3*"))
     (handle-exceptions exception
       (begin
-        (close-sqlite3* sqlite3**)
+        (free-sqlite3* sqlite3**)
         (abort exception))
       (let ((sqlite3-open-result (sqlite3-open database-name sqlite3**)))
         (unless (= sqlite3-open-result sqlite3-result-ok)
-          (abort
-            (string-append
-              "could not open database "
-              database-name)))
-        (let* ((sql-connection (make-sql-connection (indirect-sqlite3** sqlite3**)))
-               (procedure-result (procedure sql-connection)))
-            (close-sqlite3* sqlite3**)
-            procedure-result)))))
+          (abort (string-append "could not open database " database-name)))
+        (handle-exceptions exception
+          (begin
+            (sqlite3-close-v2 (indirect-sqlite3** sqlite3**))
+            (abort exception))
+          (let* ((sql-connection (make-sql-connection (indirect-sqlite3** sqlite3**)))
+                 (procedure-result (procedure sql-connection)))
+            (sqlite3-close-v2 (indirect-sqlite3** sqlite3**))
+            (free-sqlite3* sqlite3**)
+            procedure-result))))))
 
 ;; executes a sql statement
 (define (sql-execute sql-connection statement . parameter-values)
@@ -40,10 +39,7 @@
       (lambda (sqlite3-stmt*)
         (let ((sqlite3-step-result (sqlite3-step sqlite3-stmt*)))
           (unless (= sqlite3-step-result sqlite3-result-done)
-            (abort
-              (string-append
-                "could not step statement "
-                statement))))))))
+            (abort (string-append "could not step statement " statement))))))))
 
 ;; executes a sql statement that returns rows
 (define (sql-read sql-connection statement . parameter-values)
@@ -85,27 +81,26 @@
 
 ;; invokes a procedure with a sqlite3-stmt*
 (define (with-sqlite3-stmt* sqlite3* statement parameter-values procedure)
-  (define (close-sqlite3-stmt* sqlite3-stmt**)
-    (sqlite3-finalize (indirect-sqlite3-stmt** sqlite3-stmt**))
-    (free-sqlite3-stmt* sqlite3-stmt**))
   (let ((sqlite3-stmt** (malloc-sqlite3-stmt*)))
     (when (not sqlite3-stmt**)
       (abort "could not allocate sqlite3-stmt*"))
     (handle-exceptions exception
       (begin
-        (close-sqlite3-stmt* sqlite3-stmt**)
+        (free-sqlite3-stmt* sqlite3-stmt**)
         (abort exception))
       (let ((sqlite3-prepare-v2-result (sqlite3-prepare-v2 sqlite3* statement -1 sqlite3-stmt** #f)))
         (unless (= sqlite3-prepare-v2-result sqlite3-result-ok)
-          (abort
-            (string-append
-              "could not prepare statement "
-              statement)))
-        (let ((sqlite3-stmt* (indirect-sqlite3-stmt** sqlite3-stmt**)))
-          (sql-bind-parameters sqlite3-stmt* parameter-values)
-          (let ((procedure-result (procedure sqlite3-stmt*)))
-            (close-sqlite3-stmt* sqlite3-stmt**)
-            procedure-result))))))
+          (abort (string-append "could not prepare statement " statement)))
+        (handle-exceptions exception
+          (begin
+            (sqlite3-finalize (indirect-sqlite3-stmt** sqlite3-stmt**))
+            (abort exception))
+          (let ((sqlite3-stmt* (indirect-sqlite3-stmt** sqlite3-stmt**)))
+            (sql-bind-parameters sqlite3-stmt* parameter-values)
+            (let ((procedure-result (procedure sqlite3-stmt*)))
+              (sqlite3-finalize (indirect-sqlite3-stmt** sqlite3-stmt**))
+              (free-sqlite3-stmt* sqlite3-stmt**)
+              procedure-result)))))))
 
 ;; reads a column from a sqlite3-stmt*
 (define (sql-read-column sqlite3-stmt* column-index)

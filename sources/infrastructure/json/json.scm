@@ -5,6 +5,28 @@
 ;; encapsulates a json object
 (define-record json-object jansson*)
 
+;; invokes a procedure with a parsed json object
+(define (with-parsed-json-object string procedure)
+  (let ((jansson-error* (malloc-jansson-error)))
+    (when (not jansson-error*)
+      (abort "could not allocate jansson-error"))
+    (handle-exceptions exception
+      (begin
+        (free-jansson-error jansson-error*)
+        (abort exception))
+      (let ((jansson* (jansson-loads string 0 jansson-error*)))
+        (when (not jansson*)
+          (abort "could not load json string"))
+        (handle-exceptions exception
+          (begin
+            (jansson-decref jansson*)
+            (abort exception))
+          (let* ((json-object (make-json-object jansson*))
+                 (procedure-result (procedure json-object)))
+            (free-jansson-error jansson-error*)
+            (jansson-decref jansson*)
+            procedure-result))))))
+
 ;; gets the value of a property
 (define (json-property-value json-object property-name)
   (let* ((jansson* (json-object-jansson* json-object))
