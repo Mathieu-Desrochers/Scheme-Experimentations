@@ -71,6 +71,7 @@
           (use srfi-1)
 
           (declare (uses request-validation))
+          (declare (uses json))
 
           ;; encapsulates a request
           (define-record ,request-symbol ,@fields-symbol)
@@ -95,4 +96,13 @@
                         (if (eq? field-type 'subrequest)
                           (validate-subrequest-field field)
                           (validate-field field)))))
-                  fields)))))))))
+                  fields))))
+
+          ;; parses a request
+          (define (,(symbol-append 'parse- request-symbol) json-object)
+            (let (
+              ,@(map
+                (lambda (field-symbol)
+                  `(,field-symbol (json-property-value json-object ,(symbol->string field-symbol))))
+                fields-symbol))
+              (,(symbol-append 'make- request-symbol) ,@fields-symbol))))))))
