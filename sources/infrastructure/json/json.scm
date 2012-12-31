@@ -27,7 +27,7 @@
             (jansson-decref jansson*)
             procedure-result))))))
 
-;; gets the value of a property
+;; returns the value of a property
 (define (json-property-value json-object property-name)
   (let* ((jansson* (json-object-jansson* json-object))
          (jansson-property* (jansson-object-get jansson* property-name)))
@@ -41,4 +41,16 @@
               ((eq? jansson-property-type jansson-true) #t)
               ((eq? jansson-property-type jansson-false) #f)
               ((eq? jansson-property-type jansson-null) #f)))
+      #f)))
+
+;; invokes a procedure with the json object of a property
+(define (json-property-object-value json-object property-name procedure)
+  (let* ((jansson* (json-object-jansson* json-object))
+         (jansson-property* (jansson-object-get jansson* property-name)))
+    (if jansson-property*
+      (let ((jansson-property-type (jansson-typeof jansson-property*)))
+        (if (eq? jansson-property-type jansson-object)
+          (let ((jansson-property-json-object (make-json-object jansson-property*)))
+            (procedure jansson-property-json-object))
+          #f))
       #f)))

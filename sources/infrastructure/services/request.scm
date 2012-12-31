@@ -6,6 +6,19 @@
   (er-macro-transformer
     (lambda (exp rename compare)
 
+      ;; returns the type of a field
+      (define (field-type field)
+        (let ((field-type (cadr field)))
+          (if (eq? field-type 'list)
+            (let* ((element-field (list-ref field 5))
+                   (element-field-type (cadr element-field)))
+              (if (eq? element-field-type 'subrequest)
+                'subrequest-list-field
+                'list-field))
+            (if (eq? field-type 'subrequest)
+              'subrequest-field
+              'field))))
+
       ;; validates a field
       (define (validate-field field)
         (let ((field-symbol (list-ref field 0))
@@ -62,6 +75,25 @@
             ,(symbol-append 'validate- element-field-subrequest-type)
             ',(symbol-append 'invalid- element-field-symbol))))
 
+      ;; parses a field
+      (define (parse-field field)
+        (let* ((field-symbol (list-ref field 0))
+               (field-symbol-string (symbol->string field-symbol)))
+          `(json-property-value
+            json-object
+            ,field-symbol-string)))
+
+      ;; parses a subrequest field
+      (define (parse-subrequest-field field)
+        (let* ((field-symbol (list-ref field 0))
+               (field-symbol-string (symbol->string field-symbol))
+               (field-subrequest-type (list-ref field 3))
+               (field-subrequest-parse-procedure (symbol-append 'parse- field-subrequest-type)))
+          `(json-property-object-value
+            json-object
+            ,field-symbol-string
+            ,field-subrequest-parse-procedure)))
+
       ;; parses the expression
       (let* ((request-symbol (cadr exp))
              (fields (cddr exp))
@@ -86,23 +118,22 @@
               (append
                 ,@(map
                   (lambda (field)
-                    (let ((field-type (cadr field)))
-                      (if (eq? field-type 'list)
-                        (let* ((element-field (list-ref field 5))
-                               (element-field-type (cadr element-field)))
-                          (if (eq? element-field-type 'subrequest)
-                            (validate-subrequest-list-field field)
-                            (validate-list-field field)))
-                        (if (eq? field-type 'subrequest)
-                          (validate-subrequest-field field)
-                          (validate-field field)))))
+                    (let ((field-type (field-type field)))
+                      (cond ((eq? field-type 'field) (validate-field field))
+                            ((eq? field-type 'list-field) (validate-list-field field))
+                            ((eq? field-type 'subrequest-field) (validate-subrequest-field field))
+                            ((eq? field-type 'subrequest-list-field) (validate-subrequest-list-field field)))))
                   fields))))
 
           ;; parses a request
           (define (,(symbol-append 'parse- request-symbol) json-object)
             (let (
               ,@(map
-                (lambda (field-symbol)
-                  `(,field-symbol (json-property-value json-object ,(symbol->string field-symbol))))
-                fields-symbol))
+                (lambda (field)
+                  (let ((field-symbol (car field))
+                        (field-type (field-type field)))
+                    `(,field-symbol
+                      ,(cond ((eq? field-type 'field) (parse-field field))
+                             ((eq? field-type 'subrequest-field) (parse-subrequest-field field))))))
+                fields))
               (,(symbol-append 'make- request-symbol) ,@fields-symbol))))))))

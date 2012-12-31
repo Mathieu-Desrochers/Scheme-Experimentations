@@ -20,16 +20,20 @@ __Contructor and selectors__
     (new-customer-request-credit-score new-customer-request)
     (new-customer-request-credit-limit new-customer-request)
 
-- "Alice"
-- 8
-- 5000.
-
 __Validation__
 
     (validate-new-customer-request
       (make-new-customer-request "Alice" #f 12000.00))
 
 - ((invalid-credit-score . #f) (invalid-credit-limit . 12000.))
+
+__Json representation__
+
+    {
+      "name": "Alice",
+      "credit-score": 8,
+      "credit-limit": 5000.00
+    }
 
 __Parsing__
 
@@ -100,6 +104,17 @@ __Subrequest validation__
           "H2J 4R1 A124")))
 
 - ((invalid-street . "") (invalid-postal-code "H2J 4R1 A124"))
+
+__Json representation__
+
+    {
+      "address":
+      {
+        "street": "123 Sunny Street",
+        "city": "Montreal",
+        "postal-code": "H2J 4R1"
+      }
+    }
 
 Subrequest list fields
 ----------------------
