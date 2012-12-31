@@ -50,6 +50,12 @@ void free_json_error(json_error_t* json_error)
 ;; returns the associated value of string
 (define jansson-string-value (foreign-lambda c-string "json_string_value" jansson*))
 
+;; returns the number of elements in array
+(define jansson-array-size (foreign-lambda int "json_array_size" jansson*))
+
+;; returns the element in array at position index
+(define jansson-array-get (foreign-lambda jansson* "json_array_get" jansson* int))
+
 ;; decrements the reference count
 (define jansson-decref (foreign-lambda void "json_decref" jansson*))
 

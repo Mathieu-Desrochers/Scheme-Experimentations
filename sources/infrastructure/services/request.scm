@@ -79,20 +79,34 @@
       (define (parse-field field)
         (let* ((field-symbol (list-ref field 0))
                (field-symbol-string (symbol->string field-symbol)))
-          `(json-property-value
-            json-object
-            ,field-symbol-string)))
+          `(let ((json-object-property (json-object-property json-object ,field-symbol-string)))
+            (if json-object-property
+              (json-object-value json-object-property)
+              #f))))
+
+      ;; parses a list field
+      (define (parse-list-field field)
+        (let* ((field-symbol (list-ref field 0))
+               (field-symbol-string (symbol->string field-symbol)))
+          `(let ((json-object-property (json-object-property json-object ,field-symbol-string)))
+            (if json-object-property
+              (let ((json-object-array-elements (json-object-array-elements json-object-property)))
+                (if json-object-array-elements
+                  (map
+                    json-object-value
+                    json-object-array-elements)
+                  #f))
+              #f))))
 
       ;; parses a subrequest field
       (define (parse-subrequest-field field)
         (let* ((field-symbol (list-ref field 0))
                (field-symbol-string (symbol->string field-symbol))
-               (field-subrequest-type (list-ref field 3))
-               (field-subrequest-parse-procedure (symbol-append 'parse- field-subrequest-type)))
-          `(json-property-object-value
-            json-object
-            ,field-symbol-string
-            ,field-subrequest-parse-procedure)))
+               (field-subrequest-type (list-ref field 3)))
+          `(let ((json-object-property (json-object-property json-object ,field-symbol-string)))
+            (if json-object-property
+              (,(symbol-append 'parse- field-subrequest-type) json-object-property)
+              #f))))
 
       ;; parses the expression
       (let* ((request-symbol (cadr exp))
@@ -134,6 +148,7 @@
                         (field-type (field-type field)))
                     `(,field-symbol
                       ,(cond ((eq? field-type 'field) (parse-field field))
+                             ((eq? field-type 'list-field) (parse-list-field field))
                              ((eq? field-type 'subrequest-field) (parse-subrequest-field field))))))
                 fields))
               (,(symbol-append 'make- request-symbol) ,@fields-symbol))))))))

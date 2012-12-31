@@ -69,6 +69,13 @@ __Elements validation__
 
 - ((invalid-size . 30) (invalid-size . 40) (invalid-color . 1.25))
 
+__Json representation__
+
+    {
+      "sizes": [10, 11, 12, 13, 14],
+      "colors": ["Green", "Yellow", "Blue"]
+    }
+
 Subrequest fields
 -----------------
 
