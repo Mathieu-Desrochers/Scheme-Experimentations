@@ -105,34 +105,38 @@
       (define (parse-value-field field)
         (let* ((field-symbol (list-ref field 0))
                (field-symbol-string (symbol->string field-symbol)))
-          `(let ((json-object-property (json-object-property json-object ,field-symbol-string)))
-            (if json-object-property
-              (json-object-value json-object-property)
-              #f))))
+          `(json-parse-value
+            json-object
+            ,field-symbol-string)))
 
       ;; parses a value list field
       (define (parse-value-list-field field)
         (let* ((field-symbol (list-ref field 0))
                (field-symbol-string (symbol->string field-symbol)))
-          `(let ((json-object-property (json-object-property json-object ,field-symbol-string)))
-            (if json-object-property
-              (let ((json-object-array-elements (json-object-array-elements json-object-property)))
-                (if json-object-array-elements
-                  (map
-                    json-object-value
-                    json-object-array-elements)
-                  #f))
-              #f))))
+          `(json-parse-value-list
+            json-object
+            ,field-symbol-string)))
 
       ;; parses a subrequest field
       (define (parse-subrequest-field field)
         (let* ((field-symbol (list-ref field 0))
                (field-symbol-string (symbol->string field-symbol))
                (field-subrequest-type (list-ref field 3)))
-          `(let ((json-object-property (json-object-property json-object ,field-symbol-string)))
-            (if json-object-property
-              (,(symbol-append 'parse- field-subrequest-type) json-object-property)
-              #f))))
+          `(json-parse-subrequest
+            json-object
+            ,field-symbol-string
+            ,(symbol-append 'parse- field-subrequest-type))))
+
+      ;; parses a subrequest list field
+      (define (parse-subrequest-list-field field)
+        (let* ((field-symbol (list-ref field 0))
+               (field-symbol-string (symbol->string field-symbol))
+               (element-field (list-ref field 5))
+               (element-field-subrequest-type (list-ref element-field 3)))
+          `(json-parse-subrequest-list
+            json-object
+            ,field-symbol-string
+            ,(symbol-append 'parse- element-field-subrequest-type))))
 
       ;; parses the expression
       (let* ((request-symbol (cadr exp))
@@ -142,8 +146,8 @@
 
           (use srfi-1)
 
-          (declare (uses request-validation))
           (declare (uses json))
+          (declare (uses validation))
 
           ;; encapsulates a request
           (define-record ,request-symbol ,@fields-symbol)
@@ -173,6 +177,7 @@
                     `(,field-symbol
                       ,(cond ((value-field? field) (parse-value-field field))
                              ((value-list-field? field) (parse-value-list-field field))
-                             ((subrequest-field? field) (parse-subrequest-field field))))))
+                             ((subrequest-field? field) (parse-subrequest-field field))
+                             ((subrequest-list-field? field) (parse-subrequest-list-field field))))))
                 fields))
               (,(symbol-append 'make- request-symbol) ,@fields-symbol))))))))

@@ -161,3 +161,19 @@ __Elements validation__
           (make-new-product-supplier-subrequest "Supplier3" 300000.00))))
 
 - ((invalid-supplier . "Supplier1") (invalid-name . "") (invalid-price . 300000.))
+
+__Json representation__
+
+    {
+      "suppliers":
+      [
+        {
+          "name": "Supplier1",
+          "price": 100.00
+        },
+        {
+          "name": "Supplier2",
+          "price": 200.00
+        }
+      ]
+    }
