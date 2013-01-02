@@ -5,6 +5,7 @@ csc -c sources/infrastructure/json/json.scm
 
 REM compiling infrastructure/sql
 csc -Idependencies/headers -c sources/infrastructure/sql/sqlite-ffi.scm
+csc -c sources/infrastructure/sql/sql-intern.scm
 csc -c sources/infrastructure/sql/sql.scm
 
 REM compiling infrastructure/validation
@@ -27,6 +28,7 @@ csc -LC:/Github/Scheme-Experimentations/dependencies/libraries/ ^
   sources/infrastructure/json/jansson-ffi.o ^
   sources/infrastructure/json/json.o ^
   sources/infrastructure/sql/sqlite-ffi.o ^
+  sources/infrastructure/sql/sql-intern.o ^
   sources/infrastructure/sql/sql.o ^
   sources/infrastructure/validation/validation.o ^
   sources/application/services/new-customer-service.o ^
