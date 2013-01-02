@@ -6,53 +6,75 @@
   (er-macro-transformer
     (lambda (exp rename compare)
 
-      ;; returns the type of a field
-      (define (field-type field)
+      ;; whether a field is a value field
+      (define (value-field? field)
+        (let ((field-type (cadr field)))
+          (and (not (eq? field-type 'list))
+               (not (eq? field-type 'subrequest)))))
+
+      ;; whether a field is a value list field
+      (define (value-list-field? field)
         (let ((field-type (cadr field)))
           (if (eq? field-type 'list)
             (let* ((element-field (list-ref field 5))
                    (element-field-type (cadr element-field)))
-              (if (eq? element-field-type 'subrequest)
-                'subrequest-list-field
-                'list-field))
-            (if (eq? field-type 'subrequest)
-              'subrequest-field
-              'field))))
+              (not (eq? element-field-type 'subrequest)))
+            #f)))
 
-      ;; validates a field
-      (define (validate-field field)
+      ;; whether a field is a subrequest field
+      (define (subrequest-field? field)
+        (let ((field-type (cadr field)))
+          (eq? field-type 'subrequest)))
+
+      ;; whether a field is a subrequest list field
+      (define (subrequest-list-field? field)
+        (let ((field-type (cadr field)))
+          (if (eq? field-type 'list)
+            (let* ((element-field (list-ref field 5))
+                   (element-field-type (cadr element-field)))
+              (eq? element-field-type 'subrequest))
+            #f)))
+
+      ;; validates a value field
+      (define (validate-value-field field)
         (let ((field-symbol (list-ref field 0))
               (field-type (list-ref field 1))
               (field-validation-parameters (drop field 2)))
-          `(,(symbol-append 'validate-request- field-type)
+          `(validate-value
             ,field-symbol
-            ,@field-validation-parameters
+            ,(symbol-append 'validate- field-type)
+            ',field-validation-parameters
             ',(symbol-append 'invalid- field-symbol))))
 
-      ;; validates a list field
-      (define (validate-list-field field)
+      ;; validates a value list field
+      (define (validate-value-list-field field)
         (let* ((field-symbol (list-ref field 0))
-               (field-validation-parameters (take (drop field 2) 3))
+               (field-required (list-ref field 2))
+               (field-min-length (list-ref field 3))
+               (field-max-length (list-ref field 4))
                (element-field (list-ref field 5))
                (element-field-symbol (list-ref element-field 0))
                (element-field-type (list-ref element-field 1))
                (element-field-validation-parameters (drop element-field 2)))
-        `(,(symbol-append 'validate-request- element-field-type '-list)
-          ,field-symbol
-          ,@field-validation-parameters
-          ',(symbol-append 'invalid- field-symbol)
-          ',(symbol-append 'invalid- field-symbol '-length)
-          ,@element-field-validation-parameters
-          ',(symbol-append 'invalid- element-field-symbol))))
+          `(validate-value-list
+            ,field-symbol
+            ,field-required
+            ,field-min-length
+            ,field-max-length
+            ',(symbol-append 'invalid- field-symbol)
+            ',(symbol-append 'invalid- field-symbol '-length)
+            ,(symbol-append 'validate- element-field-type)
+            ',element-field-validation-parameters
+            ',(symbol-append 'invalid- element-field-symbol))))
 
       ;; validates a subrequest field
       (define (validate-subrequest-field field)
         (let ((field-symbol (list-ref field 0))
-              (field-validation-parameters (take (drop field 2) 1))
+              (field-required (list-ref field 2))
               (field-subrequest-type (list-ref field 3)))
           `(validate-subrequest
             ,field-symbol
-            ,@field-validation-parameters
+            ,field-required
             ,(symbol-append field-subrequest-type '?)
             ,(symbol-append 'validate- field-subrequest-type)
             ',(symbol-append 'invalid- field-symbol))))
@@ -60,23 +82,27 @@
       ;; validates a subrequest list field
       (define (validate-subrequest-list-field field)
         (let* ((field-symbol (list-ref field 0))
-               (field-validation-parameters (take (drop field 2) 3))
+               (field-required (list-ref field 2))
+               (field-min-length (list-ref field 3))
+               (field-max-length (list-ref field 4))
                (element-field (list-ref field 5))
                (element-field-symbol (list-ref element-field 0))
-               (element-field-validation-parameters (take (drop element-field 2) 1))
+               (element-field-required (list-ref element-field 2))
                (element-field-subrequest-type (list-ref element-field 3)))
           `(validate-subrequest-list
             ,field-symbol
-            ,@field-validation-parameters
+            ,field-required
+            ,field-min-length
+            ,field-max-length
             ',(symbol-append 'invalid- field-symbol)
             ',(symbol-append 'invalid- field-symbol '-length)
-            ,@element-field-validation-parameters
+            ,element-field-required
             ,(symbol-append element-field-subrequest-type '?)
             ,(symbol-append 'validate- element-field-subrequest-type)
             ',(symbol-append 'invalid- element-field-symbol))))
 
-      ;; parses a field
-      (define (parse-field field)
+      ;; parses a value field
+      (define (parse-value-field field)
         (let* ((field-symbol (list-ref field 0))
                (field-symbol-string (symbol->string field-symbol)))
           `(let ((json-object-property (json-object-property json-object ,field-symbol-string)))
@@ -84,8 +110,8 @@
               (json-object-value json-object-property)
               #f))))
 
-      ;; parses a list field
-      (define (parse-list-field field)
+      ;; parses a value list field
+      (define (parse-value-list-field field)
         (let* ((field-symbol (list-ref field 0))
                (field-symbol-string (symbol->string field-symbol)))
           `(let ((json-object-property (json-object-property json-object ,field-symbol-string)))
@@ -132,11 +158,10 @@
               (append
                 ,@(map
                   (lambda (field)
-                    (let ((field-type (field-type field)))
-                      (cond ((eq? field-type 'field) (validate-field field))
-                            ((eq? field-type 'list-field) (validate-list-field field))
-                            ((eq? field-type 'subrequest-field) (validate-subrequest-field field))
-                            ((eq? field-type 'subrequest-list-field) (validate-subrequest-list-field field)))))
+                    (cond ((value-field? field) (validate-value-field field))
+                          ((value-list-field? field) (validate-value-list-field field))
+                          ((subrequest-field? field) (validate-subrequest-field field))
+                          ((subrequest-list-field? field) (validate-subrequest-list-field field))))
                   fields))))
 
           ;; parses a request
@@ -144,11 +169,10 @@
             (let (
               ,@(map
                 (lambda (field)
-                  (let ((field-symbol (car field))
-                        (field-type (field-type field)))
+                  (let ((field-symbol (car field)))
                     `(,field-symbol
-                      ,(cond ((eq? field-type 'field) (parse-field field))
-                             ((eq? field-type 'list-field) (parse-list-field field))
-                             ((eq? field-type 'subrequest-field) (parse-subrequest-field field))))))
+                      ,(cond ((value-field? field) (parse-value-field field))
+                             ((value-list-field? field) (parse-value-list-field field))
+                             ((subrequest-field? field) (parse-subrequest-field field))))))
                 fields))
               (,(symbol-append 'make- request-symbol) ,@fields-symbol))))))))

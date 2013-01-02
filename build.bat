@@ -3,9 +3,6 @@ REM compiling infrastructure/json
 csc -Idependencies/headers -c sources/infrastructure/json/jansson-ffi.scm
 csc -c sources/infrastructure/json/json.scm
 
-REM compiling infrastructure/services
-csc -c sources/infrastructure/services/request-validation.scm
-
 REM compiling infrastructure/sql
 csc -Idependencies/headers -c sources/infrastructure/sql/sqlite-ffi.scm
 csc -c sources/infrastructure/sql/sql.scm
@@ -29,7 +26,6 @@ csc -LC:/Github/Scheme-Experimentations/dependencies/libraries/ ^
   -lsqlite3 ^
   sources/infrastructure/json/jansson-ffi.o ^
   sources/infrastructure/json/json.o ^
-  sources/infrastructure/services/request-validation.o ^
   sources/infrastructure/sql/sqlite-ffi.o ^
   sources/infrastructure/sql/sql.o ^
   sources/infrastructure/validation/validation.o ^

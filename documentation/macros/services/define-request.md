@@ -1,6 +1,6 @@
 
-Simple fields
--------------
+Value fields
+------------
 
 __Definition__
 
@@ -39,8 +39,8 @@ __Parsing__
 
     (parse-new-customer-request json-object)
 
-List fields
------------
+Value list fields
+-----------------
 
 __Definition__
 
