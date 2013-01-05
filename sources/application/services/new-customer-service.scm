@@ -13,3 +13,9 @@
   (address string #t 1 100)
   (city string #t 1 100)
   (state string #t 1 100))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; response definition
+
+(define-response new-customer-response
+  (customer-id))

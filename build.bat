@@ -12,11 +12,11 @@ REM compiling infrastructure/validation
 csc -c sources/infrastructure/validation/validation.scm
 
 REM compiling application/services
-csc -c -extend sources/infrastructure/services/request.scm sources/application/services/new-customer-service.scm
+csc -c -extend sources/infrastructure/services/define-request.scm sources/infrastructure/services/define-response.scm sources/application/services/new-customer-service.scm
 
 REM compiling application/tables
-csc -c -extend sources/infrastructure/tables/table.scm sources/application/tables/customer-addresses-table.scm
-csc -c -extend sources/infrastructure/tables/table.scm sources/application/tables/customers-table.scm
+csc -c -extend sources/infrastructure/tables/define-table.scm sources/application/tables/customer-addresses-table.scm
+csc -c -extend sources/infrastructure/tables/define-table.scm sources/application/tables/customers-table.scm
 
 REM compiling application
 csc -c sources/application/main.scm
