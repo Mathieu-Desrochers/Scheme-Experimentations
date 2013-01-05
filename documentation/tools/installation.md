@@ -24,6 +24,15 @@ Installing Chicken Scheme
 - Add the following folder to your PATH environment variable:
  - C:/Chicken/bin
 
+Installing Chicken Scheme Eggs
+------------------------------
+
+- Execute the following commands:
+  - chicken-install regex
+  - chicken-install utf8
+  - chicken-install -deploy -p dependencies/eggs regex
+  - chicken-install -deploy -p dependencies/eggs utf8
+
 Building Jansson
 ----------------
 

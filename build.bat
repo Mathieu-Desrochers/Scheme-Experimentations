@@ -35,8 +35,9 @@ csc -LC:/Github/Scheme-Experimentations/dependencies/libraries/ ^
   sources/application/tables/customer-addresses-table.o ^
   sources/application/tables/customers-table.o ^
   sources/application/main.o ^
-  -o build\build.exe
+  -o build.exe ^
+  -deploy
 
 REM copying dependencies
-copy dependencies\libraries\libjansson-4.dll build\
-copy dependencies\libraries\sqlite3.dll build\
+copy dependencies\eggs\*.* build\
+copy dependencies\libraries\*.* build\
