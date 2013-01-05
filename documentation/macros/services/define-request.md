@@ -82,7 +82,7 @@ Subrequest fields
 __Definition__
 
     (define-request new-customer-request
-      (address subrequest #t new-customer-address-subrequest))
+      (address new-customer-address-subrequest #t))
 
     (define-request new-customer-address-subrequest
       (street string #t 1 100)
@@ -129,7 +129,7 @@ Subrequest list fields
 __Definition__
 
     (define-request new-product-request
-      (suppliers list #t 1 3 (supplier subrequest #t new-product-supplier-subrequest)))
+      (suppliers list #t 1 3 (supplier new-product-supplier-subrequest #t)))
 
     (define-request new-product-supplier-subrequest
       (name string #t 1 100)

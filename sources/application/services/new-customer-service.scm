@@ -7,7 +7,7 @@
 (define-request new-customer-request
   (first-name string #t 1 100)
   (last-name string #t 1 100)
-  (adresses list #t 1 5 (address subrequest #t new-customer-address-subrequest)))
+  (adresses list #t 1 5 (address new-customer-address-subrequest #t)))
 
 (define-request new-customer-address-subrequest
   (address string #t 1 100)
