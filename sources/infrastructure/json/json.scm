@@ -48,7 +48,7 @@
       (make-json-object jansson-property*)
       #f)))
 
-;; returns the json objects for the items of an array
+;; returns the json objects for the elements of an array
 (define (json-object-array-elements json-object)
   (let* ((jansson* (json-object-jansson* json-object))
          (jansson-type (jansson-typeof jansson*)))
@@ -65,7 +65,7 @@
 (define (with-new-json-object procedure)
   (let ((jansson* (jansson-object)))
     (when (not jansson*)
-      (abort "could not create new jansson*"))
+      (abort "could not create new json object"))
     (handle-exceptions exception
       (begin
         (jansson-decref jansson*)
@@ -85,7 +85,7 @@
           ((not value) (jansson-null))))
   (let ((jansson* (create-jansson*)))
     (when (not jansson*)
-      (abort "could not create jansson* from value"))
+      (abort "could not create new json object from value"))
     (handle-exceptions exception
       (begin
         (jansson-decref jansson*)
@@ -94,6 +94,28 @@
              (procedure-result (procedure json-object)))
         (jansson-decref jansson*)
         procedure-result))))
+
+;; invokes a procedure with a new json object representing an array
+(define (with-new-json-object-array procedure)
+  (let ((jansson* (jansson-array)))
+    (when (not jansson*)
+      (abort "could not create new json object array"))
+    (handle-exceptions exception
+      (begin
+        (jansson-decref jansson*)
+        (abort exception))
+      (let* ((json-object (make-json-object jansson*))
+             (procedure-result (procedure json-object)))
+        (jansson-decref jansson*)
+        procedure-result))))
+
+;; appends a json object to an array
+(define (json-object-array-append! json-object json-object-element)
+  (let* ((jansson* (json-object-jansson* json-object))
+         (jansson-element* (json-object-jansson* json-object-element))
+         (jansson-array-append-result (jansson-array-append jansson* jansson-element*)))
+    (when (not (eq? jansson-array-append-result 0))
+      (abort "could not append json object to array"))))
 
 ;; sets a property to a json object
 (define (json-object-property-set! json-object property-name json-object-value)

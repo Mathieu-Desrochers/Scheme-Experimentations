@@ -8,8 +8,8 @@
 
 (with-new-json-object
   (lambda (json-object)
-    (format-get-customer-response
-      (make-get-customer-response "Alice" 8 5000.00)
+    (format-get-product-response
+      (make-get-product-response '(10 11 12 13 14) '("Green" "Yellow" "Blue"))
       json-object)
     (display
       (json-object->string

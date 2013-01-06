@@ -7,3 +7,15 @@
   (with-new-json-object-from-value value
     (lambda (json-object-value)
       (json-object-property-set! json-object property-name json-object-value))))
+
+;; formats a value list
+(define (json-format-value-list json-object property-name value)
+  (with-new-json-object-array
+    (lambda (json-object-array)
+      (map
+        (lambda (element-value)
+          (with-new-json-object-from-value element-value
+            (lambda (json-object-element)
+              (json-object-array-append! json-object-array json-object-element))))
+        value)
+      (json-object-property-set! json-object property-name json-object-array))))

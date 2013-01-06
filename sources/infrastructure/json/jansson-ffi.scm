@@ -128,6 +128,12 @@ void json_free_dumps_result(struct json_dumps_result_t* json_dumps_result)
 ;; returns a new json null
 (define jansson-null (foreign-lambda jansson* "json_null"))
 
+;; returns a new json array
+(define jansson-array (foreign-lambda jansson* "json_array"))
+
+;; appends to the end of array
+(define jansson-array-append (foreign-lambda int "json_array_append" jansson* jansson*))
+
 ;; returns the json representation as a string
 (define jansson-dumps-wrapped (foreign-lambda jansson-dumps-result* "json_dumps_wrapped" jansson*))
 (define jansson-dumps-result-value (foreign-lambda c-string "json_dumps_result_value" jansson-dumps-result*))

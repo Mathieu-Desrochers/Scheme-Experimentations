@@ -30,4 +30,24 @@ __Json representation__
 
 __Formatting__
 
-    (format-get-customer-request get-customer-request json-object)
+    (format-get-customer-response get-customer-response json-object)
+
+Value list fields
+-----------------
+
+__Definition__
+
+    (define-response get-product-response
+      (sizes list)
+      (colors list))
+
+- A list of sizes
+- A list of colors
+
+__Json representation__
+
+    {
+      "sizes": [10, 11, 12, 13, 14],
+      "colors": ["Green", "Yellow", "Blue"]
+    }
+

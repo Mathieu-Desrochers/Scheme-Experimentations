@@ -17,7 +17,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; response definition
 
-(define-response get-customer-response
-  (name)
-  (credit-score)
-  (credit-limit))
+(define-response get-product-response
+  (sizes list)
+  (colors list))
