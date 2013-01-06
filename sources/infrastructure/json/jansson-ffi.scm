@@ -74,14 +74,14 @@ void json_free_dumps_result(struct json_dumps_result_t* json_dumps_result)
 (define free-jansson-error (foreign-lambda void "free_json_error" jansson-error*))
 
 ;; json types
-(define jansson-object (foreign-value "JSON_OBJECT" int))
-(define jansson-array (foreign-value "JSON_ARRAY" int))
-(define jansson-string (foreign-value "JSON_STRING" int))
-(define jansson-integer (foreign-value "JSON_INTEGER" int))
-(define jansson-real (foreign-value "JSON_REAL" int))
-(define jansson-true (foreign-value "JSON_TRUE" int))
-(define jansson-false (foreign-value "JSON_FALSE" int))
-(define jansson-null (foreign-value "JSON_NULL" int))
+(define jansson-type-object (foreign-value "JSON_OBJECT" int))
+(define jansson-type-array (foreign-value "JSON_ARRAY" int))
+(define jansson-type-string (foreign-value "JSON_STRING" int))
+(define jansson-type-integer (foreign-value "JSON_INTEGER" int))
+(define jansson-type-real (foreign-value "JSON_REAL" int))
+(define jansson-type-true (foreign-value "JSON_TRUE" int))
+(define jansson-type-false (foreign-value "JSON_FALSE" int))
+(define jansson-type-null (foreign-value "JSON_NULL" int))
 
 ;; decodes the json string input
 (define jansson-loads (foreign-lambda jansson* "json_loads" c-string unsigned-integer jansson-error*))
