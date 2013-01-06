@@ -98,3 +98,55 @@
             json-object-array-elements)
           #f))
       #f)))
+
+;; invokes a procedure with a new json object
+(define (with-new-json-object procedure)
+  (let ((jansson* (jansson-object)))
+    (when (not jansson*)
+      (abort "could not create new jansson*"))
+    (handle-exceptions exception
+      (begin
+        (jansson-decref jansson*)
+        (abort exception))
+      (let* ((json-object (make-json-object jansson*))
+             (procedure-result (procedure json-object)))
+        (jansson-decref jansson*)
+        procedure-result))))
+
+;; invokes a procedure with a new json object representing a value
+(define (with-new-json-object-from-value value procedure)
+  (define (create-jansson*)
+    (cond ((boolean? value) (jansson-boolean value))
+          ((and (integer? value) (exact? value)) (jansson-integer value))
+          ((number? value) (jansson-real value))
+          ((string? value) (jansson-string value))
+          ((not value) (jansson-null))))
+  (let ((jansson* (create-jansson*)))
+    (when (not jansson*)
+      (abort "could not create jansson* from value"))
+    (handle-exceptions exception
+      (begin
+        (jansson-decref jansson*)
+        (abort exception))
+      (let* ((json-object (make-json-object jansson*))
+             (procedure-result (procedure json-object)))
+        (jansson-decref jansson*)
+        procedure-result))))
+
+;; sets a property to a json object
+(define (json-object-property-set! json-object property-name json-object-value)
+  (let* ((jansson* (json-object-jansson* json-object))
+         (jansson-value* (json-object-jansson* json-object-value))
+         (json-object-set-result (jansson-object-set jansson* property-name jansson-value*)))
+    (when (not (eq? json-object-set-result 0))
+      (abort "could not set json object property"))))
+
+;; serializes a json object to a string
+(define (json-object->string json-object)
+  (let* ((jansson* (json-object-jansson* json-object))
+         (jansson-dumps-result* (jansson-dumps-wrapped jansson*)))
+    (when (not jansson-dumps-result*)
+      (abort "could not serialize json object"))
+    (let ((result (jansson-dumps-result-value jansson-dumps-result*)))
+      (jansson-free-dumps-result jansson-dumps-result*)
+      result)))

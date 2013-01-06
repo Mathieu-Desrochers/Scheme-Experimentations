@@ -18,6 +18,43 @@ void free_json_error(json_error_t* json_error)
   free(json_error);
 }
 
+// the result of the wrapped json_dumps function
+struct json_dumps_result_t
+{
+  char* value;
+};
+
+// wraps the json_dumps function
+// returns a heap pointer to scheme
+struct json_dumps_result_t* json_dumps_wrapped(json_t* json)
+{
+  char* value = json_dumps(json, 0);
+  if (value == NULL)
+  {
+    return NULL;
+  }
+
+  struct json_dumps_result_t* json_dumps_result = malloc(sizeof(struct json_dumps_result_t));
+  json_dumps_result->value = value;
+  return json_dumps_result;
+}
+
+// returns the value of a json_dumps_result
+// allows scheme to take a copy of the string
+char* json_dumps_result_value(struct json_dumps_result_t* json_dumps_result)
+{
+  char* value = json_dumps_result->value;
+  return value;
+}
+
+// frees the specified json_dumps_result
+// as well as the value it points to
+void json_free_dumps_result(struct json_dumps_result_t* json_dumps_result)
+{
+  free(json_dumps_result->value);
+  free(json_dumps_result);
+}
+
 ")
 
 ;; json pointers definitions
@@ -28,9 +65,23 @@ void free_json_error(json_error_t* json_error)
 (define-foreign-type jansson-error "json_error_t")
 (define-foreign-type jansson-error* (c-pointer jansson-error))
 
+;; json-dumps-result pointers definitions
+(define-foreign-type jansson-dumps-result "struct json_dumps_result_t")
+(define-foreign-type jansson-dumps-result* (c-pointer jansson-dumps-result))
+
 ;; json-error pointers memory management
 (define malloc-jansson-error (foreign-lambda jansson-error* "malloc_json_error"))
 (define free-jansson-error (foreign-lambda void "free_json_error" jansson-error*))
+
+;; json types
+(define jansson-object (foreign-value "JSON_OBJECT" int))
+(define jansson-array (foreign-value "JSON_ARRAY" int))
+(define jansson-string (foreign-value "JSON_STRING" int))
+(define jansson-integer (foreign-value "JSON_INTEGER" int))
+(define jansson-real (foreign-value "JSON_REAL" int))
+(define jansson-true (foreign-value "JSON_TRUE" int))
+(define jansson-false (foreign-value "JSON_FALSE" int))
+(define jansson-null (foreign-value "JSON_NULL" int))
 
 ;; decodes the json string input
 (define jansson-loads (foreign-lambda jansson* "json_loads" c-string unsigned-integer jansson-error*))
@@ -56,15 +107,31 @@ void free_json_error(json_error_t* json_error)
 ;; returns the element in array at position index
 (define jansson-array-get (foreign-lambda jansson* "json_array_get" jansson* int))
 
+;; returns a new json object
+(define jansson-object (foreign-lambda jansson* "json_object"))
+
+;; sets the value of key to value in object
+(define jansson-object-set (foreign-lambda int "json_object_set" jansson* c-string jansson*))
+
+;; returns a new json boolean
+(define jansson-boolean (foreign-lambda jansson* "json_boolean" int))
+
+;; returns a new json integer
+(define jansson-integer (foreign-lambda jansson* "json_integer" int))
+
+;; returns a new json real
+(define jansson-real (foreign-lambda jansson* "json_real" double))
+
+;; returns a new json string
+(define jansson-string (foreign-lambda jansson* "json_string" c-string))
+
+;; returns a new json null
+(define jansson-null (foreign-lambda jansson* "json_null"))
+
+;; returns the json representation as a string
+(define jansson-dumps-wrapped (foreign-lambda jansson-dumps-result* "json_dumps_wrapped" jansson*))
+(define jansson-dumps-result-value (foreign-lambda c-string "json_dumps_result_value" jansson-dumps-result*))
+(define jansson-free-dumps-result (foreign-lambda void "json_free_dumps_result" jansson-dumps-result*))
+
 ;; decrements the reference count
 (define jansson-decref (foreign-lambda void "json_decref" jansson*))
-
-;; json types
-(define jansson-object (foreign-value "JSON_OBJECT" int))
-(define jansson-array (foreign-value "JSON_ARRAY" int))
-(define jansson-string (foreign-value "JSON_STRING" int))
-(define jansson-integer (foreign-value "JSON_INTEGER" int))
-(define jansson-real (foreign-value "JSON_REAL" int))
-(define jansson-true (foreign-value "JSON_TRUE" int))
-(define jansson-false (foreign-value "JSON_FALSE" int))
-(define jansson-null (foreign-value "JSON_NULL" int))
