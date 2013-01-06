@@ -52,7 +52,7 @@ __Json representation__
     }
 
 Subresponse fields
------------------
+------------------
 
 __Definition__
 
@@ -78,4 +78,36 @@ __Json representation__
         "city": "Montreal",
         "postal-code": "H2J 4R1"
       }
+    }
+
+Subresponse list fields
+-----------------------
+
+__Definition__
+
+    (define-response new-product-response
+      (suppliers list new-product-supplier-subresponse))
+
+    (define-response new-product-supplier-subresponse
+      (name)
+      (price))
+
+- A list of supplier subresponses composed of:
+ - A name
+ - A price
+
+__Json representation__
+
+    {
+      "suppliers":
+      [
+        {
+          "name": "Supplier1",
+          "price": 100.00
+        },
+        {
+          "name": "Supplier2",
+          "price": 200.00
+        }
+      ]
     }

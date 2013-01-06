@@ -26,3 +26,16 @@
     (lambda (json-object-subresponse)
       (format-subresponse-procedure value json-object-subresponse)
       (json-object-property-set! json-object property-name json-object-subresponse))))
+
+;; formats a subresponse list
+(define (json-format-subresponse-list json-object property-name value format-subresponse-procedure)
+  (with-new-json-object-array
+    (lambda (json-object-array)
+      (map
+        (lambda (element-value)
+          (with-new-json-object
+            (lambda (json-object-element)
+              (format-subresponse-procedure element-value json-object-element)
+              (json-object-array-append! json-object-array json-object-element))))
+        value)
+      (json-object-property-set! json-object property-name json-object-array))))

@@ -17,10 +17,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; response definition
 
-(define-response new-customer-response
-  (address new-customer-address-subresponse))
+(define-response new-product-response
+  (suppliers list new-product-supplier-subresponse))
 
-(define-response new-customer-address-subresponse
-  (street)
-  (city)
-  (postal-code))
+(define-response new-product-supplier-subresponse
+  (name)
+  (price))

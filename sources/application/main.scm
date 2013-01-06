@@ -8,9 +8,11 @@
 
 (with-new-json-object
   (lambda (json-object)
-    (format-new-customer-response
-      (make-new-customer-response 
-        (make-new-customer-address-subresponse "123 Sunny Street" "Montreal" "H2J 4R1"))
+    (format-new-product-response
+      (make-new-product-response
+        (list
+          (make-new-product-supplier-subresponse "Supplier1" 100.00)
+          (make-new-product-supplier-subresponse "Supplier2" 200.00)))
       json-object)
     (display
       (json-object->string
