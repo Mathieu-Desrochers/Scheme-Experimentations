@@ -19,3 +19,10 @@
               (json-object-array-append! json-object-array json-object-element))))
         value)
       (json-object-property-set! json-object property-name json-object-array))))
+
+;; formats a subresponse
+(define (json-format-subresponse json-object property-name value format-subresponse-procedure)
+  (with-new-json-object
+    (lambda (json-object-subresponse)
+      (format-subresponse-procedure value json-object-subresponse)
+      (json-object-property-set! json-object property-name json-object-subresponse))))

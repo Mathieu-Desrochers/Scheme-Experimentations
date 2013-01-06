@@ -17,6 +17,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; response definition
 
-(define-response get-product-response
-  (sizes list)
-  (colors list))
+(define-response new-customer-response
+  (address new-customer-address-subresponse))
+
+(define-response new-customer-address-subresponse
+  (street)
+  (city)
+  (postal-code))

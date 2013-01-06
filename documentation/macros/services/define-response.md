@@ -9,9 +9,9 @@ __Definition__
       (credit-score)
       (credit-limit))
 
-- A name of type string
-- A credit score of type integer
-- A credit limit of type number
+- A name
+- A credit score
+- A credit limit
 
 __Contructor and selectors__
 
@@ -51,3 +51,31 @@ __Json representation__
       "colors": ["Green", "Yellow", "Blue"]
     }
 
+Subresponse fields
+-----------------
+
+__Definition__
+
+    (define-response new-customer-response
+      (address new-customer-address-subresponse))
+
+    (define-response new-customer-address-subresponse
+      (street)
+      (city)
+      (postal-code))
+
+- An address subresponse composed of:
+ - A street
+ - A city
+ - A postal code
+
+__Json representation__
+
+    {
+      "address":
+      {
+        "street": "123 Sunny Street",
+        "city": "Montreal",
+        "postal-code": "H2J 4R1"
+      }
+    }
