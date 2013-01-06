@@ -27,3 +27,7 @@ __Json representation__
       "credit-score": 8,
       "credit-limit": 5000.00
     }
+
+__Formatting__
+
+    (format-get-customer-request get-customer-request json-object)

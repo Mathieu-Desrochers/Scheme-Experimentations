@@ -150,7 +150,7 @@
 
           (use srfi-1)
 
-          (declare (uses json))
+          (declare (uses json-parse))
           (declare (uses validation))
 
           ;; encapsulates a request

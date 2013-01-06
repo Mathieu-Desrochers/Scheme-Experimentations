@@ -17,5 +17,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; response definition
 
-(define-response new-customer-response
-  (customer-id))
+(define-response get-customer-response
+  (name)
+  (credit-score)
+  (credit-limit))

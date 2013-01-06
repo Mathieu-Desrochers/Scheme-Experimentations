@@ -4,10 +4,13 @@
 (use srfi-1)
 
 (declare (uses json))
+(declare (uses new-customer-service))
 
 (with-new-json-object
   (lambda (json-object)
-    (with-new-json-object-from-value "Mathieu"
-      (lambda (json-object-from-value)
-        (json-object-property-set! json-object "name" json-object-from-value)
-        (display (json-object->string json-object))))))
+    (format-get-customer-response
+      (make-get-customer-response "Alice" 8 5000.00)
+      json-object)
+    (display
+      (json-object->string
+        json-object))))
