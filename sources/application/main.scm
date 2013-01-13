@@ -1,6 +1,4 @@
 
-(require-extension utf8)
-
 (use srfi-1)
 
 (declare (uses json))
