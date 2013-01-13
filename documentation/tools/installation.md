@@ -1,50 +1,61 @@
 
-Installing MinGW
-----------------
+Installing Git
+--------------
 
-- Run tools/mingw/mingw-get-inst-20120426.exe
-- Select the following destination folder:
- - C:/MinGW
-- Select the following options:
- - C Compiler
- - MSYS Basic System
- - MinGW Developer Toolkit
-- Add the following folders to your PATH environment variable:
- - C:/MinGW/bin
- - C:/MinGW/msys/1.0/bin
+- Execute the following commands:
+ - sudo yum install git-core
+ - git config --global user.name "Your Name"
+ - git config --global user.email "your@name"
+ - git config --global credential.helper 'cache --timeout=3600'
+
+Cloning the repository
+----------------------
+
+- Execute the following commands:
+ - git clone https://github.com/Mathieu-Desrochers/Scheme-Experimentations.git
+
+Installing GCC
+--------------
+
+- Execute the following commands:
+ - sudo yum install gcc
+ - sudo yum install make
 
 Installing Chicken Scheme
 -------------------------
 
-- Uncompress tools/chicken-scheme/chicken-4.8.0.tar.gz to the following folder:
- - C:/Chicken
-- Run the following commands:
- - make PLATFORM=mingw-msys PREFIX=C:/Chicken
- - make PLATFORM=mingw-msys PREFIX=C:/Chicken install
-- Add the following folder to your PATH environment variable:
- - C:/Chicken/bin
+- Change directory to the root of the repository
+- Execute the following commands:
+ - mkdir /tmp/chicken-scheme
+ - tar -x -z -f tools/chicken-scheme/chicken-4.8.0.tar.gz -C /tmp/chicken-scheme
+ - cd /tmp/chicken-scheme/chicken-4.8.0
+ - sudo make PLATFORM=linux PREFIX=/opt/chicken-scheme
+ - sudo make PLATFORM=linux PREFIX=/opt/chicken-scheme install
+- Add the following folder to your $PATH environment variable:
+ - /opt/chicken-scheme/bin
 
-Installing Chicken Scheme Eggs
-------------------------------
+Installing Chicken Scheme Eggs ??
+---------------------------------
 
 - Execute the following commands:
-  - chicken-install regex
-  - chicken-install utf8
-  - chicken-install -deploy -p dependencies/eggs regex
-  - chicken-install -deploy -p dependencies/eggs utf8
+  - sudo /opt/chicken/bin/chicken-install regex
+  - sudo /opt/chicken/bin/chicken-install utf8
 
-Building Jansson
-----------------
+Installing Sqlite
+-----------------
 
-- Uncompress tools/jansson/jansson-2.4.tar.gz to the following folder:
- - C:/Jansson
-- Run the following commands:
- - ./configure --prefix=C:/Jansson/build
- - make
- - make install
-- Recover the following files:
- - build/include/jansson.h
- - build/include/jansson_config.h
- - build/bin/libjansson-4.dll
-- Delete the following folder:
- - C:/Jansson
+- Execute the following commands:
+ - sudo yum install sqlite
+ - sudo yum install sqlite-devel
+
+Installing Jansson
+------------------
+
+- Change directory to the root of the repository
+- Execute the following commands:
+ - mkdir /tmp/jansson
+ - tar -x -z -f tools/jansson/jansson-2.4.tar.gz -C /tmp/jansson
+ - cd /tmp/jansson/jansson-2.4
+ - ./configure --prefix=/opt/jansson
+ - sudo make
+ - sudo make install
