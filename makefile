@@ -11,7 +11,7 @@ jansson : sources/infrastructure/json/jansson-ffi.o \
           sources/infrastructure/json/json-parse.o
 
 sources/infrastructure/json/jansson-ffi.o : sources/infrastructure/json/jansson-ffi.scm
-	csc -I/opt/jansson/include -c sources/infrastructure/json/jansson-ffi.scm
+	csc -I/usr/local/include -c sources/infrastructure/json/jansson-ffi.scm
 
 sources/infrastructure/json/json.o : sources/infrastructure/json/json.scm
 	csc -c sources/infrastructure/json/json.scm
@@ -32,7 +32,7 @@ sql : sources/infrastructure/json/sqlite-ffi.o \
       sources/infrastructure/json/sql.o
 
 sources/infrastructure/json/sqlite-ffi.o : sources/infrastructure/sql/sqlite-ffi.scm
-	csc -I/usr/include -c sources/infrastructure/sql/sqlite-ffi.scm
+	csc -I/usr/local/include -c sources/infrastructure/sql/sqlite-ffi.scm
 
 sources/infrastructure/json/sql-intern.o : sources/infrastructure/sql/sql-intern.scm
 	csc -c sources/infrastructure/sql/sql-intern.scm
@@ -66,8 +66,8 @@ sources/application/main.o : sources/application/main.scm
 	csc -c sources/application/main.scm
 
 linking : compilation
-	csc -L/opt/jansson/lib -ljansson \
-	-L/usr/bin/ -lsqlite3 \
+	csc -ljansson \
+	-lsqlite3 \
 	sources/infrastructure/json/jansson-ffi.o \
 	sources/infrastructure/json/json.o \
 	sources/infrastructure/json/json-format.o \
@@ -80,5 +80,5 @@ linking : compilation
 	sources/application/tables/customer-addresses-table.o \
 	sources/application/tables/customers-table.o \
 	sources/application/main.o \
-	-o build\build.exe
+	-o build
 	
