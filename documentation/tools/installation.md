@@ -3,7 +3,7 @@ Installing Git
 --------------
 
 - Execute the following commands:
- - sudo yum install git-core
+ - sudo apt-get install git-core
  - git config --global user.name "Your Name"
  - git config --global user.email "your@name"
 
@@ -17,8 +17,8 @@ Installing GCC
 --------------
 
 - Execute the following commands:
- - sudo yum install gcc
- - sudo yum install make
+ - sudo apt-get install gcc
+ - sudo apt-get install make
 
 Installing Chicken Scheme
 -------------------------
@@ -55,4 +55,3 @@ Installing Jansson
  - ./configure
  - make
  - sudo make install
- - sudo ldconfig
