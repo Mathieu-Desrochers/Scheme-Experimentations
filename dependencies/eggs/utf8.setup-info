@@ -1,4 +1,0 @@
-((files "utf8.so" "utf8.import.so")
- (egg-name "utf8")
- (version "3.3.6")
- (documentation "utf8.html"))

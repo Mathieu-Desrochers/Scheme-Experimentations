@@ -40,8 +40,9 @@ Installing Sqlite
  - tar -x -z -f tools/sqlite/sqlite-autoconf-3071502.tar.gz -C /tmp/sqlite
  - cd /tmp/sqlite/sqlite-autoconf-3071502
  - ./configure
- - sudo make
+ - make
  - sudo make install
+ - sudo ldconfig
 
 Installing Jansson
 ------------------

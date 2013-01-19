@@ -1,3 +1,0 @@
-((files "unicode-char-sets.so" "unicode-char-sets.import.so")
- (egg-name "utf8")
- (version "3.3.6"))

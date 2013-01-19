@@ -1,3 +1,0 @@
-((files "utf8-lolevel.so" "utf8-lolevel.import.so")
- (egg-name "utf8")
- (version "3.3.6"))

@@ -1,1 +1,0 @@
-((files "regex.so" "regex.import.so") (egg-name "regex") (version 1.))
