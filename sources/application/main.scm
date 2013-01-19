@@ -33,3 +33,6 @@
               (lambda (json-object-response)
                 (format-new-customer-response new-customer-response json-object-response)
                 (display (json-object->string json-object-response))))))))))
+
+(display "\n")
+

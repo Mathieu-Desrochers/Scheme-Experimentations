@@ -55,3 +55,46 @@ Installing Jansson
  - ./configure
  - make
  - sudo make install
+
+Installing Apache
+-----------------
+
+- Execute the following commands:
+ - wget http://apache.parentingamerica.com//apr/apr-1.4.6.tar.gz
+ - mkdir /tmp/apr
+ - tar -x -z -f apr-1.4.6.tar.gz -C /tmp/apr
+ - cd /tmp/apr/apr-1.4.6
+ - ./configure
+ - make
+ - sudo make install
+
+- Execute the following commands:
+ - wget http://apache.parentingamerica.com//apr/apr-util-1.5.1.tar.gz
+ - mkdir /tmp/apr-util
+ - tar -x -z -f apr-util-1.5.1.tar.gz -C /tmp/apr-util
+ - cd /tmp/apr-util/apr-util-1.5.1
+ - ./configure --with-apr=/usr/local/apr
+ - make
+ - sudo make install
+
+- Execute the following commands:
+ - sudo apt-get install g++
+ - wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.32.tar.gz
+ - mkdir /tmp/pcre
+ - tar -x -z -f pcre-8.32.tar.gz -C /tmp/pcre
+ - cd /tmp/pcre-8.32
+ - ./configure
+ - make
+ - sudo make install
+ - sudo ldconfig
+
+- Execute the following commands:
+ - sudo apt-get install perl
+ - wget http://apache.parentingamerica.com//httpd/httpd-2.4.3.tar.gz
+ - mkdir /tmp/httpd
+ - tar -x -z -f httpd-2.4.3.tar.gz -C /tmp/httpd
+ - cd /tmp/httpd/httpd-2.4.3
+ - ./configure --enable-so
+ - make
+ - sudo make install
+ - sudo /usr/local/apache2/bin/apachectl -k start
