@@ -13,13 +13,6 @@ Cloning the repository
 - Execute the following commands:
  - git clone https://github.com/Mathieu-Desrochers/Scheme-Experimentations.git
 
-Installing GCC
---------------
-
-- Execute the following commands:
- - sudo apt-get install gcc
- - sudo apt-get install make
-
 Installing Chicken Scheme
 -------------------------
 
@@ -56,45 +49,51 @@ Installing Jansson
  - make
  - sudo make install
 
-Installing Apache
------------------
+Installing Apache HTTP Server
+-----------------------------
 
+Prerequisite: Apache Portable Runtime
+
+- Change directory to the root of the repository
 - Execute the following commands:
- - wget http://apache.parentingamerica.com//apr/apr-1.4.6.tar.gz
  - mkdir /tmp/apr
- - tar -x -z -f apr-1.4.6.tar.gz -C /tmp/apr
+ - tar -x -z -f tools/httpd/apr-1.4.6.tar.gz -C /tmp/apr
  - cd /tmp/apr/apr-1.4.6
  - ./configure
  - make
  - sudo make install
 
+Prerequisite: Apache Portable Runtime Utility
+
+- Change directory to the root of the repository
 - Execute the following commands:
- - wget http://apache.parentingamerica.com//apr/apr-util-1.5.1.tar.gz
  - mkdir /tmp/apr-util
- - tar -x -z -f apr-util-1.5.1.tar.gz -C /tmp/apr-util
+ - tar -x -z -f tools/httpd/apr-util-1.5.1.tar.gz -C /tmp/apr-util
  - cd /tmp/apr-util/apr-util-1.5.1
  - ./configure --with-apr=/usr/local/apr
  - make
  - sudo make install
 
+Prerequisite: Perl-Compatible Regular Expressions Library (PCRE)
+
+- Change directory to the root of the repository
 - Execute the following commands:
  - sudo apt-get install g++
- - wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.32.tar.gz
  - mkdir /tmp/pcre
- - tar -x -z -f pcre-8.32.tar.gz -C /tmp/pcre
- - cd /tmp/pcre-8.32
+ - tar -x -z -f tools/httpd/pcre-8.32.tar.gz -C /tmp/pcre
+ - cd /tmp/pcre/pcre-8.32
  - ./configure
  - make
  - sudo make install
  - sudo ldconfig
 
+Apache HTTP Server:
+
+- Change directory to the root of the repository
 - Execute the following commands:
- - sudo apt-get install perl
- - wget http://apache.parentingamerica.com//httpd/httpd-2.4.3.tar.gz
  - mkdir /tmp/httpd
- - tar -x -z -f httpd-2.4.3.tar.gz -C /tmp/httpd
+ - tar -x -z -f tools/httpd/httpd-2.4.3.tar.gz -C /tmp/httpd
  - cd /tmp/httpd/httpd-2.4.3
  - ./configure --enable-so
  - make
  - sudo make install
- - sudo /usr/local/apache2/bin/apachectl -k start
