@@ -1,3 +1,10 @@
+*.a
+*.c
+*.db
+*.la
+*.lai
+*.lo
 *.o
+*.slo
+*.so
 build
-customers.db
