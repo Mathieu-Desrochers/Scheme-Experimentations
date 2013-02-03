@@ -97,3 +97,30 @@ Apache HTTP Server:
  - ./configure --enable-so
  - make
  - sudo make install
+
+Installing Apache Module mod_fcgid
+----------------------------------
+
+- Change directory to the root of the repository
+- Execute the following commands:
+ - mkdir /tmp/mod_fcgid
+ - tar -x -z -f tools/fastcgi/mod_fcgid-2.3.7.tar.gz -C /tmp/mod_fcgid
+ - cd /tmp/mod_fcgid/mod_fcgid-2.3.7
+ - export PATH=$PATH:/usr/local/apache2/bin
+ - ./configure.apxs
+ - make
+ - sudo make install
+
+Installing FastCGI Development Kit
+----------------------------------
+
+- Change directory to the root of the repository
+- Execute the following commands:
+ - mkdir /tmp/fcgi
+ - tar -x -z -f tools/fastcgi/fcgi-2.4.0.tar.gz -C /tmp/fcgi
+ - cd /tmp/fcgi/fcgi-2.4.0
+ - nano libfcgi/fcgio.cpp
+ - Add the following include: <stdio.h>
+ - ./configure
+ - make
+ - sudo make install
