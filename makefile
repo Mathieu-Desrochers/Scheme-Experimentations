@@ -3,14 +3,26 @@ make : compile link
 
 compile : infrastructure application
 
-infrastructure : fastcgi jansson validation sql
+infrastructure : http jansson validation sql
 
-fastcgi : sources/infrastructure/fastcgi/fastcgi.o
+http : sources/infrastructure/http/http.o \
+	   sources/infrastructure/http/fastcgi.o \
+	   sources/infrastructure/http/fastcgi-ffi.o
 
-sources/infrastructure/fastcgi/fastcgi.o : sources/infrastructure/fastcgi/fastcgi.c
-	csc -c -I/usr/local/include -lfcgi \
-	sources/infrastructure/fastcgi/fastcgi.c -o \
-	sources/infrastructure/fastcgi/fastcgi.o
+sources/infrastructure/http/http.o : sources/infrastructure/http/http.scm
+	csc -c -e \
+	sources/infrastructure/http/http.scm -o \
+	sources/infrastructure/http/http.o
+
+sources/infrastructure/http/fastcgi.o : sources/infrastructure/http/fastcgi.c
+	csc -c \
+	sources/infrastructure/http/fastcgi.c -o \
+	sources/infrastructure/http/fastcgi.o
+
+sources/infrastructure/http/fastcgi-ffi.o : sources/infrastructure/http/fastcgi-ffi.scm
+	csc -c -I/usr/local/include \
+	sources/infrastructure/http/fastcgi-ffi.scm -o \
+	sources/infrastructure/http/fastcgi-ffi.o
 
 jansson : sources/infrastructure/json/jansson-ffi.o \
           sources/infrastructure/json/json.o \
@@ -90,7 +102,9 @@ link : compile
 	-lfcgi \
 	-ljansson \
 	-lsqlite3 \
-	sources/infrastructure/fastcgi/fastcgi.o \
+	sources/infrastructure/http/http.o \
+	sources/infrastructure/http/fastcgi.o \
+	sources/infrastructure/http/fastcgi-ffi.o \
 	sources/infrastructure/json/jansson-ffi.o \
 	sources/infrastructure/json/json.o \
 	sources/infrastructure/json/json-format.o \
