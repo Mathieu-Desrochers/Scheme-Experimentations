@@ -18,6 +18,7 @@ int main()
   while (FCGX_Accept_r(request) == 0)
   {
     http_handle_request(request);
+    FCGX_Finish_r(request);
   }
 
   FCGX_Free(request, 1);

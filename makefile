@@ -6,13 +6,19 @@ compile : infrastructure application
 infrastructure : http jansson validation sql
 
 http : sources/infrastructure/http/http.o \
+	   sources/infrastructure/http/http-toplevel.o \
 	   sources/infrastructure/http/fastcgi.o \
 	   sources/infrastructure/http/fastcgi-ffi.o
 
 sources/infrastructure/http/http.o : sources/infrastructure/http/http.scm
-	csc -c -e \
+	csc -c \
 	sources/infrastructure/http/http.scm -o \
 	sources/infrastructure/http/http.o
+
+sources/infrastructure/http/http-toplevel.o : sources/infrastructure/http/http-toplevel.scm
+	csc -c -e \
+	sources/infrastructure/http/http-toplevel.scm -o \
+	sources/infrastructure/http/http-toplevel.o
 
 sources/infrastructure/http/fastcgi.o : sources/infrastructure/http/fastcgi.c
 	csc -c \
@@ -81,6 +87,8 @@ services : sources/application/services/new-customer-service.o
 
 sources/application/services/new-customer-service.o : sources/application/services/new-customer-service.scm
 	csc -c \
+	-extend sources/infrastructure/services/define-request.scm \
+	-extend sources/infrastructure/services/define-response.scm \
 	sources/application/services/new-customer-service.scm -o \
 	sources/application/services/new-customer-service.o
 
@@ -88,12 +96,12 @@ tables : sources/application/tables/customer-addresses-table.o \
          sources/application/tables/customers-table.o
 
 sources/application/tables/customer-addresses-table.o : sources/application/tables/customer-addresses-table.scm
-	csc -c \
+	csc -c -extend sources/infrastructure/tables/define-table.scm \
 	sources/application/tables/customer-addresses-table.scm -o \
 	sources/application/tables/customer-addresses-table.o
 
 sources/application/tables/customers-table.o : sources/application/tables/customers-table.scm
-	csc -c \
+	csc -c -extend sources/infrastructure/tables/define-table.scm \
 	sources/application/tables/customers-table.scm -o \
 	sources/application/tables/customers-table.o
 
@@ -103,6 +111,7 @@ link : compile
 	-ljansson \
 	-lsqlite3 \
 	sources/infrastructure/http/http.o \
+	sources/infrastructure/http/http-toplevel.o \
 	sources/infrastructure/http/fastcgi.o \
 	sources/infrastructure/http/fastcgi-ffi.o \
 	sources/infrastructure/json/jansson-ffi.o \
