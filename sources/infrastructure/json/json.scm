@@ -1,6 +1,6 @@
 
 (declare (unit json))
-(declare (uses jansson-ffi))
+(declare (uses jansson))
 
 ;; encapsulates a json object
 (define-record json-object jansson*)

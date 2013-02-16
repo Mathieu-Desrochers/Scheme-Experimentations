@@ -2,7 +2,7 @@
 (use srfi-1)
 
 (declare (unit sql-intern))
-(declare (uses sqlite-ffi))
+(declare (uses sqlite))
 
 ;; binds the parameters of a sqlite3-stmt*
 (define (sql-bind-parameters sqlite3-stmt* parameter-values)

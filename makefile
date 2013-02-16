@@ -1,14 +1,78 @@
 
 make : compile link
 
-compile : infrastructure application
+compile : compile-bindings \
+          compile-core \
+          compile-foreign-interfaces \
+          compile-infrastructure
 
-infrastructure : http jansson validation sql
+compile-bindings : compile-bindings-http
 
-http : sources/infrastructure/http/http.o \
-	   sources/infrastructure/http/http-toplevel.o \
-	   sources/infrastructure/http/fastcgi.o \
-	   sources/infrastructure/http/fastcgi-ffi.o
+compile-bindings-http : sources/bindings/http/new-customer-service.o
+
+sources/bindings/http/new-customer-service.o : sources/bindings/http/new-customer-service.scm
+	csc -c \
+	sources/bindings/http/new-customer-service.scm -o \
+	sources/bindings/http/new-customer-service.o
+
+compile-core : compile-core-services \
+               compile-core-tables
+
+compile-core-services : sources/core/services/new-customer-service.o
+
+sources/core/services/new-customer-service.o : sources/core/services/new-customer-service.scm
+	csc -c \
+	-extend sources/macros/services/define-request.scm \
+	-extend sources/macros/services/define-response.scm \
+	sources/core/services/new-customer-service.scm -o \
+	sources/core/services/new-customer-service.o
+
+compile-core-tables : sources/core/tables/customer-addresses-table.o \
+                      sources/core/tables/customers-table.o
+
+sources/core/tables/customer-addresses-table.o : sources/core/tables/customer-addresses-table.scm
+	csc -c -extend sources/macros/tables/define-table.scm \
+	sources/core/tables/customer-addresses-table.scm -o \
+	sources/core/tables/customer-addresses-table.o
+
+sources/core/tables/customers-table.o : sources/core/tables/customers-table.scm
+	csc -c -extend sources/macros/tables/define-table.scm \
+	sources/core/tables/customers-table.scm -o \
+	sources/core/tables/customers-table.o
+
+compile-foreign-interfaces : compile-foreign-interfaces-fastcgi \
+                             compile-foreign-interfaces-jansson \
+                             compile-foreign-interfaces-sqlite
+
+compile-foreign-interfaces-fastcgi : sources/compile-foreign-interfaces/fastcgi/fastcgi.o
+
+sources/compile-foreign-interfaces/fastcgi/fastcgi.o : sources/foreign-interfaces/fastcgi/fastcgi.scm
+	csc -c -I/usr/local/include \
+	sources/foreign-interfaces/fastcgi/fastcgi.scm -o \
+	sources/foreign-interfaces/fastcgi/fastcgi.o
+
+compile-foreign-interfaces-jansson : sources/compile-foreign-interfaces/jansson/jansson.o
+
+sources/compile-foreign-interfaces/jansson/jansson.o : sources/foreign-interfaces/jansson/jansson.scm
+	csc -c -I/usr/local/include \
+	sources/foreign-interfaces/jansson/jansson.scm -o \
+	sources/foreign-interfaces/jansson/jansson.o
+
+compile-foreign-interfaces-sqlite : sources/compile-foreign-interfaces/sqlite/sqlite.o
+
+sources/compile-foreign-interfaces/sqlite/sqlite.o : sources/foreign-interfaces/sqlite/sqlite.scm
+	csc -c -I/usr/local/include \
+	sources/foreign-interfaces/sqlite/sqlite.scm -o \
+	sources/foreign-interfaces/sqlite/sqlite.o
+
+compile-infrastructure : compile-infrastructure-http \
+                         compile-infrastructure-json \
+                         compile-infrastructure-sql \
+                         compile-infrastructure-validation
+
+compile-infrastructure-http : sources/infrastructure/http/http.o \
+                              sources/infrastructure/http/http-toplevel.o \
+                              sources/infrastructure/http/main.o
 
 sources/infrastructure/http/http.o : sources/infrastructure/http/http.scm
 	csc -c \
@@ -20,25 +84,14 @@ sources/infrastructure/http/http-toplevel.o : sources/infrastructure/http/http-t
 	sources/infrastructure/http/http-toplevel.scm -o \
 	sources/infrastructure/http/http-toplevel.o
 
-sources/infrastructure/http/fastcgi.o : sources/infrastructure/http/fastcgi.c
+sources/infrastructure/http/main.o : sources/infrastructure/http/main.c
 	csc -c \
-	sources/infrastructure/http/fastcgi.c -o \
-	sources/infrastructure/http/fastcgi.o
+	sources/infrastructure/http/main.c -o \
+	sources/infrastructure/http/main.o
 
-sources/infrastructure/http/fastcgi-ffi.o : sources/infrastructure/http/fastcgi-ffi.scm
-	csc -c -I/usr/local/include \
-	sources/infrastructure/http/fastcgi-ffi.scm -o \
-	sources/infrastructure/http/fastcgi-ffi.o
-
-jansson : sources/infrastructure/json/jansson-ffi.o \
-          sources/infrastructure/json/json.o \
-          sources/infrastructure/json/json-format.o \
-          sources/infrastructure/json/json-parse.o
-
-sources/infrastructure/json/jansson-ffi.o : sources/infrastructure/json/jansson-ffi.scm
-	csc -c -I/usr/local/include \
-	sources/infrastructure/json/jansson-ffi.scm -o \
-	sources/infrastructure/json/jansson-ffi.o
+compile-infrastructure-json : sources/infrastructure/json/json.o \
+                              sources/infrastructure/json/json-format.o \
+                              sources/infrastructure/json/json-parse.o
 
 sources/infrastructure/json/json.o : sources/infrastructure/json/json.scm
 	csc -c \
@@ -55,21 +108,8 @@ sources/infrastructure/json/json-parse.o : sources/infrastructure/json/json-pars
 	sources/infrastructure/json/json-parse.scm -o \
 	sources/infrastructure/json/json-parse.o
 
-validation : sources/infrastructure/validation/validation.o
-
-sources/infrastructure/validation/validation.o : sources/infrastructure/validation/validation.scm
-	csc -c \
-	sources/infrastructure/validation/validation.scm -o \
-	sources/infrastructure/validation/validation.o
-
-sql : sources/infrastructure/sql/sqlite-ffi.o \
-      sources/infrastructure/sql/sql-intern.o \
-      sources/infrastructure/sql/sql.o
-
-sources/infrastructure/sql/sqlite-ffi.o : sources/infrastructure/sql/sqlite-ffi.scm
-	csc -c -I/usr/local/include \
-	sources/infrastructure/sql/sqlite-ffi.scm -o \
-	sources/infrastructure/sql/sqlite-ffi.o
+compile-infrastructure-sql : sources/infrastructure/sql/sql-intern.o \
+                             sources/infrastructure/sql/sql.o
 
 sources/infrastructure/sql/sql-intern.o : sources/infrastructure/sql/sql-intern.scm
 	csc -c \
@@ -81,50 +121,34 @@ sources/infrastructure/sql/sql.o : sources/infrastructure/sql/sql.scm
 	sources/infrastructure/sql/sql.scm -o \
 	sources/infrastructure/sql/sql.o
 
-application : services tables
+compile-infrastructure-validation : sources/infrastructure/validation/validation.o
 
-services : sources/application/services/new-customer-service.o
-
-sources/application/services/new-customer-service.o : sources/application/services/new-customer-service.scm
+sources/infrastructure/validation/validation.o : sources/infrastructure/validation/validation.scm
 	csc -c \
-	-extend sources/infrastructure/services/define-request.scm \
-	-extend sources/infrastructure/services/define-response.scm \
-	sources/application/services/new-customer-service.scm -o \
-	sources/application/services/new-customer-service.o
-
-tables : sources/application/tables/customer-addresses-table.o \
-         sources/application/tables/customers-table.o
-
-sources/application/tables/customer-addresses-table.o : sources/application/tables/customer-addresses-table.scm
-	csc -c -extend sources/infrastructure/tables/define-table.scm \
-	sources/application/tables/customer-addresses-table.scm -o \
-	sources/application/tables/customer-addresses-table.o
-
-sources/application/tables/customers-table.o : sources/application/tables/customers-table.scm
-	csc -c -extend sources/infrastructure/tables/define-table.scm \
-	sources/application/tables/customers-table.scm -o \
-	sources/application/tables/customers-table.o
+	sources/infrastructure/validation/validation.scm -o \
+	sources/infrastructure/validation/validation.o
 
 link : compile
 	csc \
 	-lfcgi \
 	-ljansson \
 	-lsqlite3 \
+	sources/bindings/http/new-customer-service.o \
+	sources/core/services/new-customer-service.o \
+	sources/core/tables/customer-addresses-table.o \
+	sources/core/tables/customers-table.o \
+	sources/foreign-interfaces/fastcgi/fastcgi.o \
+	sources/foreign-interfaces/jansson/jansson.o \
+	sources/foreign-interfaces/sqlite/sqlite.o \
 	sources/infrastructure/http/http.o \
 	sources/infrastructure/http/http-toplevel.o \
-	sources/infrastructure/http/fastcgi.o \
-	sources/infrastructure/http/fastcgi-ffi.o \
-	sources/infrastructure/json/jansson-ffi.o \
+	sources/infrastructure/http/main.o \
 	sources/infrastructure/json/json.o \
 	sources/infrastructure/json/json-format.o \
 	sources/infrastructure/json/json-parse.o \
-	sources/infrastructure/sql/sqlite-ffi.o \
 	sources/infrastructure/sql/sql-intern.o \
 	sources/infrastructure/sql/sql.o \
 	sources/infrastructure/validation/validation.o \
-	sources/application/services/new-customer-service.o \
-	sources/application/tables/customer-addresses-table.o \
-	sources/application/tables/customers-table.o \
 	-o scheme
 
 install :

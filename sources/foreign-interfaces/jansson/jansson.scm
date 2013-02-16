@@ -1,5 +1,5 @@
 
-(declare (unit jansson-ffi))
+(declare (unit jansson))
 
 (foreign-declare "
 

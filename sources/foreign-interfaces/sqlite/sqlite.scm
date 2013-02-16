@@ -1,5 +1,5 @@
 
-(declare (unit sqlite-ffi))
+(declare (unit sqlite))
 
 (foreign-declare "
 

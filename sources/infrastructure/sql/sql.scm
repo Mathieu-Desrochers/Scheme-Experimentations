@@ -3,7 +3,7 @@
 
 (declare (unit sql))
 (declare (uses sql-intern))
-(declare (uses sqlite-ffi))
+(declare (uses sqlite))
 
 ;; encapsulates a sql connection
 (define-record sql-connection sqlite3*)

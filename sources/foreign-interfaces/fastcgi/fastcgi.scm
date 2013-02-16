@@ -1,5 +1,5 @@
 
-(declare (unit fastcgi-ffi))
+(declare (unit fastcgi))
 
 (foreign-declare "
 

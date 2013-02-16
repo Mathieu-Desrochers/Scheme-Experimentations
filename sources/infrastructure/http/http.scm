@@ -1,6 +1,6 @@
 
 (declare (unit http))
-(declare (uses fastcgi-ffi))
+(declare (uses fastcgi))
 (declare (uses new-customer-service))
 
 ;; encapsulates a service registration
