@@ -44,26 +44,26 @@ compile-foreign-interfaces : compile-foreign-interfaces-fastcgi \
                              compile-foreign-interfaces-jansson \
                              compile-foreign-interfaces-sqlite
 
-compile-foreign-interfaces-fastcgi : sources/compile-foreign-interfaces/fastcgi/fastcgi.o
+compile-foreign-interfaces-fastcgi : sources/foreign-interfaces/fastcgi.o
 
-sources/compile-foreign-interfaces/fastcgi/fastcgi.o : sources/foreign-interfaces/fastcgi/fastcgi.scm
+sources/foreign-interfaces/fastcgi.o : sources/foreign-interfaces/fastcgi.scm
 	csc -c -I/usr/local/include \
-	sources/foreign-interfaces/fastcgi/fastcgi.scm -o \
-	sources/foreign-interfaces/fastcgi/fastcgi.o
+	sources/foreign-interfaces/fastcgi.scm -o \
+	sources/foreign-interfaces/fastcgi.o
 
-compile-foreign-interfaces-jansson : sources/compile-foreign-interfaces/jansson/jansson.o
+compile-foreign-interfaces-jansson : sources/foreign-interfaces/jansson.o
 
-sources/compile-foreign-interfaces/jansson/jansson.o : sources/foreign-interfaces/jansson/jansson.scm
+sources/foreign-interfaces/jansson.o : sources/foreign-interfaces/jansson.scm
 	csc -c -I/usr/local/include \
-	sources/foreign-interfaces/jansson/jansson.scm -o \
-	sources/foreign-interfaces/jansson/jansson.o
+	sources/foreign-interfaces/jansson.scm -o \
+	sources/foreign-interfaces/jansson.o
 
-compile-foreign-interfaces-sqlite : sources/compile-foreign-interfaces/sqlite/sqlite.o
+compile-foreign-interfaces-sqlite : sources/foreign-interfaces/sqlite.o
 
-sources/compile-foreign-interfaces/sqlite/sqlite.o : sources/foreign-interfaces/sqlite/sqlite.scm
+sources/foreign-interfaces/sqlite.o : sources/foreign-interfaces/sqlite.scm
 	csc -c -I/usr/local/include \
-	sources/foreign-interfaces/sqlite/sqlite.scm -o \
-	sources/foreign-interfaces/sqlite/sqlite.o
+	sources/foreign-interfaces/sqlite.scm -o \
+	sources/foreign-interfaces/sqlite.o
 
 compile-infrastructure : compile-infrastructure-http \
                          compile-infrastructure-json \
@@ -137,9 +137,9 @@ link : compile
 	sources/core/services/new-customer-service.o \
 	sources/core/tables/customer-addresses-table.o \
 	sources/core/tables/customers-table.o \
-	sources/foreign-interfaces/fastcgi/fastcgi.o \
-	sources/foreign-interfaces/jansson/jansson.o \
-	sources/foreign-interfaces/sqlite/sqlite.o \
+	sources/foreign-interfaces/fastcgi.o \
+	sources/foreign-interfaces/jansson.o \
+	sources/foreign-interfaces/sqlite.o \
 	sources/infrastructure/http/http.o \
 	sources/infrastructure/http/http-toplevel.o \
 	sources/infrastructure/http/main.o \
