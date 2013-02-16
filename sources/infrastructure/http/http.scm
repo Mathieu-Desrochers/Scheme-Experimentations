@@ -11,7 +11,7 @@
   (list
     (new-customer-service-registration)))
 
-;; searches the service registration matching a route
+;; searches the service registration matching a method and route
 (define (search-http-service-registration route)
   (define (search-http-service-registration-iter http-service-registrations)
     (if (null? http-service-registrations)

@@ -29,12 +29,12 @@ FCGX_Stream* FCGX_OutputStream(FCGX_Request* request)
 
 ")
 
+;; fastcgi-environment pointers definitions
+(define-foreign-type fastcgi-environment* (c-pointer c-string))
+
 ;; fastcgi-request pointers definitions
 (define-foreign-type fastcgi-request "FCGX_Request")
 (define-foreign-type fastcgi-request* (c-pointer fastcgi-request))
-
-;; fastcgi-environment pointers definitions
-(define-foreign-type fastcgi-environment* (c-pointer c-string))
 
 ;; fastcgi-stream pointers definitions
 (define-foreign-type fastcgi-stream "FCGX_Stream")
