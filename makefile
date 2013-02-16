@@ -22,8 +22,8 @@ compile-core-services : sources/core/services/new-customer-service.o
 
 sources/core/services/new-customer-service.o : sources/core/services/new-customer-service.scm
 	csc -c \
-	-extend sources/macros/services/define-request.scm \
-	-extend sources/macros/services/define-response.scm \
+	-extend sources/macros/core/services/define-request.scm \
+	-extend sources/macros/core/services/define-response.scm \
 	sources/core/services/new-customer-service.scm -o \
 	sources/core/services/new-customer-service.o
 
@@ -31,12 +31,12 @@ compile-core-tables : sources/core/tables/customer-addresses-table.o \
                       sources/core/tables/customers-table.o
 
 sources/core/tables/customer-addresses-table.o : sources/core/tables/customer-addresses-table.scm
-	csc -c -extend sources/macros/tables/define-table.scm \
+	csc -c -extend sources/macros/core/tables/define-table.scm \
 	sources/core/tables/customer-addresses-table.scm -o \
 	sources/core/tables/customer-addresses-table.o
 
 sources/core/tables/customers-table.o : sources/core/tables/customers-table.scm
-	csc -c -extend sources/macros/tables/define-table.scm \
+	csc -c -extend sources/macros/core/tables/define-table.scm \
 	sources/core/tables/customers-table.scm -o \
 	sources/core/tables/customers-table.o
 
