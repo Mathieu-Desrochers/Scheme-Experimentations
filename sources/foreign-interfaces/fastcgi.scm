@@ -51,9 +51,9 @@ FCGX_Stream* FCGX_OutputStream(FCGX_Request* request)
 
 // extension to the foreign function
 // accomodates the void buffer pointers
-int FCGX_GetStrEx(void* str, int n, FCGX_Stream* stream)
+void* FCGX_GetLineEx(void* str, int n, FCGX_Stream* stream)
 {
-  return FCGX_GetStr((char*)str, n, stream);
+  return FCGX_GetLine((char*)str, n, stream);
 }
 
 ")
@@ -86,8 +86,8 @@ int FCGX_GetStrEx(void* str, int n, FCGX_Stream* stream)
 ;; returns the output stream of a request
 (define fastcgi-request-output-stream (foreign-lambda fastcgi-stream* "FCGX_OutputStream" fastcgi-request*))
 
-;; reads up to n consecutive bytes from the input stream
-(define fastcgi-getstr (foreign-lambda int "FCGX_GetStrEx" c-pointer int fastcgi-stream*))
+;; reads up to n-1 consecutive bytes from the input stream
+(define fastcgi-getline (foreign-lambda c-pointer "FCGX_GetLineEx" c-pointer int fastcgi-stream*))
 
 ;; writes a null-terminated character string to the output stream
 (define fastcgi-puts (foreign-lambda int "FCGX_PutS" (const c-string) fastcgi-stream*))

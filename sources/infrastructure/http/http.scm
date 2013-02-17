@@ -45,12 +45,12 @@
   (with-fastcgi-buffer*
     (lambda (fastcgi-buffer*)
       (define (read-fastcgi-stream-iter accumulated-content)
-        (let* ((fastcgi-getstr-result (fastcgi-getstr fastcgi-buffer* 5000 fastcgi-stream*))
-               (content-read (fastcgi-buffer-string fastcgi-buffer*))
-               (content (string-append accumulated-content content-read)))
-          (if (< fastcgi-getstr-result 5000)
-            content
-            (read-fastcgi-stream-iter content))))
+        (let ((fastcgi-getline-result (fastcgi-getline fastcgi-buffer* 5000 fastcgi-stream*)))
+          (if (not fastcgi-getline-result)
+            accumulated-content
+            (let* ((content-read (fastcgi-buffer-string fastcgi-buffer*))
+                   (content (string-append accumulated-content content-read)))
+              (read-fastcgi-stream-iter content)))))
       (read-fastcgi-stream-iter ""))))
 
 ;; encapsulates a http request
