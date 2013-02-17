@@ -3,28 +3,34 @@
 (declare (uses fastcgi))
 (declare (uses new-customer-service))
 
-;; encapsulates a service registration
-(define-record http-service-registration method route parse execute format)
+;; encapsulates a http registration
+(define-record http-registration method route execute parse format)
 
-;; returns the service registrations
-(define (http-service-registrations)
+;; encapsulates a http request
+(define-record http-request fastcgi-request*)
+
+;; returns the http registrations
+(define (http-registrations)
   (list
-    (new-customer-service-registration)))
+    (new-customer-service-http-registration)))
 
-;; searches the service registration matching a method and route
-(define (search-http-service-registration route)
-  (define (search-http-service-registration-iter http-service-registrations)
-    (if (null? http-service-registrations)
+;; searches the http registration matching a method and route
+(define (search-http-registration method route)
+  (define (http-registration-match? http-registration)
+    (and (eq? (http-registration-method http-registration) method)
+         (eq? (http-registration-route http-registration) route)))
+  (define (search-http-registration-iter http-registrations)
+    (if (null? http-registrations)
       #f
-      (let ((http-service-registration (car http-service-registrations)))
-        (if (eq? (http-service-registration-route http-service-registration) route)
-          http-service-registration
-          (search-http-service-registration-iter
-            (cdr http-service-registrations))))))
-  (search-http-service-registration-iter
-    (http-service-registrations)))
+      (let ((http-registration (car http-registrations)))
+        (if (http-registration-match? http-registration)
+          http-registration
+          (search-http-registration-iter
+            (cdr http-registrations))))))
+  (search-http-registration-iter
+    (http-registrations)))
 
-;; handles an http request
+;; handles a http request
 (define (http-handle-request fastcgi-request*)
   (let* ((fastcgi-environment* (fastcgi-request-environment fastcgi-request*))
          (fastcgi-input-stream* (fastcgi-request-input-stream fastcgi-request*))

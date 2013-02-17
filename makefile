@@ -11,7 +11,7 @@ compile-bindings : compile-bindings-http
 compile-bindings-http : sources/bindings/http/new-customer-service.o
 
 sources/bindings/http/new-customer-service.o : sources/bindings/http/new-customer-service.scm
-	csc -c \
+	csc -c -extend sources/macros/bindings/http/define-http-binding.scm \
 	sources/bindings/http/new-customer-service.scm -o \
 	sources/bindings/http/new-customer-service.o
 

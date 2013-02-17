@@ -105,24 +105,24 @@
             ,(symbol-append 'validate- element-field-subrequest-type)
             ',(symbol-append 'invalid- element-field-symbol))))
 
-      ;; parses a value field
-      (define (parse-value-field field)
+      ;; json parses a value field
+      (define (json-parse-value-field field)
         (let* ((field-symbol (list-ref field 0))
                (field-symbol-string (symbol->string field-symbol)))
           `(json-parse-value
             json-object
             ,field-symbol-string)))
 
-      ;; parses a value list field
-      (define (parse-value-list-field field)
+      ;; json parses a value list field
+      (define (json-parse-value-list-field field)
         (let* ((field-symbol (list-ref field 0))
                (field-symbol-string (symbol->string field-symbol)))
           `(json-parse-value-list
             json-object
             ,field-symbol-string)))
 
-      ;; parses a subrequest field
-      (define (parse-subrequest-field field)
+      ;; json parses a subrequest field
+      (define (json-parse-subrequest-field field)
         (let* ((field-symbol (list-ref field 0))
                (field-symbol-string (symbol->string field-symbol))
                (field-subrequest-type (list-ref field 1)))
@@ -131,8 +131,8 @@
             ,field-symbol-string
             ,(symbol-append 'parse- field-subrequest-type))))
 
-      ;; parses a subrequest list field
-      (define (parse-subrequest-list-field field)
+      ;; json parses a subrequest list field
+      (define (json-parse-subrequest-list-field field)
         (let* ((field-symbol (list-ref field 0))
                (field-symbol-string (symbol->string field-symbol))
                (element-field (list-ref field 5))
@@ -172,16 +172,16 @@
                           ((subrequest-list-field? field) (validate-subrequest-list-field field))))
                   fields))))
 
-          ;; parses a request
-          (define (,(symbol-append 'parse- request-symbol) json-object)
+          ;; json parses a request
+          (define (,(symbol-append 'json-parse- request-symbol) json-object)
             (let (
               ,@(map
                 (lambda (field)
                   (let ((field-symbol (car field)))
                     `(,field-symbol
-                      ,(cond ((value-field? field) (parse-value-field field))
-                             ((value-list-field? field) (parse-value-list-field field))
-                             ((subrequest-field? field) (parse-subrequest-field field))
-                             ((subrequest-list-field? field) (parse-subrequest-list-field field))))))
+                      ,(cond ((value-field? field) (json-parse-value-field field))
+                             ((value-list-field? field) (json-parse-value-list-field field))
+                             ((subrequest-field? field) (json-parse-subrequest-field field))
+                             ((subrequest-list-field? field) (json-parse-subrequest-list-field field))))))
                 fields))
               (,(symbol-append 'make- request-symbol) ,@fields-symbol))))))))

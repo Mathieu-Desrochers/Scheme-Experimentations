@@ -2,20 +2,23 @@
 (declare (unit new-customer-service-http-binding))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; service definition
+;; http binding definition
 
-;(define-service new-customer-service
-;  "POST"
-;  "/new-customer")
+(define-http-binding
+  "POST"
+  "/new-customer"
+  new-customer-service
+  http-parse-new-customer-request
+  http-format-new-customer-response)
 
-;(declare (uses http))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; http parse logic
 
-;; returns the service registration
-(define (new-customer-service-registration)
-  (make-http-service-registration
-    "POST"
-    "/new-customer"
-    new-customer-request-parse
-    new-customer-service
-    new-customer-response-format))
+(define (http-parse-new-customer-request http-request)
+  #f)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; http format logic
+
+(define (http-format-new-customer-response http-request new-customer-response)
+  #f)
