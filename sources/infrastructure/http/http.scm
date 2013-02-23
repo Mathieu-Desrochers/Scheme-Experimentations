@@ -6,7 +6,7 @@
 (declare (uses new-customer-service-http-binding))
 
 ;; encapsulates a http registration
-(define-record http-registration method route execute parse format)
+(define-record http-registration method route service parse-request-procedure format-response-procedure)
 
 ;; returns the http registrations
 (define (http-registrations)
@@ -65,6 +65,15 @@
               (read-fastcgi-stream-iter content)))))
       (read-fastcgi-stream-iter ""))))
 
+;; safely parses a http request
+(define (http-safe-parse-request parse-request-procedure fastcgi-input-stream* fastcgi-output-stream*)
+  (let ((http-request-body (read-fastcgi-stream fastcgi-input-stream*)))
+    (handle-exceptions exception
+      (begin
+        (send-400-bad-request fastcgi-output-stream*)
+        #f)
+      (parse-request-procedure http-request-body))))
+
 ;; writes a http header
 (define (write-http-header header fastcgi-output-stream*)
   (let ((header-line (string-append header "\r\n")))
@@ -74,25 +83,34 @@
 (define (close-http-headers fastcgi-output-stream*)
     (fastcgi-puts "\r\n" fastcgi-output-stream*))
 
-;; sends a 404 error
-(define (send-404 fastcgi-output-stream*)
+;; sends a 400 bad request error
+(define (send-400-bad-request fastcgi-output-stream*)
+  (write-http-header "Status: 400 Bad Request" fastcgi-output-stream*)
+  (write-http-header "Content-Type: text/plain; charset=utf-8" fastcgi-output-stream*)
+  (close-http-headers fastcgi-output-stream*))
+
+;; sends a 404 not found error
+(define (send-404-not-found fastcgi-output-stream*)
   (write-http-header "Status: 404 Not Found" fastcgi-output-stream*)
   (write-http-header "Content-Type: text/plain; charset=utf-8" fastcgi-output-stream*)
   (close-http-headers fastcgi-output-stream*))
 
 ;; handles a http request
 (define (http-handle-request fastcgi-request*)
-  (let ((fastcgi-output-stream* (fastcgi-request-output-stream fastcgi-request*)))
-    (let* ((fastcgi-environment* (fastcgi-request-environment fastcgi-request*))
-           (method (http-request-method fastcgi-environment*))
+  (let ((fastcgi-environment* (fastcgi-request-environment fastcgi-request*))
+        (fastcgi-input-stream* (fastcgi-request-input-stream fastcgi-request*))
+        (fastcgi-output-stream* (fastcgi-request-output-stream fastcgi-request*)))
+    (let* ((method (http-request-method fastcgi-environment*))
            (route (http-request-route fastcgi-environment*))
            (http-registration (search-http-registration method route)))
       (if (not http-registration)
-        (send-404 fastcgi-output-stream*)
-        (let* ((fastcgi-input-stream* (fastcgi-request-input-stream fastcgi-request*))
-               (fastcgi-input (read-fastcgi-stream fastcgi-input-stream*)))
-            (fastcgi-puts "Content-Type: text/html; charset=utf-8\r\n\r\n" fastcgi-output-stream*)
-            (fastcgi-puts "<html><body><pre>" fastcgi-output-stream*)
-            (fastcgi-puts fastcgi-input fastcgi-output-stream*)
-            (fastcgi-puts "</pre></body></html>" fastcgi-output-stream*)
-            (fastcgi-puts "\r\n" fastcgi-output-stream*))))))
+        (send-404-not-found fastcgi-output-stream*)
+        (let* ((parse-request-procedure (http-registration-parse-request-procedure http-registration))
+               (request (http-safe-parse-request parse-request-procedure fastcgi-input-stream* fastcgi-output-stream*)))
+          (if request
+            (begin
+              (fastcgi-puts "Content-Type: text/html; charset=utf-8\r\n\r\n" fastcgi-output-stream*)
+              (fastcgi-puts "<html><body><pre>" fastcgi-output-stream*)
+              (fastcgi-puts "would have invoked the service :)" fastcgi-output-stream*)
+              (fastcgi-puts "</pre></body></html>" fastcgi-output-stream*)
+              (fastcgi-puts "\r\n" fastcgi-output-stream*))))))))

@@ -129,7 +129,7 @@
           `(json-parse-subrequest
             json-object
             ,field-symbol-string
-            ,(symbol-append 'parse- field-subrequest-type))))
+            ,(symbol-append 'json-parse- field-subrequest-type))))
 
       ;; json parses a subrequest list field
       (define (json-parse-subrequest-list-field field)
@@ -140,7 +140,7 @@
           `(json-parse-subrequest-list
             json-object
             ,field-symbol-string
-            ,(symbol-append 'parse- element-field-subrequest-type))))
+            ,(symbol-append 'json-parse- element-field-subrequest-type))))
 
       ;; parses the expression
       (let* ((request-symbol (cadr exp))

@@ -10,8 +10,8 @@
       (let* ((method (list-ref exp 1))
              (route (list-ref exp 2))
              (service-symbol (list-ref exp 3))
-             (http-parse-symbol (list-ref exp 4))
-             (http-format-symbol (list-ref exp 5)))
+             (parse-request-procedure-symbol (list-ref exp 4))
+             (format-response-procedure-symbol (list-ref exp 5)))
         `(begin
 
           (declare (uses http))
@@ -22,5 +22,5 @@
               ,method
               ,route
               ,service-symbol
-              ,http-parse-symbol
-              ,http-format-symbol)))))))
+              ,parse-request-procedure-symbol
+              ,format-response-procedure-symbol)))))))
