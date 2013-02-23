@@ -1,7 +1,9 @@
 
+(use srfi-13)
+
 (declare (unit http))
 (declare (uses fastcgi))
-(declare (uses new-customer-service))
+(declare (uses new-customer-service-http-binding))
 
 ;; encapsulates a http registration
 (define-record http-registration method route execute parse format)
@@ -11,11 +13,21 @@
   (list
     (new-customer-service-http-registration)))
 
+;; returns the method of a http request
+(define (http-request-method fastcgi-environment*)
+  (fastcgi-getparam "REQUEST_METHOD" fastcgi-environment*))
+
+;; returns the route of a http request
+(define (http-request-route fastcgi-environment*)
+  (let ((context-prefix (fastcgi-getparam "CONTEXT_PREFIX" fastcgi-environment*))
+        (request-uri (fastcgi-getparam "REQUEST_URI" fastcgi-environment*)))
+    (string-drop request-uri (string-length context-prefix))))
+
 ;; searches the http registration matching a method and route
 (define (search-http-registration method route)
   (define (http-registration-match? http-registration)
-    (and (eq? (http-registration-method http-registration) method)
-         (eq? (http-registration-route http-registration) route)))
+    (and (equal? (http-registration-method http-registration) method)
+         (equal? (http-registration-route http-registration) route)))
   (define (search-http-registration-iter http-registrations)
     (if (null? http-registrations)
       #f
@@ -53,18 +65,34 @@
               (read-fastcgi-stream-iter content)))))
       (read-fastcgi-stream-iter ""))))
 
-;; encapsulates a http request
-(define-record http-request fastcgi-request*)
+;; writes a http header
+(define (write-http-header header fastcgi-output-stream*)
+  (let ((header-line (string-append header "\r\n")))
+    (fastcgi-puts header-line fastcgi-output-stream*)))
+
+;; closes the http headers
+(define (close-http-headers fastcgi-output-stream*)
+    (fastcgi-puts "\r\n" fastcgi-output-stream*))
+
+;; sends a 404 error
+(define (send-404 fastcgi-output-stream*)
+  (write-http-header "Status: 404 Not Found" fastcgi-output-stream*)
+  (write-http-header "Content-Type: text/plain; charset=utf-8" fastcgi-output-stream*)
+  (close-http-headers fastcgi-output-stream*))
 
 ;; handles a http request
 (define (http-handle-request fastcgi-request*)
-  (let* ((fastcgi-environment* (fastcgi-request-environment fastcgi-request*))
-         (fastcgi-input-stream* (fastcgi-request-input-stream fastcgi-request*))
-         (fastcgi-input (read-fastcgi-stream fastcgi-input-stream*))
-         (fastcgi-output-stream* (fastcgi-request-output-stream fastcgi-request*))
-         (request-method (fastcgi-getparam "REQUEST_METHOD" fastcgi-environment*))
-         (request-uri (fastcgi-getparam "REQUEST_URI" fastcgi-environment*)))
-    (fastcgi-puts "Content-Type: text/html; charset=utf-8\r\n\r\n" fastcgi-output-stream*)
-    (fastcgi-puts "<html><body><pre>" fastcgi-output-stream*)
-    (fastcgi-puts fastcgi-input fastcgi-output-stream*)
-    (fastcgi-puts "</pre></body></html>" fastcgi-output-stream*)))
+  (let ((fastcgi-output-stream* (fastcgi-request-output-stream fastcgi-request*)))
+    (let* ((fastcgi-environment* (fastcgi-request-environment fastcgi-request*))
+           (method (http-request-method fastcgi-environment*))
+           (route (http-request-route fastcgi-environment*))
+           (http-registration (search-http-registration method route)))
+      (if (not http-registration)
+        (send-404 fastcgi-output-stream*)
+        (let* ((fastcgi-input-stream* (fastcgi-request-input-stream fastcgi-request*))
+               (fastcgi-input (read-fastcgi-stream fastcgi-input-stream*)))
+            (fastcgi-puts "Content-Type: text/html; charset=utf-8\r\n\r\n" fastcgi-output-stream*)
+            (fastcgi-puts "<html><body><pre>" fastcgi-output-stream*)
+            (fastcgi-puts fastcgi-input fastcgi-output-stream*)
+            (fastcgi-puts "</pre></body></html>" fastcgi-output-stream*)
+            (fastcgi-puts "\r\n" fastcgi-output-stream*))))))
