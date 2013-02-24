@@ -45,10 +45,10 @@
               (field-type (list-ref field 1))
               (field-validation-parameters (drop field 2)))
           `(validate-value
+            ',field-symbol
             ,field-symbol
             ,(symbol-append 'validate- field-type)
-            ',field-validation-parameters
-            ',(symbol-append 'invalid- field-symbol))))
+            ',field-validation-parameters)))
 
       ;; validates a value list field
       (define (validate-value-list-field field)
@@ -61,15 +61,14 @@
                (element-field-type (list-ref element-field 1))
                (element-field-validation-parameters (drop element-field 2)))
           `(validate-value-list
+            ',field-symbol
             ,field-symbol
             ,field-required
             ,field-min-length
             ,field-max-length
-            ',(symbol-append 'invalid- field-symbol)
-            ',(symbol-append 'invalid- field-symbol '-length)
+            ',element-field-symbol
             ,(symbol-append 'validate- element-field-type)
-            ',element-field-validation-parameters
-            ',(symbol-append 'invalid- element-field-symbol))))
+            ',element-field-validation-parameters)))
 
       ;; validates a subrequest field
       (define (validate-subrequest-field field)
@@ -77,11 +76,11 @@
               (field-subrequest-type (list-ref field 1))
               (field-required (list-ref field 2)))
           `(validate-subrequest
+            ',field-symbol
             ,field-symbol
             ,field-required
             ,(symbol-append field-subrequest-type '?)
-            ,(symbol-append 'validate- field-subrequest-type)
-            ',(symbol-append 'invalid- field-symbol))))
+            ,(symbol-append 'validate- field-subrequest-type))))
 
       ;; validates a subrequest list field
       (define (validate-subrequest-list-field field)
@@ -161,15 +160,21 @@
             (let (
               ,@(map
                 (lambda (field-symbol)
-                  `(,field-symbol (,(symbol-append request-symbol '- field-symbol) ,request-symbol)))
+                  `(,field-symbol
+                    (,(symbol-append request-symbol '- field-symbol)
+                      ,request-symbol)))
                 fields-symbol))
               (append
                 ,@(map
                   (lambda (field)
-                    (cond ((value-field? field) (validate-value-field field))
-                          ((value-list-field? field) (validate-value-list-field field))
-                          ((subrequest-field? field) (validate-subrequest-field field))
-                          ((subrequest-list-field? field) (validate-subrequest-list-field field))))
+                    (cond ((value-field? field)
+                           (validate-value-field field))
+                          ((value-list-field? field)
+                           (validate-value-list-field field))
+                          ((subrequest-field? field)
+                           (validate-subrequest-field field))
+                          ((subrequest-list-field? field)
+                           (validate-subrequest-list-field field))))
                   fields))))
 
           ;; json parses a request
@@ -179,9 +184,13 @@
                 (lambda (field)
                   (let ((field-symbol (car field)))
                     `(,field-symbol
-                      ,(cond ((value-field? field) (json-parse-value-field field))
-                             ((value-list-field? field) (json-parse-value-list-field field))
-                             ((subrequest-field? field) (json-parse-subrequest-field field))
-                             ((subrequest-list-field? field) (json-parse-subrequest-list-field field))))))
+                      ,(cond ((value-field? field)
+                              (json-parse-value-field field))
+                             ((value-list-field? field)
+                              (json-parse-value-list-field field))
+                             ((subrequest-field? field)
+                              (json-parse-subrequest-field field))
+                             ((subrequest-list-field? field)
+                              (json-parse-subrequest-list-field field))))))
                 fields))
               (,(symbol-append 'make- request-symbol) ,@fields-symbol))))))))

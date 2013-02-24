@@ -25,7 +25,8 @@ __Validation__
     (validate-new-customer-request
       (make-new-customer-request "Alice" #f 12000.00))
 
-- ((invalid-credit-score . #f) (invalid-credit-limit . 12000.))
+- credit-score-missing
+- credit-limit-too-high
 
 __Json representation__
 
@@ -34,10 +35,6 @@ __Json representation__
       "credit-score": 8,
       "credit-limit": 5000.00
     }
-
-__Parsing__
-
-    (parse-new-customer-request json-object)
 
 Value list fields
 -----------------
@@ -58,16 +55,19 @@ __List validation__
         (list 10 11 12 13 14 15)
         #f))
 
-- ((invalid-sizes-length . 6) (invalid-colors . #f))
+- sizes-too-many
+- colors-missing
 
 __Elements validation__
 
     (validate-new-product-request
       (make-new-product-request
-        (list 10 20 30 40)
+        (list 10 20 30 #f)
         (list "Green" "Yellow" 1.25)))
 
-- ((invalid-size . 30) (invalid-size . 40) (invalid-color . 1.25))
+- size2-too-high
+- size3-missing
+- color2-wrong-type
 
 __Json representation__
 

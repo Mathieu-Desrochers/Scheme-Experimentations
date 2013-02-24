@@ -69,9 +69,7 @@
 (define (http-safe-parse-request parse-request-procedure fastcgi-input-stream* fastcgi-output-stream*)
   (let ((http-request-body (read-fastcgi-stream fastcgi-input-stream*)))
     (handle-exceptions exception
-      (begin
-        (send-400-bad-request fastcgi-output-stream*)
-        #f)
+      #f
       (parse-request-procedure http-request-body))))
 
 ;; writes a http header
@@ -107,7 +105,8 @@
         (send-404-not-found fastcgi-output-stream*)
         (let* ((parse-request-procedure (http-registration-parse-request-procedure http-registration))
                (request (http-safe-parse-request parse-request-procedure fastcgi-input-stream* fastcgi-output-stream*)))
-          (if request
+          (if (not request)
+            (send-400-bad-request fastcgi-output-stream*)
             (begin
               (fastcgi-puts "Content-Type: text/html; charset=utf-8\r\n\r\n" fastcgi-output-stream*)
               (fastcgi-puts "<html><body><pre>" fastcgi-output-stream*)
