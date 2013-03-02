@@ -110,8 +110,8 @@ __Subrequest validation__
           "Montreal"
           "H2J 4R1 A124")))
 
-- street-too-short
-- postal-code-too-long
+- address-street-too-short
+- address-postal-code-too-long
 
 __Json representation__
 
@@ -162,8 +162,8 @@ __Elements validation__
           (make-new-product-supplier-subrequest "Supplier3" 300000.00))))
 
 - supplier0-wrong-type
-- name-too-short
-- price-too-high
+- supplier1-name-too-short
+- supplier2-price-too-high
 
 __Json representation__
 

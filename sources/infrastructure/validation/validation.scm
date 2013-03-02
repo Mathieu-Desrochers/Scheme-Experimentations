@@ -55,6 +55,7 @@
 ;; validates a list and its elements
 (define 
   (validate-list-and-elements
+    field-prefix
     field-symbol
     field-value
     field-required
@@ -69,7 +70,7 @@
             field-min-length
             field-max-length)))
     (if validation-error
-      (list (symbol-append field-symbol '- validation-error))
+      (list (symbol-append field-prefix field-symbol '- validation-error))
       (if field-value
         (map-validation-procedure
           field-value
@@ -80,6 +81,7 @@
 ;; validates a value
 (define
   (validate-value
+    field-prefix
     field-symbol
     field-value
     field-validation-procedure
@@ -90,12 +92,13 @@
             field-value
             field-validation-parameters)))
     (if validation-error
-      (list (symbol-append field-symbol '- validation-error))
+      (list (symbol-append field-prefix field-symbol '- validation-error))
       '())))
 
 ;; validates a value list
 (define
   (validate-value-list
+    field-prefix
     field-symbol
     field-value
     field-required
@@ -105,6 +108,7 @@
     element-field-validation-procedure
     element-field-validation-parameters)
   (validate-list-and-elements
+    field-prefix
     field-symbol
     field-value
     field-required
@@ -113,6 +117,7 @@
     element-field-symbol
     (lambda (element-field-symbol-indexed element-field-value)
       (validate-value
+        field-prefix
         element-field-symbol-indexed
         element-field-value
         element-field-validation-procedure
@@ -121,6 +126,7 @@
 ;; validates a subrequest
 (define
   (validate-subrequest
+    field-prefix
     field-symbol
     field-value
     field-required
@@ -132,14 +138,16 @@
             field-required
             field-type-validation-procedure)))
     (if validation-error
-      (list (symbol-append field-symbol '- validation-error))
+      (list (symbol-append field-prefix field-symbol '- validation-error))
       (if field-value
-        (field-validation-procedure field-value)
+        (let ((nested-field-prefix (symbol-append field-prefix field-symbol '-)))
+          (field-validation-procedure field-value nested-field-prefix))
         '()))))
 
 ;; validates a subrequest list
 (define
   (validate-subrequest-list
+    field-prefix
     field-symbol
     field-value
     field-required
@@ -150,6 +158,7 @@
     element-field-type-validation-procedure
     element-field-validation-procedure)
   (validate-list-and-elements
+    field-prefix
     field-symbol
     field-value
     field-required
@@ -158,6 +167,7 @@
     element-field-symbol
     (lambda (element-field-symbol-indexed element-field-value)
       (validate-subrequest
+        field-prefix
         element-field-symbol-indexed
         element-field-value
         element-field-required

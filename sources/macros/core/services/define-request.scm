@@ -45,6 +45,7 @@
               (field-type (list-ref field 1))
               (field-validation-parameters (drop field 2)))
           `(validate-value
+            field-prefix
             ',field-symbol
             ,field-symbol
             ,(symbol-append 'validate- field-type)
@@ -61,6 +62,7 @@
                (element-field-type (list-ref element-field 1))
                (element-field-validation-parameters (drop element-field 2)))
           `(validate-value-list
+            field-prefix
             ',field-symbol
             ,field-symbol
             ,field-required
@@ -76,6 +78,7 @@
               (field-subrequest-type (list-ref field 1))
               (field-required (list-ref field 2)))
           `(validate-subrequest
+            field-prefix
             ',field-symbol
             ,field-symbol
             ,field-required
@@ -93,6 +96,7 @@
                (element-field-subrequest-type (list-ref element-field 1))
                (element-field-required (list-ref element-field 2)))
           `(validate-subrequest-list
+            field-prefix
             ',field-symbol
             ,field-symbol
             ,field-required
@@ -155,8 +159,9 @@
           (define-record ,request-symbol ,@fields-symbol)
 
           ;; validates a request
-          (define (,(symbol-append 'validate- request-symbol) ,request-symbol)
+          (define (,(symbol-append 'validate- request-symbol) ,request-symbol . args)
             (let (
+              (field-prefix (if (= (length args) 1) (car args) (string->symbol "")))
               ,@(map
                 (lambda (field-symbol)
                   `(,field-symbol
