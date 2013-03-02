@@ -99,7 +99,7 @@ __Request validation__
     (validate-new-customer-request
       (make-new-customer-request #f))
 
-- ((invalid-address . #f))
+- address-missing
 
 __Subrequest validation__
 
@@ -110,7 +110,8 @@ __Subrequest validation__
           "Montreal"
           "H2J 4R1 A124")))
 
-- ((invalid-street . "") (invalid-postal-code "H2J 4R1 A124"))
+- street-too-short
+- postal-code-too-long
 
 __Json representation__
 
@@ -149,7 +150,7 @@ __List validation__
           (make-new-product-supplier-subrequest "Supplier3" 300.00)
           (make-new-product-supplier-subrequest "Supplier4" 400.00))))
 
-- ((invalid-suppliers-length . 4))
+- suppliers-too-many
 
 __Elements validation__
 
@@ -160,7 +161,9 @@ __Elements validation__
           (make-new-product-supplier-subrequest "" 200.00)
           (make-new-product-supplier-subrequest "Supplier3" 300000.00))))
 
-- ((invalid-supplier . "Supplier1") (invalid-name . "") (invalid-price . 300000.))
+- supplier0-wrong-type
+- name-too-short
+- price-too-high
 
 __Json representation__
 

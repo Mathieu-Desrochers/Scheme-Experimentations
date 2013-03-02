@@ -93,16 +93,15 @@
                (element-field-subrequest-type (list-ref element-field 1))
                (element-field-required (list-ref element-field 2)))
           `(validate-subrequest-list
+            ',field-symbol
             ,field-symbol
             ,field-required
             ,field-min-length
             ,field-max-length
-            ',(symbol-append 'invalid- field-symbol)
-            ',(symbol-append 'invalid- field-symbol '-length)
+            ',element-field-symbol
             ,element-field-required
             ,(symbol-append element-field-subrequest-type '?)
-            ,(symbol-append 'validate- element-field-subrequest-type)
-            ',(symbol-append 'invalid- element-field-symbol))))
+            ,(symbol-append 'validate- element-field-subrequest-type))))
 
       ;; json parses a value field
       (define (json-parse-value-field field)

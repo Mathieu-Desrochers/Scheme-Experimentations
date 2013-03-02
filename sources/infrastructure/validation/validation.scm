@@ -41,6 +41,42 @@
         ((not (record-type-validation-procedure value)) 'wrong-type)
         (else #f)))
 
+;; maps a validation procedure to the elements of a list
+(define (map-validation-procedure value element-symbol validation-procedure)
+  (concatenate
+    (map
+      (lambda (index)
+        (let* ((index-symbol (string->symbol (number->string index)))
+               (element-symbol-indexed (symbol-append element-symbol index-symbol))
+               (element-value (list-ref value index)))
+          (validation-procedure element-symbol-indexed element-value)))
+      (iota (length value)))))
+
+;; validates a list and its elements
+(define 
+  (validate-list-and-elements
+    field-symbol
+    field-value
+    field-required
+    field-min-length
+    field-max-length
+    element-field-symbol
+    element-field-validation-procedure)
+  (let ((validation-error
+          (validate-list
+            field-value
+            field-required
+            field-min-length
+            field-max-length)))
+    (if validation-error
+      (list (symbol-append field-symbol '- validation-error))
+      (if field-value
+        (map-validation-procedure
+          field-value
+          element-field-symbol
+          element-field-validation-procedure)
+        '()))))
+
 ;; validates a value
 (define
   (validate-value
@@ -66,33 +102,21 @@
     field-min-length
     field-max-length
     element-field-symbol
-    element-validation-procedure
-    element-validation-parameters)
-  (let ((validation-error
-          (validate-list
-            field-value
-            field-required
-            field-min-length
-            field-max-length)))
-    (if validation-error
-      (list (symbol-append field-symbol '- validation-error))
-      (if field-value
-        (concatenate
-          (map
-            (lambda (index)
-              (let* ((index-symbol
-                      (string->symbol (number->string index)))
-                     (element-field-symbol-indexed
-                      (symbol-append element-field-symbol index-symbol))
-                     (element-field-value
-                      (list-ref field-value index)))
-                (validate-value
-                  element-field-symbol-indexed
-                  element-field-value
-                  element-validation-procedure
-                  element-validation-parameters)))
-            (iota (length field-value))))
-        '()))))
+    element-field-validation-procedure
+    element-field-validation-parameters)
+  (validate-list-and-elements
+    field-symbol
+    field-value
+    field-required
+    field-min-length
+    field-max-length
+    element-field-symbol
+    (lambda (element-field-symbol-indexed element-field-value)
+      (validate-value
+        element-field-symbol-indexed
+        element-field-value
+        element-field-validation-procedure
+        element-field-validation-parameters))))
 
 ;; validates a subrequest
 (define
@@ -100,47 +124,42 @@
     field-symbol
     field-value
     field-required
-    subrequest-type-validation-procedure
-    subrequest-validation-procedure)
+    field-type-validation-procedure
+    field-validation-procedure)
   (let ((validation-error
-          (apply
-            validate-record
-            (list
-              field-value
-              field-required
-              subrequest-type-validation-procedure))))
+          (validate-record
+            field-value
+            field-required
+            field-type-validation-procedure)))
     (if validation-error
-      (symbol-append field-symbol '- validation-error)
+      (list (symbol-append field-symbol '- validation-error))
       (if field-value
-        (subrequest-validation-procedure field-value)
-        #f))))
+        (field-validation-procedure field-value)
+        '()))))
 
 ;; validates a subrequest list
 (define
   (validate-subrequest-list
-    value
-    required
-    min-length
-    max-length
-    invalid-value-symbol
-    invalid-length-symbol
-    element-required
-    element-record-type-validation-procedure
-    element-record-validation-procedure
-    invalid-element-value-symbol)
-    (if (not (validate-list value required min-length max-length))
-      (if (not (list? value))
-        (list (cons invalid-value-symbol value))
-        (list (cons invalid-length-symbol (length value))))
-      (if value
-        (concatenate
-          (map
-            (lambda (element-value)
-              (validate-subrequest
-                element-value
-                element-required
-                element-record-type-validation-procedure
-                element-record-validation-procedure
-                invalid-element-value-symbol))
-            value))
-        '())))
+    field-symbol
+    field-value
+    field-required
+    field-min-length
+    field-max-length
+    element-field-symbol
+    element-field-required
+    element-field-type-validation-procedure
+    element-field-validation-procedure)
+  (validate-list-and-elements
+    field-symbol
+    field-value
+    field-required
+    field-min-length
+    field-max-length
+    element-field-symbol
+    (lambda (element-field-symbol-indexed element-field-value)
+      (validate-subrequest
+        element-field-symbol-indexed
+        element-field-value
+        element-field-required
+        element-field-type-validation-procedure
+        element-field-validation-procedure))))
