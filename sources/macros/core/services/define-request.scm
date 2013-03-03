@@ -161,7 +161,7 @@
           ;; validates a request
           (define (,(symbol-append 'validate- request-symbol) ,request-symbol . args)
             (let (
-              (field-prefix (if (= (length args) 1) (car args) (string->symbol "")))
+              (field-prefix (if (not (null? args)) (car args) (string->symbol "")))
               ,@(map
                 (lambda (field-symbol)
                   `(,field-symbol

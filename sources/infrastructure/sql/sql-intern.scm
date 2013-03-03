@@ -2,6 +2,7 @@
 (use srfi-1)
 
 (declare (unit sql-intern))
+
 (declare (uses sqlite))
 
 ;; binds the parameters of a sqlite3-stmt*

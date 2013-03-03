@@ -1,5 +1,6 @@
 
 (declare (unit json-format))
+
 (declare (uses json))
 
 ;; formats a value

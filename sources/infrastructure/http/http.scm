@@ -2,6 +2,8 @@
 (use srfi-13)
 
 (declare (unit http))
+
+(declare (uses json))
 (declare (uses fastcgi))
 (declare (uses new-customer-service-http-binding))
 
@@ -40,8 +42,8 @@
     (http-registrations)))
 
 ;; invokes a procedure with a fastcgi buffer
-(define (with-fastcgi-buffer* procedure)
-  (let ((fastcgi-buffer* (malloc-fastcgi-buffer 5000)))
+(define (http-with-fastcgi-buffer* buffer-size procedure)
+  (let ((fastcgi-buffer* (malloc-fastcgi-buffer buffer-size)))
     (when (not fastcgi-buffer*)
       (abort "could not allocate fastcgi buffer"))
     (handle-exceptions exception
@@ -53,63 +55,108 @@
         procedure-result))))
 
 ;; reads a fastcgi stream
-(define (read-fastcgi-stream fastcgi-stream*)
-  (with-fastcgi-buffer*
-    (lambda (fastcgi-buffer*)
-      (define (read-fastcgi-stream-iter accumulated-content)
-        (let ((fastcgi-getline-result (fastcgi-getline fastcgi-buffer* 5000 fastcgi-stream*)))
-          (if (not fastcgi-getline-result)
-            accumulated-content
-            (let* ((content-read (fastcgi-buffer-string fastcgi-buffer*))
-                   (content (string-append accumulated-content content-read)))
-              (read-fastcgi-stream-iter content)))))
-      (read-fastcgi-stream-iter ""))))
+(define (http-read-fastcgi-stream fastcgi-stream*)
+  (let ((buffer-size 5000))
+    (http-with-fastcgi-buffer*
+      buffer-size
+      (lambda (fastcgi-buffer*)
+        (define (http-read-fastcgi-stream-iter accumulated-content)
+          (let ((fastcgi-getline-result (fastcgi-getline fastcgi-buffer* buffer-size fastcgi-stream*)))
+            (if (not fastcgi-getline-result)
+              accumulated-content
+              (let* ((content-read (fastcgi-buffer-string fastcgi-buffer*))
+                     (content (string-append accumulated-content content-read)))
+                (http-read-fastcgi-stream-iter content)))))
+        (http-read-fastcgi-stream-iter "")))))
 
-;; safely parses a http request
-(define (http-safe-parse-request parse-request-procedure fastcgi-input-stream* fastcgi-output-stream*)
-  (let ((http-request-body (read-fastcgi-stream fastcgi-input-stream*)))
-    (handle-exceptions exception
-      #f
-      (parse-request-procedure http-request-body))))
+;; safely parses a request
+(define (http-safe-parse-request parse-request-procedure http-request-body)
+  (handle-exceptions exception
+    #f
+    (parse-request-procedure http-request-body)))
 
 ;; writes a http header
-(define (write-http-header header fastcgi-output-stream*)
+(define (http-write-header header fastcgi-output-stream*)
   (let ((header-line (string-append header "\r\n")))
     (fastcgi-puts header-line fastcgi-output-stream*)))
 
 ;; closes the http headers
-(define (close-http-headers fastcgi-output-stream*)
+(define (http-close-headers fastcgi-output-stream*)
     (fastcgi-puts "\r\n" fastcgi-output-stream*))
 
+;; writes the http body
+(define (http-write-body body fastcgi-output-stream*)
+  (fastcgi-puts body fastcgi-output-stream*)
+  (fastcgi-puts "\r\n" fastcgi-output-stream*))
+
 ;; sends a 400 bad request error
-(define (send-400-bad-request fastcgi-output-stream*)
-  (write-http-header "Status: 400 Bad Request" fastcgi-output-stream*)
-  (write-http-header "Content-Type: text/plain; charset=utf-8" fastcgi-output-stream*)
-  (close-http-headers fastcgi-output-stream*))
+(define (http-send-400-bad-request fastcgi-output-stream*)
+  (http-write-header "Status: 400 Bad Request" fastcgi-output-stream*)
+  (http-write-header "Content-Type: text/plain; charset=utf-8" fastcgi-output-stream*)
+  (http-close-headers fastcgi-output-stream*))
 
 ;; sends a 404 not found error
-(define (send-404-not-found fastcgi-output-stream*)
-  (write-http-header "Status: 404 Not Found" fastcgi-output-stream*)
-  (write-http-header "Content-Type: text/plain; charset=utf-8" fastcgi-output-stream*)
-  (close-http-headers fastcgi-output-stream*))
+(define (http-send-404-not-found fastcgi-output-stream*)
+  (http-write-header "Status: 404 Not Found" fastcgi-output-stream*)
+  (http-write-header "Content-Type: text/plain; charset=utf-8" fastcgi-output-stream*)
+  (http-close-headers fastcgi-output-stream*))
+
+;; sends a 422 unprocessable entity error
+(define (http-send-422-unprocessable-entity validation-errors fastcgi-output-stream*)
+  
+  ;; write the response headers
+  (http-write-header "Status: 422 Unprocessable Entity" fastcgi-output-stream*)
+  (http-write-header "Content-Type: text/json; charset=utf-8" fastcgi-output-stream*)
+  (http-close-headers fastcgi-output-stream*)
+  
+  ;; formats the validation errors into a json array
+  (define (format-response-body)
+    (with-new-json-object
+      (lambda (json-object)
+        (with-new-json-object-array
+          (lambda (json-object-array)
+            (map
+              (lambda (validation-error)
+                (with-new-json-object-from-value (symbol->string validation-error)
+                  (lambda (json-object-from-value)
+                    (json-object-array-append! json-object-array json-object-from-value))))
+              validation-errors)
+            (json-object-property-set! json-object "errors" json-object-array)
+            (json-object->string json-object))))))
+
+  ;; write the response body
+  (let ((response-body (format-response-body)))
+    (http-write-body response-body fastcgi-output-stream*)))
 
 ;; handles a http request
 (define (http-handle-request fastcgi-request*)
+
+  ;; get the environment pointers
   (let ((fastcgi-environment* (fastcgi-request-environment fastcgi-request*))
         (fastcgi-input-stream* (fastcgi-request-input-stream fastcgi-request*))
         (fastcgi-output-stream* (fastcgi-request-output-stream fastcgi-request*)))
+
+    ;; search for a http registration matching
+    ;; the requested method and route
     (let* ((method (http-request-method fastcgi-environment*))
            (route (http-request-route fastcgi-environment*))
            (http-registration (search-http-registration method route)))
       (if (not http-registration)
-        (send-404-not-found fastcgi-output-stream*)
-        (let* ((parse-request-procedure (http-registration-parse-request-procedure http-registration))
-               (request (http-safe-parse-request parse-request-procedure fastcgi-input-stream* fastcgi-output-stream*)))
+        (http-send-404-not-found fastcgi-output-stream*)
+        
+        ;; try to parse the request
+        (let* ((http-request-body (http-read-fastcgi-stream fastcgi-input-stream*))
+               (parse-request-procedure (http-registration-parse-request-procedure http-registration))
+               (request (http-safe-parse-request parse-request-procedure http-request-body)))
           (if (not request)
-            (send-400-bad-request fastcgi-output-stream*)
-            (begin
-              (fastcgi-puts "Content-Type: text/html; charset=utf-8\r\n\r\n" fastcgi-output-stream*)
-              (fastcgi-puts "<html><body><pre>" fastcgi-output-stream*)
-              (fastcgi-puts "would have invoked the service :)" fastcgi-output-stream*)
-              (fastcgi-puts "</pre></body></html>" fastcgi-output-stream*)
-              (fastcgi-puts "\r\n" fastcgi-output-stream*))))))))
+            (http-send-400-bad-request fastcgi-output-stream*)
+            
+            ;; invoke the service
+            (let* ((service (http-registration-service http-registration)))
+              (handle-validation-errors
+                (lambda () (service #f request))
+                (lambda (validation-errors)
+                  (http-send-422-unprocessable-entity validation-errors fastcgi-output-stream*))
+                
+                ;; send back the response
+                (lambda (response) #f)))))))))

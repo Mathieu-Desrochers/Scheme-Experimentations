@@ -2,6 +2,7 @@
 (use srfi-1)
 
 (declare (unit sql))
+
 (declare (uses sql-intern))
 (declare (uses sqlite))
 

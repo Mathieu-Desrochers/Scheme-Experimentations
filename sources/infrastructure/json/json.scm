@@ -1,5 +1,6 @@
 
 (declare (unit json))
+
 (declare (uses jansson))
 
 ;; encapsulates a json object
