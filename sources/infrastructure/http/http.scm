@@ -3,6 +3,7 @@
 
 (declare (unit http))
 
+(declare (uses exceptions))
 (declare (uses json))
 (declare (uses fastcgi))
 (declare (uses new-customer-service-http-binding))
@@ -69,12 +70,6 @@
                 (http-read-fastcgi-stream-iter content)))))
         (http-read-fastcgi-stream-iter "")))))
 
-;; safely parses a request
-(define (http-safe-parse-request parse-request-procedure http-request-body)
-  (handle-exceptions exception
-    #f
-    (parse-request-procedure http-request-body)))
-
 ;; writes a http header
 (define (http-write-header header fastcgi-output-stream*)
   (let ((header-line (string-append header "\r\n")))
@@ -110,7 +105,7 @@
   (http-close-headers fastcgi-output-stream*)
   
   ;; formats the validation errors into a json array
-  (define (format-response-body)
+  (define (format-validation-errors)
     (with-new-json-object
       (lambda (json-object)
         (with-new-json-object-array
@@ -125,7 +120,7 @@
             (json-object->string json-object))))))
 
   ;; write the response body
-  (let ((response-body (format-response-body)))
+  (let ((response-body (format-validation-errors)))
     (http-write-body response-body fastcgi-output-stream*)))
 
 ;; handles a http request
@@ -143,11 +138,11 @@
            (http-registration (search-http-registration method route)))
       (if (not http-registration)
         (http-send-404-not-found fastcgi-output-stream*)
-        
+
         ;; try to parse the request
         (let* ((http-request-body (http-read-fastcgi-stream fastcgi-input-stream*))
                (parse-request-procedure (http-registration-parse-request-procedure http-registration))
-               (request (http-safe-parse-request parse-request-procedure http-request-body)))
+               (request (hide-exceptions (lambda () (parse-request-procedure http-request-body)))))
           (if (not request)
             (http-send-400-bad-request fastcgi-output-stream*)
             

@@ -32,22 +32,31 @@
 (define (json-object-value json-object)
   (let* ((jansson* (json-object-jansson* json-object))
          (jansson-type (jansson-typeof jansson*)))
-    (cond ((eq? jansson-type jansson-type-object) #f)
-          ((eq? jansson-type jansson-type-array) #f)
-          ((eq? jansson-type jansson-type-string) (jansson-string-value jansson*))
+    (cond ((eq? jansson-type jansson-type-string) (jansson-string-value jansson*))
           ((eq? jansson-type jansson-type-integer) (jansson-integer-value jansson*))
           ((eq? jansson-type jansson-type-real) (jansson-real-value jansson*))
           ((eq? jansson-type jansson-type-true) #t)
-          ((eq? jansson-type jansson-type-false) #f)
-          ((eq? jansson-type jansson-type-null) #f))))
+          (else #f))))
 
-;; returns the json object of a property
+;; returns whether a json-object is of type object
+(define (json-object-type-object? json-object)
+  (let* ((jansson* (json-object-jansson* json-object))
+         (jansson-type (jansson-typeof jansson*)))
+    (eq? jansson-type jansson-type-object)))
+
+;; returns a property of a json object
 (define (json-object-property json-object property-name)
   (let* ((jansson* (json-object-jansson* json-object))
          (jansson-property* (jansson-object-get jansson* property-name)))
     (if jansson-property*
       (make-json-object jansson-property*)
       #f)))
+
+;; returns whether a json-object is of type array
+(define (json-object-type-array? json-object)
+  (let* ((jansson* (json-object-jansson* json-object))
+         (jansson-type (jansson-typeof jansson*)))
+    (eq? jansson-type jansson-type-array)))
 
 ;; returns the json objects for the elements of an array
 (define (json-object-array-elements json-object)

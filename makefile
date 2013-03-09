@@ -65,10 +65,18 @@ sources/foreign-interfaces/sqlite.o : sources/foreign-interfaces/sqlite.scm
 	sources/foreign-interfaces/sqlite.scm -o \
 	sources/foreign-interfaces/sqlite.o
 
-compile-infrastructure : compile-infrastructure-http \
+compile-infrastructure : compile-infrastructure-exceptions \
+                         compile-infrastructure-http \
                          compile-infrastructure-json \
                          compile-infrastructure-sql \
                          compile-infrastructure-validation
+
+compile-infrastructure-exceptions : sources/infrastructure/exceptions/exceptions.o
+
+sources/infrastructure/exceptions/exceptions.o : sources/infrastructure/exceptions/exceptions.scm
+	csc -c \
+	sources/infrastructure/exceptions/exceptions.scm -o \
+	sources/infrastructure/exceptions/exceptions.o
 
 compile-infrastructure-http : sources/infrastructure/http/http.o \
                               sources/infrastructure/http/http-toplevel.o \
@@ -140,6 +148,7 @@ link : compile
 	sources/foreign-interfaces/fastcgi.o \
 	sources/foreign-interfaces/jansson.o \
 	sources/foreign-interfaces/sqlite.o \
+	sources/infrastructure/exceptions/exceptions.o \
 	sources/infrastructure/http/http.o \
 	sources/infrastructure/http/http-toplevel.o \
 	sources/infrastructure/http/main.o \
