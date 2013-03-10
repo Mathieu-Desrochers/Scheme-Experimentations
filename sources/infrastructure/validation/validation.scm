@@ -175,16 +175,14 @@
         element-field-validation-procedure))))
 
 ;; raises an exception caused by validation errors
-(define (abort-validation-failed validation-errors)
+(define (abort-validation-errors validation-errors)
   (let ((condition (make-property-condition 'validation 'errors validation-errors)))
     (abort condition)))
 
-;; handles exceptions caused by validation errors
-(define (handle-validation-errors procedure error-procedure success-procedure)
-  (handle-exceptions exception
-    (if ((condition-predicate 'validation) exception)
-      (let ((validation-errors ((condition-property-accessor 'validation 'errors) exception)))
-        (error-procedure validation-errors))
-      (abort exception))
-    (let ((procedure-result (procedure)))
-      (success-procedure procedure-result))))
+;; returns whether an exception was caused by validation errors
+(define (validation-exception? exception)
+  ((condition-predicate 'validation) exception))
+
+;; returns the validation errors from an exception
+(define (validation-errors exception)
+  ((condition-property-accessor 'validation 'errors) exception))

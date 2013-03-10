@@ -4,8 +4,10 @@
 (declare (unit http))
 
 (declare (uses exceptions))
-(declare (uses json))
 (declare (uses fastcgi))
+(declare (uses json))
+(declare (uses services))
+
 (declare (uses new-customer-service-http-binding))
 
 ;; encapsulates a http registration
@@ -148,10 +150,14 @@
             
             ;; invoke the service
             (let* ((service (http-registration-service http-registration)))
-              (handle-validation-errors
-                (lambda () (service #f request))
-                (lambda (validation-errors)
-                  (http-send-422-unprocessable-entity validation-errors fastcgi-output-stream*))
+              (invoke-service service request
+              
+                ;; send the response
+                (lambda (response)
+                  #f)
                 
-                ;; send back the response
-                (lambda (response) #f)))))))))
+                ;; send the validation errors
+                (lambda (validation-errors)
+                  (http-send-422-unprocessable-entity
+                    validation-errors
+                    fastcgi-output-stream*))))))))))

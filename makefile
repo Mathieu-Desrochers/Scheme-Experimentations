@@ -68,6 +68,7 @@ sources/foreign-interfaces/sqlite.o : sources/foreign-interfaces/sqlite.scm
 compile-infrastructure : compile-infrastructure-exceptions \
                          compile-infrastructure-http \
                          compile-infrastructure-json \
+                         compile-infrastructure-services \
                          compile-infrastructure-sql \
                          compile-infrastructure-validation
 
@@ -116,6 +117,13 @@ sources/infrastructure/json/json-parse.o : sources/infrastructure/json/json-pars
 	sources/infrastructure/json/json-parse.scm -o \
 	sources/infrastructure/json/json-parse.o
 
+compile-infrastructure-services : sources/infrastructure/services/services.o
+
+sources/infrastructure/services/services.o : sources/infrastructure/services/services.scm
+	csc -c \
+	sources/infrastructure/services/services.scm -o \
+	sources/infrastructure/services/services.o
+
 compile-infrastructure-sql : sources/infrastructure/sql/sql-intern.o \
                              sources/infrastructure/sql/sql.o
 
@@ -155,6 +163,7 @@ link : compile
 	sources/infrastructure/json/json.o \
 	sources/infrastructure/json/json-format.o \
 	sources/infrastructure/json/json-parse.o \
+	sources/infrastructure/services/services.o \
 	sources/infrastructure/sql/sql-intern.o \
 	sources/infrastructure/sql/sql.o \
 	sources/infrastructure/validation/validation.o \

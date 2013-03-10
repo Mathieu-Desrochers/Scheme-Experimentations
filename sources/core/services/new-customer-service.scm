@@ -44,7 +44,7 @@
   ;; validate the request
   (let ((validation-errors (validate-new-customer-request new-customer-request)))
     (when (not (null? validation-errors))
-      (abort-validation-failed validation-errors)))
+      (abort-validation-errors validation-errors)))
 
   ;; insert a customer-row
   (let* ((first-name (new-customer-request-first-name new-customer-request))
