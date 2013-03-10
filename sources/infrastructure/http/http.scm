@@ -86,6 +86,13 @@
   (fastcgi-puts body fastcgi-output-stream*)
   (fastcgi-puts "\r\n" fastcgi-output-stream*))
 
+;; sends a 200 ok
+(define (http-send-200-ok response-body fastcgi-output-stream*)
+  (http-write-header "Status: 200 OK" fastcgi-output-stream*)
+  (http-write-header "Content-Type: text/json; charset=utf-8" fastcgi-output-stream*)
+  (http-close-headers fastcgi-output-stream*)
+  (http-write-body response-body fastcgi-output-stream*))
+
 ;; sends a 400 bad request error
 (define (http-send-400-bad-request fastcgi-output-stream*)
   (http-write-header "Status: 400 Bad Request" fastcgi-output-stream*)
@@ -154,10 +161,10 @@
               
                 ;; send the response
                 (lambda (response)
-                  #f)
+                  (let* ((format-response-procedure (http-registration-format-response-procedure http-registration))
+                         (http-response-body (format-response-procedure response)))
+                    (http-send-200-ok http-response-body fastcgi-output-stream*)))
                 
                 ;; send the validation errors
                 (lambda (validation-errors)
-                  (http-send-422-unprocessable-entity
-                    validation-errors
-                    fastcgi-output-stream*))))))))))
+                  (http-send-422-unprocessable-entity validation-errors fastcgi-output-stream*))))))))))

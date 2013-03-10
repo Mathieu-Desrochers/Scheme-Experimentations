@@ -25,4 +25,7 @@
 ;; http format logic
 
 (define (http-format-new-customer-response response)
-  "{}")
+  (with-new-json-object
+    (lambda (json-object)
+      (json-format-new-customer-response response json-object)
+      (json-object->string json-object))))

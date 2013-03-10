@@ -30,8 +30,8 @@
              (eq? (cadr field) 'list)
              (symbol-contains? (caddr field) "subresponse")))
 
-      ;; formats a value field
-      (define (format-value-field field)
+      ;; json formats a value field
+      (define (json-format-value-field field)
         (let* ((field-symbol (car field))
                (field-symbol-string (symbol->string field-symbol)))
           `(json-format-value
@@ -39,8 +39,8 @@
             ,field-symbol-string
             ,field-symbol)))
 
-      ;; formats a value list field
-      (define (format-value-list-field field)
+      ;; json formats a value list field
+      (define (json-format-value-list-field field)
         (let* ((field-symbol (car field))
                (field-symbol-string (symbol->string field-symbol)))
           `(json-format-value-list
@@ -48,8 +48,8 @@
             ,field-symbol-string
             ,field-symbol)))
 
-      ;; formats a subresponse field
-      (define (format-subresponse-field field)
+      ;; json formats a subresponse field
+      (define (json-format-subresponse-field field)
         (let* ((field-symbol (car field))
                (field-symbol-string (symbol->string field-symbol))
                (field-subresponse-type (cadr field)))
@@ -59,8 +59,8 @@
             ,field-symbol
             ,(symbol-append 'format- field-subresponse-type))))
 
-      ;; formats a subresponse list field
-      (define (format-subresponse-list-field field)
+      ;; json formats a subresponse list field
+      (define (json-format-subresponse-list-field field)
         (let* ((field-symbol (car field))
                (field-symbol-string (symbol->string field-symbol))
                (field-subresponse-type (caddr field)))
@@ -84,7 +84,7 @@
           (define-record ,response-symbol ,@fields-symbol)
 
           ;; formats a response
-          (define (,(symbol-append 'format- response-symbol) ,response-symbol json-object)
+          (define (,(symbol-append 'json-format- response-symbol) ,response-symbol json-object)
             (let (
               ,@(map
                 (lambda (field-symbol)
@@ -92,8 +92,12 @@
                 fields-symbol))
               ,@(map
                 (lambda (field)
-                  (cond ((value-field? field) (format-value-field field))
-                        ((value-list-field? field) (format-value-list-field field))
-                        ((subresponse-field? field) (format-subresponse-field field))
-                        ((subresponse-list-field? field) (format-subresponse-list-field field))))
+                  (cond ((value-field? field)
+                         (json-format-value-field field))
+                        ((value-list-field? field)
+                         (json-format-value-list-field field))
+                        ((subresponse-field? field)
+                         (json-format-subresponse-field field))
+                        ((subresponse-list-field? field)
+                         (json-format-subresponse-list-field field))))
                 fields))))))))
