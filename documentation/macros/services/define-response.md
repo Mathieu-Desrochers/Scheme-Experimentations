@@ -28,10 +28,6 @@ __Json representation__
       "credit-limit": 5000.00
     }
 
-__Formatting__
-
-    (format-get-customer-response get-customer-response json-object)
-
 Value list fields
 -----------------
 
