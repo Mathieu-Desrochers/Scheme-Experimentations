@@ -31,6 +31,18 @@
             (free-sqlite3* sqlite3**)
             procedure-result))))))
 
+;; disables all synchronous disk writes
+(define (sql-disable-synchronous-writes sql-connection)
+  (sql-execute sql-connection "PRAGMA synchronous = OFF;"))
+
+;; executes a procedure within a transaction
+(define (within-sql-transaction sql-connection procedure)
+  (handle-exceptions exception
+    (sql-execute sql-connection "ROLLBACK TRANSACTION;")
+    (sql-execute sql-connection "BEGIN TRANSACTION;")
+    (procedure)
+    (sql-execute sql-connection "COMMIT TRANSACTION;")))
+
 ;; executes a sql statement
 (define (sql-execute sql-connection statement . parameter-values)
   (let ((sqlite3* (sql-connection-sqlite3* sql-connection)))
