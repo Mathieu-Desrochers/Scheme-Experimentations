@@ -10,13 +10,13 @@
 
 (declare (uses new-customer-service-http-binding))
 
-;; encapsulates a http registration
-(define-record http-registration method route service parse-request-procedure format-response-procedure)
+;; encapsulates a http binding
+(define-record http-binding method route service parse-request-procedure format-response-procedure)
 
-;; returns the http registrations
-(define (http-registrations)
+;; returns the http bindings
+(define (http-bindings)
   (list
-    (new-customer-service-http-registration)))
+    (make-new-customer-service-http-binding)))
 
 ;; returns the method of a http request
 (define (http-request-method fastcgi-environment*)
@@ -28,21 +28,21 @@
         (request-uri (fastcgi-getparam "REQUEST_URI" fastcgi-environment*)))
     (string-drop request-uri (string-length context-prefix))))
 
-;; searches the http registration matching a method and route
-(define (search-http-registration method route)
-  (define (http-registration-match? http-registration)
-    (and (equal? (http-registration-method http-registration) method)
-         (equal? (http-registration-route http-registration) route)))
-  (define (search-http-registration-iter http-registrations)
-    (if (null? http-registrations)
+;; searches the http binding matching a method and route
+(define (search-http-binding method route)
+  (define (http-binding-match? http-binding)
+    (and (equal? (http-binding-method http-binding) method)
+         (equal? (http-binding-route http-binding) route)))
+  (define (search-http-binding-iter http-bindings)
+    (if (null? http-bindings)
       #f
-      (let ((http-registration (car http-registrations)))
-        (if (http-registration-match? http-registration)
-          http-registration
-          (search-http-registration-iter
-            (cdr http-registrations))))))
-  (search-http-registration-iter
-    (http-registrations)))
+      (let ((http-binding (car http-bindings)))
+        (if (http-binding-match? http-binding)
+          http-binding
+          (search-http-binding-iter
+            (cdr http-bindings))))))
+  (search-http-binding-iter
+    (http-bindings)))
 
 ;; invokes a procedure with a fastcgi buffer
 (define (http-with-fastcgi-buffer* buffer-size procedure)
@@ -140,28 +140,28 @@
         (fastcgi-input-stream* (fastcgi-request-input-stream fastcgi-request*))
         (fastcgi-output-stream* (fastcgi-request-output-stream fastcgi-request*)))
 
-    ;; search for a http registration matching
+    ;; search for a http binding matching
     ;; the requested method and route
     (let* ((method (http-request-method fastcgi-environment*))
            (route (http-request-route fastcgi-environment*))
-           (http-registration (search-http-registration method route)))
-      (if (not http-registration)
+           (http-binding (search-http-binding method route)))
+      (if (not http-binding)
         (http-send-404-not-found fastcgi-output-stream*)
 
         ;; try to parse the request
         (let* ((http-request-body (http-read-fastcgi-stream fastcgi-input-stream*))
-               (parse-request-procedure (http-registration-parse-request-procedure http-registration))
+               (parse-request-procedure (http-binding-parse-request-procedure http-binding))
                (request (hide-exceptions (lambda () (parse-request-procedure http-request-body)))))
           (if (not request)
             (http-send-400-bad-request fastcgi-output-stream*)
             
             ;; invoke the service
-            (let* ((service (http-registration-service http-registration)))
+            (let* ((service (http-binding-service http-binding)))
               (invoke-service service request
               
                 ;; send the response
                 (lambda (response)
-                  (let* ((format-response-procedure (http-registration-format-response-procedure http-registration))
+                  (let* ((format-response-procedure (http-binding-format-response-procedure http-binding))
                          (http-response-body (format-response-procedure response)))
                     (http-send-200-ok http-response-body fastcgi-output-stream*)))
                 

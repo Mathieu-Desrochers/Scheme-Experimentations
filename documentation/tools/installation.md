@@ -24,7 +24,7 @@ Installing Chicken Scheme
  - make PLATFORM=linux
  - sudo make PLATFORM=linux install
 
-Installing Sqlite
+Installing SQLite
 -----------------
 
 - Change directory to the root of the repository

@@ -16,9 +16,9 @@
 
           (declare (uses http))
 
-          ;; returns the http registration
-          (define (,(symbol-append service-symbol '-http-registration))
-            (make-http-registration
+          ;; returns the http binding
+          (define (,(symbol-append 'make- service-symbol '-http-binding))
+            (make-http-binding
               ,method
               ,route
               ,service-symbol
