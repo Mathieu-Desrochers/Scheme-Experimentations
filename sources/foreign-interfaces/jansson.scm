@@ -25,7 +25,7 @@ struct json_dumps_result_t
 };
 
 // wraps the json_dumps function
-// returns a heap pointer to scheme
+// returns an opaque heap pointer to scheme
 struct json_dumps_result_t* json_dumps_wrapped(json_t* json)
 {
   char* value = json_dumps(json, JSON_INDENT(2) | JSON_PRESERVE_ORDER);
