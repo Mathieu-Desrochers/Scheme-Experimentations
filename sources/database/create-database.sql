@@ -3,14 +3,16 @@ CREATE TABLE "customers"
 (
 	"customer-id" INTEGER PRIMARY KEY,
 	"first-name" TEXT,
-	"last-name" TEXT
+	"last-name" TEXT,
+	"is-vip" INTEGER
 );
 
-CREATE TABLE "customer-addresses"
+CREATE TABLE "shipping-addresses"
 (
-	"customer-address-id" INTEGER PRIMARY KEY,
+	"shipping-address-id" INTEGER PRIMARY KEY,
 	"customer-id" INTEGER,
-	"address" TEXT,
+	"effective-date" TEXT,
+	"street" TEXT,
 	"city" TEXT,
 	"state" TEXT
 );

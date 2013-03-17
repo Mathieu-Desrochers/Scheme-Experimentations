@@ -1,8 +1,8 @@
 
 (declare (unit new-customer-service))
 
-(declare (uses customer-addresses-table))
 (declare (uses customers-table))
+(declare (uses shipping-addresses-table))
 (declare (uses sql))
 (declare (uses validation))
 
@@ -10,14 +10,15 @@
 ;; request definition
 
 (define-request new-customer-request
-  (first-name string #t 1 100)
-  (last-name string #t 1 100)
-  (addresses list #t 1 5 (address new-customer-address-subrequest #t)))
+  (first-name string #t 1 50)
+  (last-name string #t 1 50)
+  (is-vip boolean)
+  (shipping-address new-customer-shipping-address-subrequest #t))
 
-(define-request new-customer-address-subrequest
-  (address string #t 1 100)
-  (city string #t 1 100)
-  (state string #t 1 100))
+(define-request new-customer-shipping-address-subrequest
+  (street string #t 1 100)
+  (city string #t 1 50)
+  (state string #t 1 50))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; response definition
@@ -30,34 +31,30 @@
 
 (define (new-customer-service sql-connection new-customer-request)
 
-  ;; makes a customer-address-row
-  ;; for every new-customer-address-subrequest
-  (define (make-customer-address-rows customer-id)
-    (map
-      (lambda (new-customer-address-subrequest)
-        (let ((address (new-customer-address-subrequest-address new-customer-address-subrequest))
-              (city (new-customer-address-subrequest-city new-customer-address-subrequest))
-              (state (new-customer-address-subrequest-state new-customer-address-subrequest)))
-          (make-customer-address-row 0 customer-id address city state)))
-      (new-customer-request-addresses new-customer-request)))
-
   ;; validate the request
   (let ((validation-errors (validate-new-customer-request new-customer-request)))
     (when (not (null? validation-errors))
       (abort-validation-errors validation-errors)))
 
   ;; insert a customer-row
-  (let* ((first-name (new-customer-request-first-name new-customer-request))
-         (last-name (new-customer-request-last-name new-customer-request))
-         (customer-row (make-customer-row 0 first-name last-name))
-         (customer-id (customers-table-insert sql-connection customer-row)))
+  (let ((customer-id
+          (customers-table-insert
+            sql-connection
+            (make-customer-row 0
+              (new-customer-request-first-name new-customer-request)
+              (new-customer-request-last-name new-customer-request)
+              (new-customer-request-is-vip new-customer-request)))))
 
-    ;; insert the customer-address-rows
-    (let ((customer-address-rows (make-customer-address-rows customer-id)))
-      (map
-        (lambda (customer-address-row)
-          (customer-addresses-table-insert sql-connection customer-address-row))
-        customer-address-rows)
+    ;; insert a shipping-address-row
+    (let ((shipping-address-subrequest (new-customer-request-shipping-address new-customer-request)))
+      (shipping-addresses-table-insert
+        sql-connection
+        (make-shipping-address-row 0
+          customer-id
+          "2001-01-01"
+          (new-customer-shipping-address-subrequest-street shipping-address-subrequest)
+          (new-customer-shipping-address-subrequest-city shipping-address-subrequest)
+          (new-customer-shipping-address-subrequest-state shipping-address-subrequest))))
 
-      ;; make the service response
-      (make-new-customer-response customer-id))))
+    ;; make the service response
+    (make-new-customer-response customer-id)))

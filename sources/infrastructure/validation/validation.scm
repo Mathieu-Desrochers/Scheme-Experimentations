@@ -3,6 +3,11 @@
 
 (declare (unit validation))
 
+;; validates a boolean
+(define (validate-boolean value)
+  (cond ((not (boolean? value)) 'wrong-type)
+        (else #f)))
+
 ;; validates an integer
 (define (validate-integer value required min-value max-value)
   (cond ((not value) (if (not required) #f 'missing))

@@ -10,4 +10,5 @@
   (customer-row
     "customer-id"
     "first-name"
-    "last-name"))
+    "last-name"
+    "is-vip"))

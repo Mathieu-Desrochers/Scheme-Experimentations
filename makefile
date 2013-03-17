@@ -27,21 +27,22 @@ sources/core/services/new-customer-service.o : sources/core/services/new-custome
 	sources/core/services/new-customer-service.scm -o \
 	sources/core/services/new-customer-service.o
 
-compile-core-tables : sources/core/tables/customer-addresses-table.o \
-                      sources/core/tables/customers-table.o
-
-sources/core/tables/customer-addresses-table.o : sources/core/tables/customer-addresses-table.scm
-	csc -c -extend sources/macros/core/tables/define-table.scm \
-	sources/core/tables/customer-addresses-table.scm -o \
-	sources/core/tables/customer-addresses-table.o
+compile-core-tables : sources/core/tables/customers-table.o \
+                      sources/core/tables/shipping-addresses-table.o
 
 sources/core/tables/customers-table.o : sources/core/tables/customers-table.scm
 	csc -c -extend sources/macros/core/tables/define-table.scm \
 	sources/core/tables/customers-table.scm -o \
 	sources/core/tables/customers-table.o
 
+sources/core/tables/shipping-addresses-table.o : sources/core/tables/shipping-addresses-table.scm
+	csc -c -extend sources/macros/core/tables/define-table.scm \
+	sources/core/tables/shipping-addresses-table.scm -o \
+	sources/core/tables/shipping-addresses-table.o
+
 compile-foreign-interfaces : compile-foreign-interfaces-fastcgi \
                              compile-foreign-interfaces-jansson \
+                             compile-foreign-interfaces-scdtl \
                              compile-foreign-interfaces-sqlite
 
 compile-foreign-interfaces-fastcgi : sources/foreign-interfaces/fastcgi.o
@@ -58,6 +59,13 @@ sources/foreign-interfaces/jansson.o : sources/foreign-interfaces/jansson.scm
 	sources/foreign-interfaces/jansson.scm -o \
 	sources/foreign-interfaces/jansson.o
 
+compile-foreign-interfaces-scdtl : sources/foreign-interfaces/scdtl.o
+
+sources/foreign-interfaces/scdtl.o : sources/foreign-interfaces/scdtl.scm
+	csc -c \
+	sources/foreign-interfaces/scdtl.scm -o \
+	sources/foreign-interfaces/scdtl.o
+
 compile-foreign-interfaces-sqlite : sources/foreign-interfaces/sqlite.o
 
 sources/foreign-interfaces/sqlite.o : sources/foreign-interfaces/sqlite.scm
@@ -65,12 +73,26 @@ sources/foreign-interfaces/sqlite.o : sources/foreign-interfaces/sqlite.scm
 	sources/foreign-interfaces/sqlite.scm -o \
 	sources/foreign-interfaces/sqlite.o
 
-compile-infrastructure : compile-infrastructure-exceptions \
+compile-infrastructure : compile-infrastructure-datetime \
+                         compile-infrastructure-exceptions \
                          compile-infrastructure-http \
                          compile-infrastructure-json \
                          compile-infrastructure-services \
                          compile-infrastructure-sql \
                          compile-infrastructure-validation
+
+compile-infrastructure-datetime : sources/infrastructure/datetime/datetime-intern.o \
+                                  sources/infrastructure/datetime/datetime.o
+
+sources/infrastructure/datetime/datetime-intern.o : sources/infrastructure/datetime/datetime-intern.scm
+	csc -c \
+	sources/infrastructure/datetime/datetime-intern.scm -o \
+	sources/infrastructure/datetime/datetime-intern.o
+
+sources/infrastructure/datetime/datetime.o : sources/infrastructure/datetime/datetime.scm
+	csc -c \
+	sources/infrastructure/datetime/datetime.scm -o \
+	sources/infrastructure/datetime/datetime.o
 
 compile-infrastructure-exceptions : sources/infrastructure/exceptions/exceptions.o
 
@@ -151,11 +173,14 @@ link : compile
 	-lsqlite3 \
 	sources/bindings/http/new-customer-service.o \
 	sources/core/services/new-customer-service.o \
-	sources/core/tables/customer-addresses-table.o \
 	sources/core/tables/customers-table.o \
+	sources/core/tables/shipping-addresses-table.o \
 	sources/foreign-interfaces/fastcgi.o \
 	sources/foreign-interfaces/jansson.o \
+	sources/foreign-interfaces/scdtl.o \
 	sources/foreign-interfaces/sqlite.o \
+	sources/infrastructure/datetime/datetime-intern.o \
+	sources/infrastructure/datetime/datetime.o \
 	sources/infrastructure/exceptions/exceptions.o \
 	sources/infrastructure/http/http.o \
 	sources/infrastructure/http/http-toplevel.o \
