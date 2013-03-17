@@ -35,6 +35,11 @@ struct json_dumps_result_t* json_dumps_wrapped(json_t* json)
   }
 
   struct json_dumps_result_t* json_dumps_result = malloc(sizeof(struct json_dumps_result_t));
+  if (json_dumps_result == NULL)
+  {
+    return NULL;
+  }
+
   json_dumps_result->value = value;
   return json_dumps_result;
 }
