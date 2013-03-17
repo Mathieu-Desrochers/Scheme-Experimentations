@@ -84,12 +84,14 @@ struct scdtl_strftime_result_t* scdtl_strftime_wrapped(struct tm* tm, char* form
   int result = strftime(output, 50, format, tm);
   if (result == 0)
   {
+    free(output);
     return NULL;
   }
 
   struct scdtl_strftime_result_t* scdtl_strftime_result = malloc(sizeof(struct scdtl_strftime_result_t));
   if (scdtl_strftime_result == NULL)
   {
+    free(output);
     return NULL;
   }
 
