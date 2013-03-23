@@ -38,7 +38,9 @@
 ;; executes a procedure within a transaction
 (define (within-sql-transaction sql-connection procedure)
   (handle-exceptions exception
-    (sql-execute sql-connection "ROLLBACK TRANSACTION;")
+    (begin
+      (sql-execute sql-connection "ROLLBACK TRANSACTION;")
+      (abort exception))
     (sql-execute sql-connection "BEGIN TRANSACTION;")
     (procedure)
     (sql-execute sql-connection "COMMIT TRANSACTION;")))

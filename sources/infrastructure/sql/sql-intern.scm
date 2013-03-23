@@ -3,29 +3,41 @@
 
 (declare (unit sql-intern))
 
+(declare (uses datetime))
 (declare (uses sqlite))
+
+;; serializes a parameter value for its storage in sqlite3
+(define (sql-serialize-parameter-value parameter-value)
+  (cond ((boolean? parameter-value) (if parameter-value 1 0))
+        ((date? parameter-value) (date->string parameter-value))
+        ((datetime? parameter-value) (datetime->string parameter-value))
+        ((time? parameter-value) (time->string parameter-value))
+        (else parameter-value)))
+
+;; binds a parameter of a sqlite3-stmt*
+(define (sql-bind-parameter sqlite3-stmt* parameter-number parameter-value)
+  (cond ((and (integer? parameter-value) (exact? parameter-value))
+         (sqlite3-bind-int sqlite3-stmt* parameter-number parameter-value))
+        ((number? parameter-value)
+         (sqlite3-bind-double sqlite3-stmt* parameter-number parameter-value))
+        ((string? parameter-value)
+         (sqlite3-bind-text sqlite3-stmt* parameter-number parameter-value -1 sqlite3-transient))
+        ((not parameter-value)
+         (sqlite3-bind-null sqlite3-stmt* parameter-number))
+        (else
+          (abort
+            (string-append
+              "unsupported parameter value "
+              (format "~a" parameter-value))))))
 
 ;; binds the parameters of a sqlite3-stmt*
 (define (sql-bind-parameters sqlite3-stmt* parameter-values)
-  (define (sql-bind-parameter parameter-index)
-    (let ((parameter-number (+ parameter-index 1))
-          (parameter-value (list-ref parameter-values parameter-index)))
-      (cond ((and (integer? parameter-value) (exact? parameter-value))
-             (sqlite3-bind-int sqlite3-stmt* parameter-number parameter-value))
-            ((number? parameter-value)
-             (sqlite3-bind-double sqlite3-stmt* parameter-number parameter-value))
-            ((string? parameter-value)
-             (sqlite3-bind-text sqlite3-stmt* parameter-number parameter-value -1 sqlite3-transient))
-            ((not parameter-value)
-             (sqlite3-bind-null sqlite3-stmt* parameter-number))
-            (else
-              (abort
-                (string-append
-                  "unsupported parameter value "
-                  (format "~a" parameter-value)))))))
   (map
     (lambda (parameter-index)
-      (let ((sql-bind-parameter-result (sql-bind-parameter parameter-index)))
+      (let* ((parameter-number (+ parameter-index 1))
+             (parameter-value (list-ref parameter-values parameter-index))
+             (serialized-parameter-value (sql-serialize-parameter-value parameter-value))
+             (sql-bind-parameter-result (sql-bind-parameter sqlite3-stmt* parameter-number serialized-parameter-value)))
         (unless (= sql-bind-parameter-result sqlite3-result-ok)
           (abort
             (string-append
