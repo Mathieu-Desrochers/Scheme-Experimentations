@@ -81,18 +81,18 @@ compile-infrastructure : compile-infrastructure-datetime \
                          compile-infrastructure-sql \
                          compile-infrastructure-validation
 
-compile-infrastructure-datetime : sources/infrastructure/datetime/datetime-intern.o \
-                                  sources/infrastructure/datetime/datetime.o
-
-sources/infrastructure/datetime/datetime-intern.o : sources/infrastructure/datetime/datetime-intern.scm
-	csc -c \
-	sources/infrastructure/datetime/datetime-intern.scm -o \
-	sources/infrastructure/datetime/datetime-intern.o
+compile-infrastructure-datetime : sources/infrastructure/datetime/datetime.o \
+                                  sources/infrastructure/datetime/datetime-intern.o
 
 sources/infrastructure/datetime/datetime.o : sources/infrastructure/datetime/datetime.scm
 	csc -c \
 	sources/infrastructure/datetime/datetime.scm -o \
 	sources/infrastructure/datetime/datetime.o
+
+sources/infrastructure/datetime/datetime-intern.o : sources/infrastructure/datetime/datetime-intern.scm
+	csc -c \
+	sources/infrastructure/datetime/datetime-intern.scm -o \
+	sources/infrastructure/datetime/datetime-intern.o
 
 compile-infrastructure-exceptions : sources/infrastructure/exceptions/exceptions.o
 
@@ -121,6 +121,7 @@ sources/infrastructure/http/main.o : sources/infrastructure/http/main.c
 	sources/infrastructure/http/main.o
 
 compile-infrastructure-json : sources/infrastructure/json/json.o \
+                              sources/infrastructure/json/json-convert.o \
                               sources/infrastructure/json/json-format.o \
                               sources/infrastructure/json/json-parse.o
 
@@ -128,6 +129,11 @@ sources/infrastructure/json/json.o : sources/infrastructure/json/json.scm
 	csc -c \
 	sources/infrastructure/json/json.scm -o \
 	sources/infrastructure/json/json.o
+
+sources/infrastructure/json/json-convert.o : sources/infrastructure/json/json-convert.scm
+	csc -c \
+	sources/infrastructure/json/json-convert.scm -o \
+	sources/infrastructure/json/json-convert.o
 
 sources/infrastructure/json/json-format.o : sources/infrastructure/json/json-format.scm
 	csc -c \
@@ -146,18 +152,24 @@ sources/infrastructure/services/services.o : sources/infrastructure/services/ser
 	sources/infrastructure/services/services.scm -o \
 	sources/infrastructure/services/services.o
 
-compile-infrastructure-sql : sources/infrastructure/sql/sql-intern.o \
-                             sources/infrastructure/sql/sql.o
-
-sources/infrastructure/sql/sql-intern.o : sources/infrastructure/sql/sql-intern.scm
-	csc -c \
-	sources/infrastructure/sql/sql-intern.scm -o \
-	sources/infrastructure/sql/sql-intern.o
+compile-infrastructure-sql : sources/infrastructure/sql/sql.o \
+                             sources/infrastructure/sql/sql-convert.o \
+                             sources/infrastructure/sql/sql-intern.o
 
 sources/infrastructure/sql/sql.o : sources/infrastructure/sql/sql.scm
 	csc -c \
 	sources/infrastructure/sql/sql.scm -o \
 	sources/infrastructure/sql/sql.o
+
+sources/infrastructure/sql/sql-convert.o : sources/infrastructure/sql/sql-convert.scm
+	csc -c \
+	sources/infrastructure/sql/sql-convert.scm -o \
+	sources/infrastructure/sql/sql-convert.o
+
+sources/infrastructure/sql/sql-intern.o : sources/infrastructure/sql/sql-intern.scm
+	csc -c \
+	sources/infrastructure/sql/sql-intern.scm -o \
+	sources/infrastructure/sql/sql-intern.o
 
 compile-infrastructure-validation : sources/infrastructure/validation/validation.o
 
@@ -179,18 +191,20 @@ link : compile
 	sources/foreign-interfaces/jansson.o \
 	sources/foreign-interfaces/scdtl.o \
 	sources/foreign-interfaces/sqlite.o \
-	sources/infrastructure/datetime/datetime-intern.o \
 	sources/infrastructure/datetime/datetime.o \
+	sources/infrastructure/datetime/datetime-intern.o \
 	sources/infrastructure/exceptions/exceptions.o \
 	sources/infrastructure/http/http.o \
 	sources/infrastructure/http/http-toplevel.o \
 	sources/infrastructure/http/main.o \
 	sources/infrastructure/json/json.o \
+	sources/infrastructure/json/json-convert.o \
 	sources/infrastructure/json/json-format.o \
 	sources/infrastructure/json/json-parse.o \
 	sources/infrastructure/services/services.o \
-	sources/infrastructure/sql/sql-intern.o \
 	sources/infrastructure/sql/sql.o \
+	sources/infrastructure/sql/sql-convert.o \
+	sources/infrastructure/sql/sql-intern.o \
 	sources/infrastructure/validation/validation.o \
 	-o scheme
 

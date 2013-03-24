@@ -34,10 +34,11 @@
       (define (json-format-value-field field)
         (let* ((field-symbol (car field))
                (field-symbol-string (symbol->string field-symbol)))
-          `(json-format-value
-            json-object
-            ,field-symbol-string
-            ,field-symbol)))
+          `(json-downgrade-value
+            (json-format-value
+              json-object
+              ,field-symbol-string
+              ,field-symbol))))
 
       ;; json formats a value list field
       (define (json-format-value-list-field field)
@@ -78,6 +79,7 @@
 
           (use srfi-1)
 
+          (declare (uses json-convert))
           (declare (uses json-format))
 
           ;; encapsulates a response

@@ -8,9 +8,9 @@
   (shipping-addresses-table
     "shipping-addresses")
   (shipping-address-row
-    "shipping-address-id"
-    "customer-id"
-    "effective-date"
-    "street"
-    "city"
-    "state"))
+    ("shipping-address-id" integer)
+    ("customer-id" integer)
+    ("effective-date" date)
+    ("street" string)
+    ("city" string)
+    ("state" string)))

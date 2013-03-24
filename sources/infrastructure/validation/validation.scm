@@ -3,9 +3,23 @@
 
 (declare (unit validation))
 
+(declare (uses datetime))
+
 ;; validates a boolean
 (define (validate-boolean value)
   (cond ((not (boolean? value)) 'wrong-type)
+        (else #f)))
+
+;; validates a date
+(define (validate-date value required)
+  (cond ((not value) (if (not required) #f 'missing))
+        ((not (date? value)) 'wrong-type)
+        (else #f)))
+
+;; validates a datetime
+(define (validate-datetime value required)
+  (cond ((not value) (if (not required) #f 'missing))
+        ((not (datetime? value)) 'wrong-type)
         (else #f)))
 
 ;; validates an integer
@@ -30,6 +44,12 @@
         ((not (string? value)) 'wrong-type)
         ((< (string-length value) min-length) 'too-short)
         ((> (string-length value) max-length) 'too-long)
+        (else #f)))
+
+;; validates a time
+(define (validate-time value required)
+  (cond ((not value) (if (not required) #f 'missing))
+        ((not (time? value)) 'wrong-type)
         (else #f)))
 
 ;; validates a list

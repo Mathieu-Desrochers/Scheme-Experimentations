@@ -3,16 +3,7 @@
 
 (declare (unit sql-intern))
 
-(declare (uses datetime))
 (declare (uses sqlite))
-
-;; serializes a parameter value for its storage in sqlite3
-(define (sql-serialize-parameter-value parameter-value)
-  (cond ((boolean? parameter-value) (if parameter-value 1 0))
-        ((date? parameter-value) (date->string parameter-value))
-        ((datetime? parameter-value) (datetime->string parameter-value))
-        ((time? parameter-value) (time->string parameter-value))
-        (else parameter-value)))
 
 ;; binds a parameter of a sqlite3-stmt*
 (define (sql-bind-parameter sqlite3-stmt* parameter-number parameter-value)
@@ -36,8 +27,7 @@
     (lambda (parameter-index)
       (let* ((parameter-number (+ parameter-index 1))
              (parameter-value (list-ref parameter-values parameter-index))
-             (serialized-parameter-value (sql-serialize-parameter-value parameter-value))
-             (sql-bind-parameter-result (sql-bind-parameter sqlite3-stmt* parameter-number serialized-parameter-value)))
+             (sql-bind-parameter-result (sql-bind-parameter sqlite3-stmt* parameter-number parameter-value)))
         (unless (= sql-bind-parameter-result sqlite3-result-ok)
           (abort
             (string-append

@@ -110,10 +110,13 @@
       ;; json parses a value field
       (define (json-parse-value-field field)
         (let* ((field-symbol (list-ref field 0))
-               (field-symbol-string (symbol->string field-symbol)))
-          `(json-parse-value
-            json-object
-            ,field-symbol-string)))
+               (field-symbol-string (symbol->string field-symbol))
+               (field-type (list-ref field 1)))
+          `(json-upgrade-value
+            (json-parse-value
+              json-object
+              ,field-symbol-string)
+            ',field-type)))
 
       ;; json parses a value list field
       (define (json-parse-value-list-field field)
@@ -152,6 +155,7 @@
 
           (use srfi-1)
 
+          (declare (uses json-convert))
           (declare (uses json-parse))
           (declare (uses validation))
 

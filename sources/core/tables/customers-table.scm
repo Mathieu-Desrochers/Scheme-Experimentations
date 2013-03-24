@@ -8,7 +8,7 @@
   (customers-table
     "customers")
   (customer-row
-    "customer-id"
-    "first-name"
-    "last-name"
-    "is-vip"))
+    ("customer-id" integer)
+    ("first-name" string)
+    ("last-name" string)
+    ("is-vip" boolean)))
