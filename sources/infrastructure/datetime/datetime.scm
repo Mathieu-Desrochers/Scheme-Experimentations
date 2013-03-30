@@ -134,3 +134,140 @@
   (with-datetime-now
     (lambda (year month day hour minute second)
       (make-time hour minute second))))
+
+;; adds years to a date
+(define (date-add-years date years)
+  (make-date
+    (+ (date-year date) years)
+    (date-month date)
+    (date-day date)))
+
+;; adds months to a date
+(define (date-add-months date months)
+  (with-normalized-datetime
+    (date-year date)
+    (+ (date-month date) months)
+    (date-day date)
+    0
+    0
+    0
+    (lambda (year month day hour minute second)
+      (make-date year month day))))
+
+;; adds days to a date
+(define (date-add-days date days)
+  (with-normalized-datetime
+    (date-year date)
+    (date-month date)
+    (+ (date-day date) days)
+    0
+    0
+    0
+    (lambda (year month day hour minute second)
+      (make-date year month day))))
+
+;; adds years to a datetime
+(define (datetime-add-years datetime years)
+  (make-datetime
+    (+ (datetime-year datetime) years)
+    (datetime-month datetime)
+    (datetime-day datetime)
+    (datetime-hour datetime)
+    (datetime-minute datetime)
+    (datetime-second datetime)))
+
+;; adds months to a datetime
+(define (datetime-add-months datetime months)
+  (with-normalized-datetime
+    (datetime-year datetime)
+    (+ (datetime-month datetime) months)
+    (datetime-day datetime)
+    (datetime-hour datetime)
+    (datetime-minute datetime)
+    (datetime-second datetime)
+    (lambda (year month day hour minute second)
+      (make-datetime year month day hour minute second))))
+
+;; adds days to a datetime
+(define (datetime-add-days datetime days)
+  (with-normalized-datetime
+    (datetime-year datetime)
+    (datetime-month datetime)
+    (+ (datetime-day datetime) days)
+    (datetime-hour datetime)
+    (datetime-minute datetime)
+    (datetime-second datetime)
+    (lambda (year month day hour minute second)
+      (make-datetime year month day hour minute second))))
+
+;; adds hours to a datetime
+(define (datetime-add-hours datetime hours)
+  (with-normalized-datetime
+    (datetime-year datetime)
+    (datetime-month datetime)
+    (datetime-day datetime)
+    (+ (datetime-hour datetime) hours)
+    (datetime-minute datetime)
+    (datetime-second datetime)
+    (lambda (year month day hour minute second)
+      (make-datetime year month day hour minute second))))
+
+;; adds minutes to a datetime
+(define (datetime-add-minutes datetime minutes)
+  (with-normalized-datetime
+    (datetime-year datetime)
+    (datetime-month datetime)
+    (datetime-day datetime)
+    (datetime-hour datetime)
+    (+ (datetime-minute datetime) minutes)
+    (datetime-second datetime)
+    (lambda (year month day hour minute second)
+      (make-datetime year month day hour minute second))))
+
+;; adds seconds to a datetime
+(define (datetime-add-seconds datetime seconds)
+  (with-normalized-datetime
+    (datetime-year datetime)
+    (datetime-month datetime)
+    (datetime-day datetime)
+    (datetime-hour datetime)
+    (datetime-minute datetime)
+    (+ (datetime-second datetime) seconds)
+    (lambda (year month day hour minute second)
+      (make-datetime year month day hour minute second))))
+
+;; adds hours to a time
+(define (time-add-hours time hours)
+  (with-normalized-datetime
+    0
+    0
+    0
+    (+ (time-hour time) hours)
+    (time-minute time)
+    (time-second time)
+    (lambda (year month day hour minute second)
+      (make-time hour minute second))))
+
+;; adds minutes to a time
+(define (time-add-minutes time minutes)
+  (with-normalized-datetime
+    0
+    0
+    0
+    (time-hour time)
+    (+ (time-minute time) minutes)
+    (time-second time)
+    (lambda (year month day hour minute second)
+      (make-time hour minute second))))
+
+;; adds seconds to a time
+(define (time-add-seconds time seconds)
+  (with-normalized-datetime
+    0
+    0
+    0
+    (time-hour time)
+    (time-minute time)
+    (+ (time-second time) seconds)
+    (lambda (year month day hour minute second)
+      (make-time hour minute second))))
