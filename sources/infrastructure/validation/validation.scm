@@ -14,12 +14,14 @@
 (define (validate-date value required)
   (cond ((not value) (if (not required) #f 'missing))
         ((not (date? value)) 'wrong-type)
+        ((not (date-valid? value)) 'invalid)
         (else #f)))
 
 ;; validates a datetime
 (define (validate-datetime value required)
   (cond ((not value) (if (not required) #f 'missing))
         ((not (datetime? value)) 'wrong-type)
+        ((not (datetime-valid? value)) 'invalid)
         (else #f)))
 
 ;; validates an integer
@@ -50,6 +52,7 @@
 (define (validate-time value required)
   (cond ((not value) (if (not required) #f 'missing))
         ((not (time? value)) 'wrong-type)
+        ((not (time-valid? value)) 'invalid)
         (else #f)))
 
 ;; validates a list
