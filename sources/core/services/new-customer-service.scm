@@ -2,6 +2,7 @@
 (declare (unit new-customer-service))
 
 (declare (uses customers-table))
+(declare (uses datetime))
 (declare (uses shipping-addresses-table))
 (declare (uses sql))
 (declare (uses validation))
@@ -16,7 +17,6 @@
   (shipping-address new-customer-shipping-address-subrequest #t))
 
 (define-request new-customer-shipping-address-subrequest
-  (effective-date date #t)
   (street string #t 1 100)
   (city string #t 1 50)
   (state string #t 1 50))
@@ -52,7 +52,7 @@
         sql-connection
         (make-shipping-address-row 0
           customer-id
-          (new-customer-shipping-address-subrequest-effective-date shipping-address-subrequest)
+          (date-now)
           (new-customer-shipping-address-subrequest-street shipping-address-subrequest)
           (new-customer-shipping-address-subrequest-city shipping-address-subrequest)
           (new-customer-shipping-address-subrequest-state shipping-address-subrequest))))

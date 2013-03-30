@@ -62,7 +62,7 @@ sources/foreign-interfaces/jansson.o : sources/foreign-interfaces/jansson.scm
 compile-foreign-interfaces-scdtl : sources/foreign-interfaces/scdtl.o
 
 sources/foreign-interfaces/scdtl.o : sources/foreign-interfaces/scdtl.scm
-	csc -c \
+	csc -C "-D_XOPEN_SOURCE" -c \
 	sources/foreign-interfaces/scdtl.scm -o \
 	sources/foreign-interfaces/scdtl.o
 
