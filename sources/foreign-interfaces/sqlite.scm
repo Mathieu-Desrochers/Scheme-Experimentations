@@ -12,13 +12,13 @@ sqlite3** malloc_sqlite3_pointer()
   return sqlite3_pointer;
 }
 
-// indirects the specified sqlite3**
+// indirects a sqlite3**
 sqlite3* indirect_sqlite3_pointer_pointer(sqlite3** sqlite3_pointer)
 {
   return *sqlite3_pointer;
 }
 
-// frees the specified sqlite3*
+// frees a sqlite3*
 void free_sqlite3_pointer(sqlite3** sqlite3_pointer)
 {
   sqlite3_free(sqlite3_pointer);
@@ -31,13 +31,13 @@ sqlite3_stmt** malloc_sqlite3_stmt_pointer()
   return sqlite3_stmt_pointer;
 }
 
-// indirects the specified sqlite3_stmt**
+// indirects a sqlite3_stmt**
 sqlite3_stmt* indirect_sqlite3_stmt_pointer_pointer(sqlite3_stmt** sqlite3_stmt_pointer)
 {
   return *sqlite3_stmt_pointer;
 }
 
-// frees the specified sqlite3_stmt*
+// frees a sqlite3_stmt*
 void free_sqlite3_stmt_pointer(sqlite3_stmt** sqlite3_stmt_pointer)
 {
   sqlite3_free(sqlite3_stmt_pointer);

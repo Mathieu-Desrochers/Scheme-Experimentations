@@ -12,7 +12,7 @@ struct tm* malloc_scdtl_tm()
   return tm;
 }
 
-// frees the specified calendar time
+// frees a calendar time
 void free_scdtl_tm(struct tm* tm)
 {
   free(tm);
@@ -140,7 +140,7 @@ char* scdtl_strftime_result_value(struct scdtl_strftime_result_t* scdtl_strftime
   return value;
 }
 
-// frees the specified scdtl_strftime_result
+// frees a scdtl_strftime_result
 // as well as the value it points to
 void free_scdtl_strftime_result(struct scdtl_strftime_result_t* scdtl_strftime_result)
 {

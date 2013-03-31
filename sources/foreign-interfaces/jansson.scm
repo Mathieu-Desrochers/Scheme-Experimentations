@@ -12,7 +12,7 @@ json_error_t* malloc_json_error()
   return json_error;
 }
 
-// frees the specified json_error
+// frees a json_error
 void free_json_error(json_error_t* json_error)
 {
   free(json_error);
@@ -53,7 +53,7 @@ char* json_dumps_result_value(struct json_dumps_result_t* json_dumps_result)
   return value;
 }
 
-// frees the specified json_dumps_result
+// frees a json_dumps_result
 // as well as the value it points to
 void json_free_dumps_result(struct json_dumps_result_t* json_dumps_result)
 {

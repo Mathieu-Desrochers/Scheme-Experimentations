@@ -124,3 +124,15 @@ Installing FastCGI Development Kit
  - ./configure
  - make
  - sudo make install
+
+Installing Perl Compatible Regular Expressions
+----------------------------------------------
+
+- Change directory to the root of the repository
+- Execute the following commands:
+ - mkdir /tmp/pcre
+ - tar -x -z -f tools/pcre/pcre-8.32.tar.gz -C /tmp/pcre
+ - cd /tmp/pcre/pcre-8.32
+ - ./configure
+ - make
+ - sudo make install

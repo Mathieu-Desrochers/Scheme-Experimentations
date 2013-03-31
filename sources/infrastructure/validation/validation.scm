@@ -202,6 +202,10 @@
         element-field-type-validation-procedure
         element-field-validation-procedure))))
 
+;; raises an exception caused by a validation error
+(define (abort-validation-error validation-error)
+  (abort-validation-errors (list validation-error)))
+
 ;; raises an exception caused by validation errors
 (define (abort-validation-errors validation-errors)
   (let ((condition (make-property-condition 'validation 'errors validation-errors)))

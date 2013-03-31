@@ -9,7 +9,7 @@
 
 (define-http-binding
   "POST"
-  "new-customer"
+  "^customers$"
   new-customer-service
   http-parse-new-customer-request
   http-format-new-customer-response)

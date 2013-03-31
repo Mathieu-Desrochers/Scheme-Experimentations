@@ -42,6 +42,7 @@ sources/core/tables/shipping-addresses-table.o : sources/core/tables/shipping-ad
 
 compile-foreign-interfaces : compile-foreign-interfaces-fastcgi \
                              compile-foreign-interfaces-jansson \
+                             compile-foreign-interfaces-pcre \
                              compile-foreign-interfaces-scdtl \
                              compile-foreign-interfaces-sqlite
 
@@ -58,6 +59,13 @@ sources/foreign-interfaces/jansson.o : sources/foreign-interfaces/jansson.scm
 	csc -c -I/usr/local/include \
 	sources/foreign-interfaces/jansson.scm -o \
 	sources/foreign-interfaces/jansson.o
+
+compile-foreign-interfaces-pcre : sources/foreign-interfaces/pcre.o
+
+sources/foreign-interfaces/pcre.o : sources/foreign-interfaces/pcre.scm
+	csc -c -I/usr/local/include \
+	sources/foreign-interfaces/pcre.scm -o \
+	sources/foreign-interfaces/pcre.o
 
 compile-foreign-interfaces-scdtl : sources/foreign-interfaces/scdtl.o
 
@@ -77,6 +85,7 @@ compile-infrastructure : compile-infrastructure-datetime \
                          compile-infrastructure-exceptions \
                          compile-infrastructure-http \
                          compile-infrastructure-json \
+                         compile-infrastructure-regex \
                          compile-infrastructure-services \
                          compile-infrastructure-sql \
                          compile-infrastructure-validation
@@ -145,6 +154,19 @@ sources/infrastructure/json/json-parse.o : sources/infrastructure/json/json-pars
 	sources/infrastructure/json/json-parse.scm -o \
 	sources/infrastructure/json/json-parse.o
 
+compile-infrastructure-regex : sources/infrastructure/regex/regex.o \
+                               sources/infrastructure/regex/regex-intern.o
+
+sources/infrastructure/regex/regex.o : sources/infrastructure/regex/regex.scm
+	csc -c \
+	sources/infrastructure/regex/regex.scm -o \
+	sources/infrastructure/regex/regex.o
+
+sources/infrastructure/regex/regex-intern.o : sources/infrastructure/regex/regex-intern.scm
+	csc -c \
+	sources/infrastructure/regex/regex-intern.scm -o \
+	sources/infrastructure/regex/regex-intern.o
+
 compile-infrastructure-services : sources/infrastructure/services/services.o
 
 sources/infrastructure/services/services.o : sources/infrastructure/services/services.scm
@@ -182,6 +204,7 @@ link : compile
 	csc \
 	-lfcgi \
 	-ljansson \
+	-lpcre \
 	-lsqlite3 \
 	sources/bindings/http/new-customer-service.o \
 	sources/core/services/new-customer-service.o \
@@ -189,6 +212,7 @@ link : compile
 	sources/core/tables/shipping-addresses-table.o \
 	sources/foreign-interfaces/fastcgi.o \
 	sources/foreign-interfaces/jansson.o \
+	sources/foreign-interfaces/pcre.o \
 	sources/foreign-interfaces/scdtl.o \
 	sources/foreign-interfaces/sqlite.o \
 	sources/infrastructure/datetime/datetime.o \
@@ -201,6 +225,8 @@ link : compile
 	sources/infrastructure/json/json-convert.o \
 	sources/infrastructure/json/json-format.o \
 	sources/infrastructure/json/json-parse.o \
+	sources/infrastructure/regex/regex.o \
+	sources/infrastructure/regex/regex-intern.o \
 	sources/infrastructure/services/services.o \
 	sources/infrastructure/sql/sql.o \
 	sources/infrastructure/sql/sql-convert.o \

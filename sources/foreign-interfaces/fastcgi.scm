@@ -22,7 +22,7 @@ char* FCGX_buffer_string(void* buffer_pointer)
   return (char*)buffer_pointer;
 }
 
-// frees the specified buffer
+// frees a buffer
 void FCGX_free_buffer(void* buffer_pointer)
 {
   free(buffer_pointer);
