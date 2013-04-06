@@ -9,7 +9,7 @@
 
 (define-http-binding
   "POST"
-  "^customers/(\\d{1,10})/shipping-addresses$"
+  "^customers/(\\d{1,6})/shipping-addresses$"
   new-shipping-address-service
   http-parse-new-shipping-address-request
   http-format-new-shipping-address-response)
@@ -17,10 +17,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; http parse logic
 
-(define (http-parse-new-shipping-address-request http-request-body)
-  (with-parsed-json-object http-request-body
-    (lambda (json-object)
-      (json-parse-new-shipping-address-request json-object))))
+(define (http-parse-new-shipping-address-request route-captures request-body)
+  (let ((new-shipping-address-request (http-parse-json request-body json-parse-new-shipping-address-request)))
+    (if new-shipping-address-request
+      (let ((customer-id (string->number (car route-captures))))
+        (new-shipping-address-request-customer-id-set! new-shipping-address-request customer-id)
+        new-shipping-address-request)
+      #f)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; http format logic

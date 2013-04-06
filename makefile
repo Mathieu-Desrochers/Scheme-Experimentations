@@ -8,17 +8,24 @@ compile : compile-bindings \
 
 compile-bindings : compile-bindings-http
 
-compile-bindings-http : sources/bindings/http/new-customer-service.o
+compile-bindings-http : sources/bindings/http/new-customer-service.o \
+                        sources/bindings/http/new-shipping-address-service.o
 
 sources/bindings/http/new-customer-service.o : sources/bindings/http/new-customer-service.scm
 	csc -c -extend sources/macros/bindings/http/define-http-binding.scm \
 	sources/bindings/http/new-customer-service.scm -o \
 	sources/bindings/http/new-customer-service.o
 
+sources/bindings/http/new-shipping-address-service.o : sources/bindings/http/new-shipping-address-service.scm
+	csc -c -extend sources/macros/bindings/http/define-http-binding.scm \
+	sources/bindings/http/new-shipping-address-service.scm -o \
+	sources/bindings/http/new-shipping-address-service.o
+
 compile-core : compile-core-services \
                compile-core-tables
 
-compile-core-services : sources/core/services/new-customer-service.o
+compile-core-services : sources/core/services/new-customer-service.o \
+                        sources/core/services/new-shipping-address-service.o
 
 sources/core/services/new-customer-service.o : sources/core/services/new-customer-service.scm
 	csc -c \
@@ -26,6 +33,13 @@ sources/core/services/new-customer-service.o : sources/core/services/new-custome
 	-extend sources/macros/core/services/define-response.scm \
 	sources/core/services/new-customer-service.scm -o \
 	sources/core/services/new-customer-service.o
+
+sources/core/services/new-shipping-address-service.o : sources/core/services/new-shipping-address-service.scm
+	csc -c \
+	-extend sources/macros/core/services/define-request.scm \
+	-extend sources/macros/core/services/define-response.scm \
+	sources/core/services/new-shipping-address-service.scm -o \
+	sources/core/services/new-shipping-address-service.o
 
 compile-core-tables : sources/core/tables/customers-table.o \
                       sources/core/tables/shipping-addresses-table.o
@@ -111,6 +125,7 @@ sources/infrastructure/exceptions/exceptions.o : sources/infrastructure/exceptio
 	sources/infrastructure/exceptions/exceptions.o
 
 compile-infrastructure-http : sources/infrastructure/http/http.o \
+                              sources/infrastructure/http/http-bindings.o \
                               sources/infrastructure/http/http-toplevel.o \
                               sources/infrastructure/http/main.o
 
@@ -118,6 +133,11 @@ sources/infrastructure/http/http.o : sources/infrastructure/http/http.scm
 	csc -c \
 	sources/infrastructure/http/http.scm -o \
 	sources/infrastructure/http/http.o
+
+sources/infrastructure/http/http-bindings.o : sources/infrastructure/http/http-bindings.scm
+	csc -c \
+	sources/infrastructure/http/http-bindings.scm -o \
+	sources/infrastructure/http/http-bindings.o
 
 sources/infrastructure/http/http-toplevel.o : sources/infrastructure/http/http-toplevel.scm
 	csc -c -e \
@@ -207,7 +227,9 @@ link : compile
 	-lpcre \
 	-lsqlite3 \
 	sources/bindings/http/new-customer-service.o \
+	sources/bindings/http/new-shipping-address-service.o \
 	sources/core/services/new-customer-service.o \
+	sources/core/services/new-shipping-address-service.o \
 	sources/core/tables/customers-table.o \
 	sources/core/tables/shipping-addresses-table.o \
 	sources/foreign-interfaces/fastcgi.o \
@@ -219,6 +241,7 @@ link : compile
 	sources/infrastructure/datetime/datetime-intern.o \
 	sources/infrastructure/exceptions/exceptions.o \
 	sources/infrastructure/http/http.o \
+	sources/infrastructure/http/http-bindings.o \
 	sources/infrastructure/http/http-toplevel.o \
 	sources/infrastructure/http/main.o \
 	sources/infrastructure/json/json.o \

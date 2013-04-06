@@ -52,13 +52,14 @@
           ", "))
 
       ;; upgrades row values based on their columns type
-      (define (sql-upgrade-row row columns)
-        (map
-          (lambda (column-index)
-            (sql-upgrade-value
-              (list-ref row column-index)
-              (column-type (list-ref columns column-index))))
-          (iota (length columns))))
+      (define (sql-upgrade-row columns)
+        `(list
+          ,@(map
+            (lambda (column-index)
+              `(sql-upgrade-value
+                (list-ref row ,column-index)
+                ',(column-type (list-ref columns column-index))))
+            (iota (length columns)))))
 
       ;; parses the expression
       (let* ((table-symbol (car (list-ref exp 1)))
@@ -93,7 +94,9 @@
           (define (,(symbol-append table-symbol '-select-by- (column-symbol id-column)) sql-connection ,(column-symbol id-column))
             (map
               (lambda (row)
-                (apply ,(symbol-append 'make- row-symbol) (sql-upgrade-row row columns)))
+                (apply
+                  ,(symbol-append 'make- row-symbol)
+                  ,(sql-upgrade-row columns)))
               (sql-read sql-connection
                 ,(string-append
                   "SELECT " (join-columns-name columns)
@@ -105,7 +108,9 @@
           (define (,(symbol-append table-symbol '-select-all) sql-connection)
             (map
               (lambda (row)
-                (apply ,(symbol-append 'make- row-symbol) (sql-upgrade-row row columns)))
+                (apply
+                  ,(symbol-append 'make- row-symbol)
+                  ,(sql-upgrade-row columns)))
               (sql-read sql-connection
                 ,(string-append
                   "SELECT " (join-columns-name columns)

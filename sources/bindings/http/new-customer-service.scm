@@ -17,10 +17,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; http parse logic
 
-(define (http-parse-new-customer-request http-request-body)
-  (with-parsed-json-object http-request-body
-    (lambda (json-object)
-      (json-parse-new-customer-request json-object))))
+(define (http-parse-new-customer-request route-captures request-body)
+  (http-parse-json request-body json-parse-new-customer-request))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; http format logic

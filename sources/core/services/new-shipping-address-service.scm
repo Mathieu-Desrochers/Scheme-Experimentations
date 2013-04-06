@@ -11,13 +11,7 @@
 ;; request definition
 
 (define-request new-shipping-address-request
-  (customer new-shipping-address-customer-subrequest #t)
-  (shipping-address new-shipping-address-shipping-address-subrequest #t))
-
-(define-request new-shipping-address-customer-subrequest
-  (customer-id integer #t 1 1000000000))
-
-(define-request new-shipping-address-shipping-address-subrequest
+  (customer-id integer #t 1 1000000)
   (street string #t 1 100)
   (city string #t 1 50)
   (state string #t 1 50)
@@ -40,23 +34,21 @@
       (abort-validation-errors validation-errors)))
 
   ;; validate the customer-id
-  (let* ((customer-subrequest (new-shipping-address-request-customer new-shipping-address-request))
-         (customer-id (new-shipping-address-customer-subrequest-customer-id customer-subrequest))
-         (customer-row (customers-table-select-by-customer-id customer-id)))
+  (let* ((customer-id (new-shipping-address-request-customer-id new-shipping-address-request))
+         (customer-row (customers-table-select-by-customer-id sql-connection customer-id)))
     (when (null? customer-row)
       (abort-validation-error 'customer-id-unknown))
 
     ;; insert a shipping-address-row
-    (let* ((shipping-address-subrequest (new-shipping-address-request-shipping-address new-shipping-address-request))
-           (shipping-address-id
+    (let ((shipping-address-id
             (shipping-addresses-table-insert
               sql-connection
               (make-shipping-address-row 0
                 customer-id
-                (new-shipping-address-shipping-address-subrequest-effective-date shipping-address-subrequest)
-                (new-shipping-address-shipping-address-subrequest-street shipping-address-subrequest)
-                (new-shipping-address-shipping-address-subrequest-city shipping-address-subrequest)
-                (new-shipping-address-shipping-address-subrequest-state shipping-address-subrequest)))))
+                (new-shipping-address-request-effective-date new-shipping-address-request)
+                (new-shipping-address-request-street new-shipping-address-request)
+                (new-shipping-address-request-city new-shipping-address-request)
+                (new-shipping-address-request-state new-shipping-address-request)))))
 
       ;; make the service response
       (make-new-shipping-address-response shipping-address-id))))
