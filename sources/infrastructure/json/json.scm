@@ -1,6 +1,7 @@
 
 (declare (unit json))
 
+(declare (uses exceptions))
 (declare (uses jansson))
 
 ;; encapsulates a json object
@@ -144,3 +145,18 @@
     (let ((jansson-dumps-result-value (jansson-dumps-result-value jansson-dumps-result*)))
       (jansson-free-dumps-result jansson-dumps-result*)
       jansson-dumps-result-value)))
+
+;; parses a json string
+(define (json-parse-string string json-parse-procedure)
+  (hide-exceptions
+    (lambda ()
+      (with-parsed-json-object string
+        (lambda (json-object)
+          (json-parse-procedure json-object))))))
+
+;; formats a json string
+(define (json-format-string record json-format-procedure)
+  (with-new-json-object
+    (lambda (json-object)
+      (json-format-procedure record json-object)
+      (json-object->string json-object))))

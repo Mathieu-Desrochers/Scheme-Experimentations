@@ -18,18 +18,18 @@
 ;; http parse logic
 
 (define (http-parse-new-shipping-address-request route-captures request-body)
-  (let ((new-shipping-address-request (http-parse-json request-body json-parse-new-shipping-address-request)))
-    (if new-shipping-address-request
-      (let ((customer-id (string->number (car route-captures))))
-        (new-shipping-address-request-customer-id-set! new-shipping-address-request customer-id)
-        new-shipping-address-request)
+  (let ((parsed-new-shipping-address-request (json-parse-string request-body json-parse-new-shipping-address-request)))
+    (if parsed-new-shipping-address-request
+      (make-new-shipping-address-request
+        (string->number (car route-captures))
+        (new-shipping-address-request-street parsed-new-shipping-address-request)
+        (new-shipping-address-request-city parsed-new-shipping-address-request)
+        (new-shipping-address-request-state parsed-new-shipping-address-request)
+        (new-shipping-address-request-effective-date parsed-new-shipping-address-request))
       #f)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; http format logic
 
 (define (http-format-new-shipping-address-response response)
-  (with-new-json-object
-    (lambda (json-object)
-      (json-format-new-shipping-address-response response json-object)
-      (json-object->string json-object))))
+  (json-format-string response json-format-new-shipping-address-response))

@@ -4,7 +4,6 @@
 (declare (unit http))
 
 (declare (uses http-bindings))
-(declare (uses exceptions))
 (declare (uses fastcgi))
 (declare (uses json))
 (declare (uses regex))
@@ -142,14 +141,6 @@
   ;; write the response body
   (let ((response-body (format-validation-errors)))
     (http-write-body response-body fastcgi-output-stream*)))
-
-;; parses a json string
-(define (http-parse-json string json-parse-procedure)
-  (hide-exceptions
-    (lambda ()
-      (with-parsed-json-object string
-        (lambda (json-object)
-          (json-parse-procedure json-object))))))
 
 ;; handles a http request
 (define (http-handle-request fastcgi-request*)
