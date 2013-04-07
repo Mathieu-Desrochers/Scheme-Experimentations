@@ -8,18 +8,18 @@ compile : compile-bindings \
 
 compile-bindings : compile-bindings-http
 
-compile-bindings-http : sources/bindings/http/new-customer-service.o \
-                        sources/bindings/http/new-shipping-address-service.o
+compile-bindings-http : sources/bindings/http/new-customer-service-http-binding.o \
+                        sources/bindings/http/new-shipping-address-service-http-binding.o
 
-sources/bindings/http/new-customer-service.o : sources/bindings/http/new-customer-service.scm
+sources/bindings/http/new-customer-service-http-binding.o : sources/bindings/http/new-customer-service-http-binding.scm
 	csc -c -extend sources/macros/bindings/http/define-http-binding.scm \
-	sources/bindings/http/new-customer-service.scm -o \
-	sources/bindings/http/new-customer-service.o
+	sources/bindings/http/new-customer-service-http-binding.scm -o \
+	sources/bindings/http/new-customer-service-http-binding.o
 
-sources/bindings/http/new-shipping-address-service.o : sources/bindings/http/new-shipping-address-service.scm
+sources/bindings/http/new-shipping-address-service-http-binding.o : sources/bindings/http/new-shipping-address-service-http-binding.scm
 	csc -c -extend sources/macros/bindings/http/define-http-binding.scm \
-	sources/bindings/http/new-shipping-address-service.scm -o \
-	sources/bindings/http/new-shipping-address-service.o
+	sources/bindings/http/new-shipping-address-service-http-binding.scm -o \
+	sources/bindings/http/new-shipping-address-service-http-binding.o
 
 compile-core : compile-core-services \
                compile-core-tables
@@ -226,8 +226,8 @@ link : compile
 	-ljansson \
 	-lpcre \
 	-lsqlite3 \
-	sources/bindings/http/new-customer-service.o \
-	sources/bindings/http/new-shipping-address-service.o \
+	sources/bindings/http/new-customer-service-http-binding.o \
+	sources/bindings/http/new-shipping-address-service-http-binding.o \
 	sources/core/services/new-customer-service.o \
 	sources/core/services/new-shipping-address-service.o \
 	sources/core/tables/customers-table.o \
