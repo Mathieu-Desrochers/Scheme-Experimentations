@@ -88,7 +88,7 @@
 ;; invokes a procedure with a new json object representing a value
 (define (with-new-json-object-from-value value procedure)
   (define (create-jansson*)
-    (cond ((boolean? value) (jansson-boolean value))
+    (cond ((boolean? value) (jansson-boolean (if value 1 0)))
           ((and (integer? value) (exact? value)) (jansson-integer value))
           ((number? value) (jansson-real value))
           ((string? value) (jansson-string value))

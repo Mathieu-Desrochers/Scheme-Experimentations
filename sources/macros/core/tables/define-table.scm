@@ -51,7 +51,7 @@
             (iota (length columns)))
           ", "))
 
-      ;; upgrades row values based on their columns type
+      ;; upgrades a row based on its columns type
       (define (sql-upgrade-row columns)
         `(list
           ,@(map
@@ -61,13 +61,21 @@
                 ',(column-type (list-ref columns column-index))))
             (iota (length columns)))))
 
+      ;; makes a row based on its columns type
+      (define (sql-make-row row-symbol columns)
+        `(lambda (row)
+          (apply
+            ,(symbol-append 'make- row-symbol)
+            ,(sql-upgrade-row columns))))
+
       ;; parses the expression
       (let* ((table-symbol (car (list-ref exp 1)))
              (table-name (cadr (list-ref exp 1)))
              (row-symbol (car (list-ref exp 2)))
              (columns (make-columns (cdr (list-ref exp 2))))
              (id-column (car columns))
-             (value-columns (cdr columns)))
+             (value-columns (cdr columns))
+             (custom-reads (cdr (list-ref exp 3))))
         `(begin
 
           (declare (uses sql))
@@ -93,13 +101,10 @@
           ;; selects a row by id
           (define (,(symbol-append table-symbol '-select-by- (column-symbol id-column)) sql-connection ,(column-symbol id-column))
             (map
-              (lambda (row)
-                (apply
-                  ,(symbol-append 'make- row-symbol)
-                  ,(sql-upgrade-row columns)))
+              ,(sql-make-row row-symbol columns)
               (sql-read sql-connection
                 ,(string-append
-                  "SELECT " (join-columns-name columns)
+                  "SELECT * "
                   "FROM \"" table-name "\" "
                   "WHERE \"" (column-name id-column) "\" = ?1;")
                 ,(column-symbol id-column))))
@@ -107,13 +112,10 @@
           ;; selects all rows
           (define (,(symbol-append table-symbol '-select-all) sql-connection)
             (map
-              (lambda (row)
-                (apply
-                  ,(symbol-append 'make- row-symbol)
-                  ,(sql-upgrade-row columns)))
+              ,(sql-make-row row-symbol columns)
               (sql-read sql-connection
                 ,(string-append
-                  "SELECT " (join-columns-name columns)
+                  "SELECT * "
                   "FROM \"" table-name "\" "))))
 
           ;; updates a row
@@ -135,4 +137,21 @@
                 "DELETE "
                 "FROM \"" ,table-name "\" "
                 "WHERE \"" ,(column-name id-column) "\" = ?1;")
-              (,(symbol-append row-symbol '- (column-symbol id-column)) ,row-symbol))))))))
+              (,(symbol-append row-symbol '- (column-symbol id-column)) ,row-symbol)))
+
+          ;; custom reads
+          ,@(map
+            (lambda (custom-read)
+              (let ((custom-read-symbol (car custom-read))
+                    (custom-read-sql (cadr custom-read))
+                    (custom-read-parameters (cddr custom-read)))
+                `(define (,custom-read-symbol sql-connection ,@custom-read-parameters)
+                  (map
+                    ,(sql-make-row row-symbol columns)
+                    (sql-read sql-connection
+                      ,custom-read-sql
+                      ,@(map
+                        (lambda (custom-read-parameter)
+                          `(sql-downgrade-value ,custom-read-parameter))
+                        custom-read-parameters))))))
+            custom-reads))))))

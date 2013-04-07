@@ -58,7 +58,7 @@
             json-object
             ,field-symbol-string
             ,field-symbol
-            ,(symbol-append 'format- field-subresponse-type))))
+            ,(symbol-append 'json-format- field-subresponse-type))))
 
       ;; json formats a subresponse list field
       (define (json-format-subresponse-list-field field)

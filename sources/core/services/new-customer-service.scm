@@ -4,7 +4,6 @@
 (declare (uses customers-table))
 (declare (uses datetime))
 (declare (uses shipping-addresses-table))
-(declare (uses sql))
 (declare (uses validation))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -33,9 +32,7 @@
 (define (new-customer-service sql-connection new-customer-request)
 
   ;; validate the request
-  (let ((validation-errors (validate-new-customer-request new-customer-request)))
-    (when (not (null? validation-errors))
-      (abort-validation-errors validation-errors)))
+  (validate-request new-customer-request validate-new-customer-request)
 
   ;; insert a customer-row
   (let ((customer-id
@@ -57,5 +54,5 @@
           (new-customer-shipping-address-subrequest-city shipping-address-subrequest)
           (new-customer-shipping-address-subrequest-state shipping-address-subrequest))))
 
-    ;; make the service response
+    ;; make the response
     (make-new-customer-response customer-id)))

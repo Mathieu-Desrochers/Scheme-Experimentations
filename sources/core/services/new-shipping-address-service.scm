@@ -4,7 +4,6 @@
 (declare (uses customers-table))
 (declare (uses datetime))
 (declare (uses shipping-addresses-table))
-(declare (uses sql))
 (declare (uses validation))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -29,9 +28,7 @@
 (define (new-shipping-address-service sql-connection new-shipping-address-request)
 
   ;; validate the request
-  (let ((validation-errors (validate-new-shipping-address-request new-shipping-address-request)))
-    (when (not (null? validation-errors))
-      (abort-validation-errors validation-errors)))
+  (validate-request new-shipping-address-request validate-new-shipping-address-request)
 
   ;; validate the customer-id
   (let* ((customer-id (new-shipping-address-request-customer-id new-shipping-address-request))
@@ -50,5 +47,5 @@
                 (new-shipping-address-request-city new-shipping-address-request)
                 (new-shipping-address-request-state new-shipping-address-request)))))
 
-      ;; make the service response
+      ;; make the response
       (make-new-shipping-address-response shipping-address-id))))

@@ -218,3 +218,9 @@
 ;; returns the validation errors from an exception
 (define (validation-errors exception)
   ((condition-property-accessor 'validation 'errors) exception))
+
+;; validates a request
+(define (validate-request request validate-request-procedure)
+  (let ((validation-errors (validate-request-procedure request)))
+    (when (not (null? validation-errors))
+      (abort-validation-errors validation-errors))))

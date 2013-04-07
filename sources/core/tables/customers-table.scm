@@ -11,4 +11,5 @@
     ("customer-id" integer)
     ("first-name" string)
     ("last-name" string)
-    ("is-vip" boolean)))
+    ("is-vip" boolean))
+  (custom-reads))
