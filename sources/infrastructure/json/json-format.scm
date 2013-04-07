@@ -40,3 +40,10 @@
               (json-object-array-append! json-object-array json-object-element))))
         value)
       (json-object-property-set! json-object property-name json-object-array))))
+
+;; formats a json response
+(define (json-format-response response json-format-response-procedure)
+  (with-new-json-object
+    (lambda (json-object)
+      (json-format-response-procedure response json-object)
+      (json-object->string json-object))))

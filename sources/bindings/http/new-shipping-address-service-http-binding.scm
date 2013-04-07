@@ -1,7 +1,8 @@
 
 (declare (unit new-shipping-address-service-http-binding))
 
-(declare (uses json))
+(declare (uses json-format))
+(declare (uses json-parse))
 (declare (uses new-shipping-address-service))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -18,7 +19,7 @@
 ;; http parse logic
 
 (define (http-parse-new-shipping-address-request route-captures request-body)
-  (let ((parsed-new-shipping-address-request (json-parse-string request-body json-parse-new-shipping-address-request)))
+  (let ((parsed-new-shipping-address-request (json-parse-request request-body json-parse-new-shipping-address-request)))
     (if parsed-new-shipping-address-request
       (make-new-shipping-address-request
         (string->number (car route-captures))
@@ -32,4 +33,4 @@
 ;; http format logic
 
 (define (http-format-new-shipping-address-response response)
-  (json-format-string response json-format-new-shipping-address-response))
+  (json-format-response response json-format-new-shipping-address-response))
