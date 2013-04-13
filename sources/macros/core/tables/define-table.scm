@@ -55,7 +55,7 @@
       ;; has been replaced by SELECT [column names]
       (define (replace-star-by-columns-name custom-select-sql columns)
         `(string-replace
-          custom-select-sql
+          ,custom-select-sql
           ,(join-columns-name columns)
           7 8))
 

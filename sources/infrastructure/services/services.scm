@@ -10,6 +10,9 @@
   (with-sql-connection "/databases/customers.db"
     (lambda (sql-connection)
 
+      ;; enable the foreign keys enforcement
+      (sql-enable-foreign-keys sql-connection)
+
       ;; disable the synchronous disk
       ;; writes for improved performance
       (sql-disable-synchronous-writes sql-connection)

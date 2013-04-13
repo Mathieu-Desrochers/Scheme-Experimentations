@@ -107,8 +107,10 @@ __Custom selections__
           maximum-credit-limit)))
 
 - Defines a custom selection composed of:
-  - A handwritten sql statement (must start with "SELECT *" by convention)
+  - A handwritten SQL statement (must start with "SELECT *" by convention)
   - Two parameters
+
+__Custom selections invocation__
 
     (customers-table-select-by-credit-limit-range
       sql-connection

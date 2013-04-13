@@ -31,6 +31,10 @@
             (free-sqlite3* sqlite3**)
             procedure-result))))))
 
+;; enables foreign keys enforcement
+(define (sql-enable-foreign-keys sql-connection)
+  (sql-execute sql-connection "PRAGMA foreign_keys = ON;"))
+
 ;; disables all synchronous disk writes
 (define (sql-disable-synchronous-writes sql-connection)
   (sql-execute sql-connection "PRAGMA synchronous = OFF;"))

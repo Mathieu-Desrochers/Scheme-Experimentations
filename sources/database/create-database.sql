@@ -10,9 +10,11 @@ CREATE TABLE "customers"
 CREATE TABLE "shipping-addresses"
 (
 	"shipping-address-id" INTEGER PRIMARY KEY AUTOINCREMENT,
-	"customer-id" INTEGER,
+	"customer-id" INTEGER REFERENCES "customers" ("customer-id"),
 	"effective-date" TEXT,
 	"street" TEXT,
 	"city" TEXT,
 	"state" TEXT
 );
+
+CREATE INDEX "shipping-addresses-customer-id" ON "shipping-addresses" ("customer-id");
