@@ -12,4 +12,4 @@
     ("first-name" string)
     ("last-name" string)
     ("is-vip" boolean))
-  (custom-reads))
+  (custom-selects))

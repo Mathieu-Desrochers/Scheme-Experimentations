@@ -51,22 +51,36 @@
             (iota (length columns)))
           ", "))
 
-      ;; upgrades a row based on its columns type
-      (define (sql-upgrade-row columns)
-        `(list
-          ,@(map
-            (lambda (column-index)
-              `(sql-upgrade-value
-                (list-ref row ,column-index)
-                ',(column-type (list-ref columns column-index))))
-            (iota (length columns)))))
+      ;; returns a sql statement where SELECT *
+      ;; has been replaced by SELECT [column names]
+      (define (replace-star-by-columns-name custom-select-sql columns)
+        `(string-replace
+          custom-select-sql
+          ,(join-columns-name columns)
+          7 8))
 
-      ;; makes a row based on its columns type
-      (define (sql-make-row row-symbol columns)
-        `(lambda (row)
+      ;; returns a procedure that makes a row
+      ;; from a result of the sql-read procedure
+      (define (make-row-from-sql-read-result row-symbol columns)
+        `(lambda (sql-read-result)
           (apply
             ,(symbol-append 'make- row-symbol)
-            ,(sql-upgrade-row columns))))
+            (list
+              ,@(map
+                (lambda (column-index)
+                  `(sql-upgrade-value
+                    (list-ref sql-read-result ,column-index)
+                    ',(column-type (list-ref columns column-index))))
+                (iota (length columns)))))))
+
+      ;; returns downgraded row values for a set of columns
+      (define (sql-downgrade-row-values row-symbol columns)
+        (map
+          (lambda (column)
+            `(sql-downgrade-value 
+              (,(symbol-append row-symbol '- (column-symbol column))
+               ,row-symbol)))
+          columns))
 
       ;; parses the expression
       (let* ((table-symbol (car (list-ref exp 1)))
@@ -75,7 +89,7 @@
              (columns (make-columns (cdr (list-ref exp 2))))
              (id-column (car columns))
              (value-columns (cdr columns))
-             (custom-reads (cdr (list-ref exp 3))))
+             (custom-selects (cdr (list-ref exp 3))))
         `(begin
 
           (declare (uses sql))
@@ -90,32 +104,27 @@
               (string-append
                 "INSERT INTO \"" ,table-name "\" (" ,(join-columns-name value-columns) ") "
                 "VALUES (" ,(join-columns-variable value-columns) ");")
-              ,@(map
-                (lambda (value-column)
-                  `(sql-downgrade-value (,(symbol-append row-symbol '- (column-symbol value-column)) ,row-symbol)))
-                value-columns))
+              ,@(sql-downgrade-row-values row-symbol value-columns))
             (caar
               (sql-read sql-connection
                 "SELECT last_insert_rowid();")))
 
           ;; selects a row by id
           (define (,(symbol-append table-symbol '-select-by- (column-symbol id-column)) sql-connection ,(column-symbol id-column))
-            (map
-              ,(sql-make-row row-symbol columns)
+            (map ,(make-row-from-sql-read-result row-symbol columns)
               (sql-read sql-connection
                 ,(string-append
-                  "SELECT * "
+                  "SELECT " (join-columns-name columns)
                   "FROM \"" table-name "\" "
                   "WHERE \"" (column-name id-column) "\" = ?1;")
                 ,(column-symbol id-column))))
 
           ;; selects all rows
           (define (,(symbol-append table-symbol '-select-all) sql-connection)
-            (map
-              ,(sql-make-row row-symbol columns)
+            (map ,(make-row-from-sql-read-result row-symbol columns)
               (sql-read sql-connection
                 ,(string-append
-                  "SELECT * "
+                  "SELECT " (join-columns-name columns)
                   "FROM \"" table-name "\" "))))
 
           ;; updates a row
@@ -125,10 +134,7 @@
                 "UPDATE \"" ,table-name "\" "
                 "SET " (join-columns-variable-assignation value-columns)
                 "WHERE \"" ,(column-name id-column) "\" = ?1;")
-              ,@(map
-                (lambda (column)
-                  `(sql-downgrade-value (,(symbol-append row-symbol '- (column-symbol column)) ,row-symbol)))
-                columns)))
+              (sql-downgrade-row-values row-symbol columns)))
 
           ;; deletes a row
           (define (,(symbol-append table-symbol '-delete) sql-connection ,row-symbol)
@@ -139,19 +145,18 @@
                 "WHERE \"" ,(column-name id-column) "\" = ?1;")
               (,(symbol-append row-symbol '- (column-symbol id-column)) ,row-symbol)))
 
-          ;; custom reads
+          ;; selects based on custom statements
           ,@(map
-            (lambda (custom-read)
-              (let ((custom-read-symbol (car custom-read))
-                    (custom-read-sql (cadr custom-read))
-                    (custom-read-parameters (cddr custom-read)))
-                `(define (,custom-read-symbol sql-connection ,@custom-read-parameters)
-                  (map
-                    ,(sql-make-row row-symbol columns)
+            (lambda (custom-select)
+              (let ((custom-select-symbol (car custom-select))
+                    (custom-select-sql (cadr custom-select))
+                    (custom-select-parameters (cddr custom-select)))
+                `(define (,custom-select-symbol sql-connection ,@custom-select-parameters)
+                  (map ,(make-row-from-sql-read-result row-symbol columns)
                     (sql-read sql-connection
-                      ,custom-read-sql
+                      ,(replace-star-by-columns-name custom-select-sql columns)
                       ,@(map
-                        (lambda (custom-read-parameter)
-                          `(sql-downgrade-value ,custom-read-parameter))
-                        custom-read-parameters))))))
-            custom-reads))))))
+                        (lambda (custom-select-parameter)
+                          `(sql-downgrade-value ,custom-select-parameter))
+                        custom-select-parameters))))))
+            custom-selects))))))

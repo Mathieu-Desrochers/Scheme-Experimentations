@@ -14,7 +14,7 @@
     ("street" string)
     ("city" string)
     ("state" string))
-  (custom-reads
+  (custom-selects
     (shipping-addresses-table-select-effective-by-customer-id
       (string-append
         "SELECT * "
