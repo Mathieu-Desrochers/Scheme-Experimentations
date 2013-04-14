@@ -2,17 +2,17 @@
 Name
 ----
 
-get-customer
+get-shipping-addresses
 
 Description
 -----------
 
-Returns the details about a customer.
+Returns the shipping addresses of a customer.
 
 Address
 -------
 
-    http://www.server.com/fcgi-bin/customers/{customer-id}
+    http://www.server.com/fcgi-bin/customers/{customer-id}/shipping-addresses
 
 Request definition
 ------------------
@@ -27,7 +27,7 @@ Must be included in the service address.
 Sample request
 --------------
 
-    GET /fcgi-bin/customers/1000 HTTP/1.1
+    GET /fcgi-bin/customers/1000/shipping-addresses HTTP/1.1
     Host: www.server.com
 
 Response definition
@@ -35,24 +35,9 @@ Response definition
 
 The response is composed of the following fields:
 
-__first-name__  
-The customer's first name.  
-A string composed of 1 to 50 characters.  
-Will always be present.  
-  
-__last-name__  
-The customer's last name.  
-A string composed of 1 to 50 characters.  
-Will always be present.
-
-__is-vip__  
-Whether the customer is vip.  
-A boolean value.  
-Will always be present.
-
-__shipping-address__  
-The customer's most recent effective shipping address.  
-See the get-shipping-addresses service for the complete list.  
+__shipping-addresses__  
+The customer's shipping addresses.  
+An array of shipping-address objects.
 Will always be present.
 
 __shipping-address / street__  
@@ -77,12 +62,18 @@ Sample response
     Content-Type: text/json; charset=utf-8
     
     {
-      "first-name": "Alice",
-      "last-name": "Anderson",
-      "is-vip": true,
-      "shipping-address": {
-        "street": "123 Sunny Street",
-        "city": "Miami",
-        "state": "Florida"
-      }
+      "shipping-addresses": [
+        {
+          "effective-date": "2010-12-31",
+          "street": "123 Sunny Street",
+          "city": "Miami",
+          "state": "Florida"
+        },
+        {
+          "effective-date": "2012-12-31",
+          "street": "456 Cloudy Boulevard",
+          "city": "Seattle",
+          "state": "Washington"
+        }
+      ]
     }

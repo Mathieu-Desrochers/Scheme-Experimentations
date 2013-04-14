@@ -15,6 +15,12 @@
     ("city" string)
     ("state" string))
   (custom-selects
+    (shipping-addresses-table-select-by-customer-id
+      (string-append
+        "SELECT * "
+        "FROM \"shipping-addresses\" "
+        "WHERE \"customer-id\" = ?1;")
+      customer-id)
     (shipping-addresses-table-select-effective-by-customer-id
       (string-append
         "SELECT * "

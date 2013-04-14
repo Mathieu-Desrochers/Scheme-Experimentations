@@ -2,6 +2,7 @@
 (declare (unit http-bindings))
 
 (declare (uses get-customer-service-http-binding))
+(declare (uses get-shipping-addresses-service-http-binding))
 (declare (uses new-customer-service-http-binding))
 (declare (uses new-shipping-address-service-http-binding))
 
@@ -12,5 +13,6 @@
 (define (register-http-bindings)
   (list
     (make-get-customer-service-http-binding)
+    (make-get-shipping-addresses-service-http-binding)
     (make-new-customer-service-http-binding)
     (make-new-shipping-address-service-http-binding)))
