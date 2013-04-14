@@ -37,7 +37,12 @@ The response is composed of the following fields:
 
 __shipping-addresses__  
 The customer's shipping addresses.  
-An array of shipping-address objects.
+An array of shipping-address objects.  
+Will always be present.
+
+__shipping-address / shipping-address-id__  
+The customer's unique identifier.  
+A number between 1 and 1000000.  
 Will always be present.
 
 __shipping-address / street__  

@@ -18,6 +18,7 @@
   (shipping-addresses list get-shipping-addresses-subresponse))
 
 (define-response get-shipping-addresses-subresponse
+  (shipping-address-id)
   (effective-date)
   (street)
   (city)
@@ -45,6 +46,7 @@
         (map
           (lambda (shipping-address-row)
             (make-get-shipping-addresses-subresponse
+              (shipping-address-row-shipping-address-id shipping-address-row)
               (shipping-address-row-effective-date shipping-address-row)
               (shipping-address-row-street shipping-address-row)
               (shipping-address-row-city shipping-address-row)
