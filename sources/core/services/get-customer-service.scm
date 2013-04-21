@@ -16,12 +16,14 @@
 ;; response definition
 
 (define-response get-customer-response
+  (customer-id)
   (first-name)
   (last-name)
   (is-vip)
   (shipping-address get-customer-shipping-address-subresponse))
 
 (define-response get-customer-shipping-address-subresponse
+  (shipping-address-id)
   (street)
   (city)
   (state))
@@ -47,10 +49,12 @@
 
       ;; make the response
       (make-get-customer-response
+        (customer-row-customer-id customer-row)
         (customer-row-first-name customer-row)
         (customer-row-last-name customer-row)
         (customer-row-is-vip customer-row)
         (make-get-customer-shipping-address-subresponse
+          (shipping-address-row-shipping-address-id effective-shipping-address-row)
           (shipping-address-row-street effective-shipping-address-row)
           (shipping-address-row-city effective-shipping-address-row)
           (shipping-address-row-state effective-shipping-address-row))))))

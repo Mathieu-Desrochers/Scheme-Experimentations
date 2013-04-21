@@ -11,25 +11,25 @@
 
 ;; invokes a procedure with a sql connection
 (define (with-sql-connection database-name procedure)
-  (let ((sqlite3** (malloc-sqlite3*)))
-    (when (not sqlite3**)
-      (abort "could not allocate sqlite3*"))
-    (handle-exceptions exception
-      (begin
-        (free-sqlite3* sqlite3**)
-        (abort exception))
-      (let ((sqlite3-open-result (sqlite3-open database-name sqlite3**)))
-        (unless (= sqlite3-open-result sqlite3-result-ok)
-          (abort (string-append "could not open database " database-name)))
-        (handle-exceptions exception
-          (begin
-            (sqlite3-close-v2 (indirect-sqlite3** sqlite3**))
-            (abort exception))
-          (let* ((sql-connection (make-sql-connection (indirect-sqlite3** sqlite3**)))
-                 (procedure-result (procedure sql-connection)))
-            (sqlite3-close-v2 (indirect-sqlite3** sqlite3**))
-            (free-sqlite3* sqlite3**)
-            procedure-result))))))
+  (define (checked-malloc-sqlite3*)
+    (let ((sqlite3** (malloc-sqlite3*)))
+      (if (not sqlite3**)
+        (abort "failed to allocate sqlite3*")
+        sqlite3**)))
+  (define (checked-sqlite3-open sqlite3**)
+    (let ((sqlite3-open-result (sqlite3-open database-name sqlite3**)))
+      (if (not (= sqlite3-open-result sqlite3-result-ok))
+        (abort (string-append "failed to open database " database-name))
+        (indirect-sqlite3** sqlite3**))))
+  (with-guaranteed-release
+    checked-malloc-sqlite3*
+    (lambda (sqlite3**)
+      (with-guaranteed-release
+        (lambda () (checked-sqlite3-open sqlite3**))
+        (lambda (sqlite3*)
+          (with-make-sql-connection sqlite3* procedure))
+        sqlite3-close-v2))
+    free-sqlite3*))
 
 ;; enables foreign keys enforcement
 (define (sql-enable-foreign-keys sql-connection)
@@ -41,13 +41,14 @@
 
 ;; executes a procedure within a transaction
 (define (within-sql-transaction sql-connection procedure)
-  (handle-exceptions exception
-    (begin
-      (sql-execute sql-connection "ROLLBACK TRANSACTION;")
-      (abort exception))
-    (sql-execute sql-connection "BEGIN TRANSACTION;")
-    (procedure)
-    (sql-execute sql-connection "COMMIT TRANSACTION;")))
+  (sql-execute sql-connection "BEGIN TRANSACTION;")
+  (let ((original-exception-handler (current-exception-handler)))
+    (handle-exceptions exception
+      (begin
+        (sql-execute sql-connection "ROLLBACK TRANSACTION;")
+        (original-exception-handler exception))
+      (procedure)
+      (sql-execute sql-connection "COMMIT TRANSACTION;"))))
 
 ;; executes a sql statement
 (define (sql-execute sql-connection statement . parameter-values)
@@ -56,7 +57,7 @@
       (lambda (sqlite3-stmt*)
         (let ((sqlite3-step-result (sqlite3-step sqlite3-stmt*)))
           (unless (= sqlite3-step-result sqlite3-result-done)
-            (abort (string-append "could not step statement " statement))))))))
+            (abort (string-append "failed to step statement " statement))))))))
 
 ;; executes a sql statement that returns rows
 (define (sql-read sql-connection statement . parameter-values)

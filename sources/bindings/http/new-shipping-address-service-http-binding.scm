@@ -23,10 +23,10 @@
     (if parsed-new-shipping-address-request
       (make-new-shipping-address-request
         (string->number (car route-captures))
+        (new-shipping-address-request-effective-date parsed-new-shipping-address-request)
         (new-shipping-address-request-street parsed-new-shipping-address-request)
         (new-shipping-address-request-city parsed-new-shipping-address-request)
-        (new-shipping-address-request-state parsed-new-shipping-address-request)
-        (new-shipping-address-request-effective-date parsed-new-shipping-address-request))
+        (new-shipping-address-request-state parsed-new-shipping-address-request))
       #f)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

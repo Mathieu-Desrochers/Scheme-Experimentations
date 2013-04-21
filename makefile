@@ -180,6 +180,7 @@ sources/infrastructure/http/main.o : sources/infrastructure/http/main.c
 compile-infrastructure-json : sources/infrastructure/json/json.o \
                               sources/infrastructure/json/json-convert.o \
                               sources/infrastructure/json/json-format.o \
+                              sources/infrastructure/json/json-intern.o \
                               sources/infrastructure/json/json-parse.o
 
 sources/infrastructure/json/json.o : sources/infrastructure/json/json.scm
@@ -196,6 +197,11 @@ sources/infrastructure/json/json-format.o : sources/infrastructure/json/json-for
 	csc -c \
 	sources/infrastructure/json/json-format.scm -o \
 	sources/infrastructure/json/json-format.o
+
+sources/infrastructure/json/json-intern.o : sources/infrastructure/json/json-intern.scm
+	csc -c \
+	sources/infrastructure/json/json-intern.scm -o \
+	sources/infrastructure/json/json-intern.o
 
 sources/infrastructure/json/json-parse.o : sources/infrastructure/json/json-parse.scm
 	csc -c \
@@ -279,6 +285,7 @@ link : compile
 	sources/infrastructure/json/json.o \
 	sources/infrastructure/json/json-convert.o \
 	sources/infrastructure/json/json-format.o \
+	sources/infrastructure/json/json-intern.o \
 	sources/infrastructure/json/json-parse.o \
 	sources/infrastructure/regex/regex.o \
 	sources/infrastructure/regex/regex-intern.o \

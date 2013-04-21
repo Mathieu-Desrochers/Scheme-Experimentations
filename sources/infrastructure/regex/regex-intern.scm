@@ -1,30 +1,29 @@
 
 (declare (unit regex-intern))
 
+(declare (uses exceptions))
 (declare (uses pcre))
 
 ;; invokes a procedure with a regular expression
 (define (with-regex pattern procedure)
-  (let ((pcre* (pcre-compile pattern)))
-    (when (not pcre*)
-      (abort "could not compile regular expression"))
-    (handle-exceptions exception
-      (begin
-        (free-pcre pcre*)
-        (abort exception))
-      (let ((procedure-result (procedure pcre*)))
-        (free-pcre pcre*)
-        procedure-result))))
+  (define (checked-pcre-compile)
+    (let ((pcre* (pcre-compile pattern)))
+      (if (not pcre*)
+        (abort "failed to compile regular expression")
+        pcre*)))
+  (with-guaranteed-release
+    checked-pcre-compile
+    procedure
+    free-pcre))
 
 ;; invokes a procedure with the matches of a regular expression
 (define (with-regex-matches pcre* string procedure)
-  (let ((pcre-exec-result* (pcre-exec pcre* string)))
-    (when (not pcre-exec-result*)
-      (abort "could not execute regular expression"))
-    (handle-exceptions exception
-      (begin
-        (free-pcre-exec-result pcre-exec-result*)
-        (abort exception))
-      (let ((procedure-result (procedure pcre-exec-result*)))
-        (free-pcre-exec-result pcre-exec-result*)
-        procedure-result))))
+  (define (checked-pcre-exec)
+    (let ((pcre-exec-result* (pcre-exec pcre* string)))
+      (if (not pcre-exec-result*)
+        (abort "failed to execute regular expression")
+        pcre-exec-result*)))
+  (with-guaranteed-release
+    checked-pcre-exec
+    procedure
+    free-pcre-exec-result))

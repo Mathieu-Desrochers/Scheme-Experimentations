@@ -1,20 +1,20 @@
 
 (declare (unit datetime-intern))
 
+(declare (uses exceptions))
 (declare (uses scdtl))
 
 ;; invokes a procedure with a scdtl-tm*
 (define (datetime-with-scdtl-tm* procedure)
-  (let ((scdtl-tm* (malloc-scdtl-tm)))
-    (when (not scdtl-tm*)
-      (abort "could not allocate scdtl tm"))
-    (handle-exceptions exception
-      (begin
-        (free-scdtl-tm scdtl-tm*)
-        (abort exception))
-      (let ((procedure-result (procedure scdtl-tm*)))
-        (free-scdtl-tm scdtl-tm*)
-        procedure-result))))
+  (define (checked-malloc-scdtl-tm)
+    (let ((scdtl-tm* (malloc-scdtl-tm)))
+      (when (not scdtl-tm*)
+        (abort "failed to allocate scdtl tm"))
+      scdtl-tm*))
+  (with-guaranteed-release
+    checked-malloc-scdtl-tm
+    procedure
+    free-scdtl-tm))
 
 ;; invokes a procedure with a parsed scdtl-tm*
 (define (datetime-with-parsed-scdtl-tm* string format procedure)
@@ -32,7 +32,7 @@
       (scdtl-assign-tm scdtl-tm* (- year 1900) (- month 1) day hour minute second)
       (let ((scdtl-strftime-result* (scdtl-strftime-wrapped scdtl-tm* format)))
         (when (not scdtl-strftime-result*)
-          (abort "could not format datetime"))
+          (abort "failed to format datetime"))
         (let ((scdtl-strftime-result-value (scdtl-strftime-result-value scdtl-strftime-result*)))
           (free-scdtl-strftime-result scdtl-strftime-result*)
           scdtl-strftime-result-value)))))

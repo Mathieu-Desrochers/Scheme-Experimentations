@@ -3,6 +3,7 @@
 
 (declare (unit http))
 
+(declare (uses exceptions))
 (declare (uses http-bindings))
 (declare (uses fastcgi))
 (declare (uses json))
@@ -56,16 +57,15 @@
 
 ;; invokes a procedure with a fastcgi buffer
 (define (http-with-fastcgi-buffer* buffer-size procedure)
-  (let ((fastcgi-buffer* (malloc-fastcgi-buffer buffer-size)))
-    (when (not fastcgi-buffer*)
-      (abort "could not allocate fastcgi buffer"))
-    (handle-exceptions exception
-      (begin
-        (free-fastcgi-buffer fastcgi-buffer*)
-        (abort exception))
-      (let ((procedure-result (procedure fastcgi-buffer*)))
-        (free-fastcgi-buffer fastcgi-buffer*)
-        procedure-result))))
+  (define (checked-malloc-fastcgi-buffer)
+    (let ((fastcgi-buffer* (malloc-fastcgi-buffer buffer-size)))
+      (when (not fastcgi-buffer*)
+        (abort "failed to allocate fastcgi buffer"))
+      fastcgi-buffer*))
+  (with-guaranteed-release
+    checked-malloc-fastcgi-buffer
+    procedure
+    free-fastcgi-buffer))
 
 ;; reads a fastcgi stream
 (define (http-read-fastcgi-stream fastcgi-stream*)

@@ -20,18 +20,19 @@
       ;; start a transaction
       (within-sql-transaction sql-connection
         (lambda ()
-          (handle-exceptions exception
+          (let ((original-exception-handler (current-exception-handler)))
+            (handle-exceptions exception
 
-            ;; report validation errors
-            ;; through the error procedure
-            (if (validation-exception? exception)
-              (let ((validation-errors (validation-errors exception)))
-                (error-procedure validation-errors))
-              (abort exception))
+              ;; report validation errors
+              ;; through the error procedure
+              (if (validation-exception? exception)
+                (let ((validation-errors (validation-errors exception)))
+                  (error-procedure validation-errors))
+                (original-exception-handler exception))
 
-            ;; invoke the service
-            (let ((response (service sql-connection request)))
+              ;; invoke the service
+              (let ((response (service sql-connection request)))
 
-              ;; report the response through
-              ;; the success procedure
-              (success-procedure response))))))))
+                ;; report the response through
+                ;; the success procedure
+                (success-procedure response)))))))))

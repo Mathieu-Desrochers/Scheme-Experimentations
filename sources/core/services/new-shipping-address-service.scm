@@ -11,10 +11,10 @@
 
 (define-request new-shipping-address-request
   (customer-id integer #t 1 1000000)
+  (effective-date date #t)
   (street string #t 1 100)
   (city string #t 1 50)
-  (state string #t 1 50)
-  (effective-date date #t))
+  (state string #t 1 50))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; response definition
