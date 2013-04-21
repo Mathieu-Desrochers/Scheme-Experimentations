@@ -103,16 +103,19 @@
   (http-close-headers fastcgi-output-stream*)
   (http-write-body response-body fastcgi-output-stream*))
 
+;; sends a 204 no content
+(define (http-send-204-no-content fastcgi-output-stream*)
+  (http-write-header "Status: 204 No Content" fastcgi-output-stream*)
+  (http-close-headers fastcgi-output-stream*))
+
 ;; sends a 400 bad request error
 (define (http-send-400-bad-request fastcgi-output-stream*)
   (http-write-header "Status: 400 Bad Request" fastcgi-output-stream*)
-  (http-write-header "Content-Type: text/plain; charset=utf-8" fastcgi-output-stream*)
   (http-close-headers fastcgi-output-stream*))
 
 ;; sends a 404 not found error
 (define (http-send-404-not-found fastcgi-output-stream*)
   (http-write-header "Status: 404 Not Found" fastcgi-output-stream*)
-  (http-write-header "Content-Type: text/plain; charset=utf-8" fastcgi-output-stream*)
   (http-close-headers fastcgi-output-stream*))
 
 ;; sends a 422 unprocessable entity error
@@ -174,7 +177,9 @@
                 (lambda (response)
                   (let* ((format-response-procedure (http-binding-match-format-response-procedure http-binding-match))
                          (response-body (format-response-procedure response)))
-                    (http-send-200-ok response-body fastcgi-output-stream*)))
+                    (if (is-empty-json-object-string? response-body)
+                      (http-send-204-no-content fastcgi-output-stream*)
+                      (http-send-200-ok response-body fastcgi-output-stream*))))
 
                 ;; send the validation errors
                 (lambda (validation-errors)

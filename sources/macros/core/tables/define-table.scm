@@ -41,13 +41,13 @@
           ", "))
 
       ;; joins a set of columns variable assignation
-      (define (join-columns-variable-assignation columns)
+      (define (join-columns-variable-assignation columns first-variable-number)
         (string-join
           (map
             (lambda (column-index)
               (string-append
                 "\"" (column-name (list-ref columns column-index)) "\" = "
-                "?" (number->string (+ column-index 1))))
+                "?" (number->string (+ column-index first-variable-number))))
             (iota (length columns)))
           ", "))
 
@@ -101,9 +101,9 @@
           ;; inserts a row
           (define (,(symbol-append table-symbol '-insert) sql-connection ,row-symbol)
             (sql-execute sql-connection
-              (string-append
-                "INSERT INTO \"" ,table-name "\" (" ,(join-columns-name value-columns) ") "
-                "VALUES (" ,(join-columns-variable value-columns) ");")
+              ,(string-append
+                "INSERT INTO \"" table-name "\" (" (join-columns-name value-columns) ") "
+                "VALUES (" (join-columns-variable value-columns) ");")
               ,@(sql-downgrade-row-values row-symbol value-columns))
             (caar
               (sql-read sql-connection
@@ -130,19 +130,19 @@
           ;; updates a row
           (define (,(symbol-append table-symbol '-update) sql-connection ,row-symbol)
             (sql-execute sql-connection
-              (string-append
-                "UPDATE \"" ,table-name "\" "
-                "SET " (join-columns-variable-assignation value-columns)
-                "WHERE \"" ,(column-name id-column) "\" = ?1;")
-              (sql-downgrade-row-values row-symbol columns)))
+              ,(string-append
+                "UPDATE \"" table-name "\" "
+                "SET " (join-columns-variable-assignation value-columns 2)
+                "WHERE \"" (column-name id-column) "\" = ?1;")
+              ,@(sql-downgrade-row-values row-symbol columns)))
 
           ;; deletes a row
           (define (,(symbol-append table-symbol '-delete) sql-connection ,row-symbol)
             (sql-execute sql-connection
-              (string-append
+              ,(string-append
                 "DELETE "
-                "FROM \"" ,table-name "\" "
-                "WHERE \"" ,(column-name id-column) "\" = ?1;")
+                "FROM \"" table-name "\" "
+                "WHERE \"" (column-name id-column) "\" = ?1;")
               (,(symbol-append row-symbol '- (column-symbol id-column)) ,row-symbol)))
 
           ;; selects based on custom statements

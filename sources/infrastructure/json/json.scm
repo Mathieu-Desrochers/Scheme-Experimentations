@@ -130,3 +130,7 @@
     (let ((jansson-dumps-result-value (jansson-dumps-result-value jansson-dumps-result*)))
       (jansson-free-dumps-result jansson-dumps-result*)
       jansson-dumps-result-value)))
+
+;; returns whether a string represents an empty json object
+(define (is-empty-json-object-string? string)
+  (equal? string "{}"))

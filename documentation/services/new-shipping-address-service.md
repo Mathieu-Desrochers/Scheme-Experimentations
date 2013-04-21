@@ -12,7 +12,7 @@ Sample request
       "state": "Washington"
     }
 
-Sample Response
+Sample response
 ---------------
 
     HTTP/1.1 200 OK

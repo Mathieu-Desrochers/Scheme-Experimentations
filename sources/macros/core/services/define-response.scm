@@ -86,19 +86,21 @@
 
           ;; formats a response
           (define (,(symbol-append 'json-format- response-symbol) ,response-symbol json-object)
-            (let (
-              ,@(map
-                (lambda (field-symbol)
-                  `(,field-symbol (,(symbol-append response-symbol '- field-symbol) ,response-symbol)))
-                fields-symbol))
-              ,@(map
-                (lambda (field)
-                  (cond ((value-field? field)
-                         (json-format-value-field field))
-                        ((value-list-field? field)
-                         (json-format-value-list-field field))
-                        ((subresponse-field? field)
-                         (json-format-subresponse-field field))
-                        ((subresponse-list-field? field)
-                         (json-format-subresponse-list-field field))))
-                fields))))))))
+            ,(if (not (null? fields))
+              `(let (
+                ,@(map
+                  (lambda (field-symbol)
+                    `(,field-symbol (,(symbol-append response-symbol '- field-symbol) ,response-symbol)))
+                  fields-symbol))
+                ,@(map
+                  (lambda (field)
+                    (cond ((value-field? field)
+                           (json-format-value-field field))
+                          ((value-list-field? field)
+                           (json-format-value-list-field field))
+                          ((subresponse-field? field)
+                           (json-format-subresponse-field field))
+                          ((subresponse-list-field? field)
+                           (json-format-subresponse-list-field field))))
+                  fields))
+              `#f)))))))
