@@ -32,8 +32,8 @@
 
   ;; validate the customer-id
   (let* ((customer-id (new-shipping-address-request-customer-id new-shipping-address-request))
-         (customer-row (customers-table-select-by-customer-id sql-connection customer-id)))
-    (when (null? customer-row)
+         (customer-rows (customers-table-select-by-customer-id sql-connection customer-id)))
+    (when (null? customer-rows)
       (abort-validation-error 'customer-id-unknown))
 
     ;; insert a shipping-address-row

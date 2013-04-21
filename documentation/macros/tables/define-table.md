@@ -97,7 +97,7 @@ __Custom selections__
     (define-table
       ...
       (custom-selects
-        (customers-table-select-by-credit-limit-range
+        (customers-table-select-within-credit-limit-range
           (string-append
             "SELECT * "
             "FROM \"customers\" "
@@ -112,9 +112,31 @@ __Custom selections__
 
 __Custom selections invocation__
 
-    (customers-table-select-by-credit-limit-range
+    (customers-table-select-within-credit-limit-range
       sql-connection
       1000
       2000)
 
 - Returns a list of customer-rows
+
+__Custom executes__
+
+    (define-table
+      ...
+      (custom-executes
+        (customers-table-delete-below-minimum-credit-limit
+          (string-append
+            "DELETE "
+            "FROM \"customers\" "
+            "WHERE \"credit-limit\" < ?1;")
+          minimum-credit-limit)))
+
+- Defines a custom selection composed of:
+  - A handwritten SQL statement
+  - One parameter
+
+__Custom executes invocation__
+
+    (customers-table-delete-below-minimum-credit-limit
+      sql-connection
+      1000)

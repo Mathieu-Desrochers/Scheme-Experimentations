@@ -1,6 +1,7 @@
 
 (declare (unit http-bindings))
 
+(declare (uses delete-customer-service-http-binding))
 (declare (uses get-customer-service-http-binding))
 (declare (uses get-shipping-addresses-service-http-binding))
 (declare (uses new-customer-service-http-binding))
@@ -13,6 +14,7 @@
 ;; registers the application's http bindings
 (define (register-http-bindings)
   (list
+    (make-delete-customer-service-http-binding)
     (make-get-customer-service-http-binding)
     (make-get-shipping-addresses-service-http-binding)
     (make-new-customer-service-http-binding)

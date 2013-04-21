@@ -89,7 +89,8 @@
              (columns (make-columns (cdr (list-ref exp 2))))
              (id-column (car columns))
              (value-columns (cdr columns))
-             (custom-selects (cdr (list-ref exp 3))))
+             (custom-selects (cdr (list-ref exp 3)))
+             (custom-executes (cdr (list-ref exp 4))))
         `(begin
 
           (declare (uses sql))
@@ -159,4 +160,16 @@
                         (lambda (custom-select-parameter)
                           `(sql-downgrade-value ,custom-select-parameter))
                         custom-select-parameters))))))
-            custom-selects))))))
+            custom-selects)
+
+          ;; executes based on custom statements
+          ,@(map
+            (lambda (custom-execute)
+              (let ((custom-execute-symbol (car custom-execute))
+                    (custom-execute-sql (cadr custom-execute))
+                    (custom-execute-parameters (cddr custom-execute)))
+                `(define (,custom-execute-symbol sql-connection ,@custom-execute-parameters)
+                  (sql-execute sql-connection
+                    ,custom-execute-sql
+                    ,@custom-execute-parameters))))
+            custom-executes))))))

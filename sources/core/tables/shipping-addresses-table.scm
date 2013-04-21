@@ -30,4 +30,11 @@
         "ORDER BY \"effective-date\" DESC "
         "LIMIT 1;")
       customer-id
-      effective-date)))
+      effective-date))
+  (custom-executes
+    (shipping-addresses-table-delete-by-customer-id
+      (string-append
+        "DELETE "
+        "FROM \"shipping-addresses\" "
+        "WHERE \"customer-id\" = ?1;")
+      customer-id)))

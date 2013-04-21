@@ -8,11 +8,17 @@ compile : compile-bindings \
 
 compile-bindings : compile-bindings-http
 
-compile-bindings-http : sources/bindings/http/get-customer-service-http-binding.o \
+compile-bindings-http : sources/bindings/http/delete-customer-service-http-binding.o \
+                        sources/bindings/http/get-customer-service-http-binding.o \
                         sources/bindings/http/get-shipping-addresses-service-http-binding.o \
                         sources/bindings/http/new-customer-service-http-binding.o \
                         sources/bindings/http/new-shipping-address-service-http-binding.o \
                         sources/bindings/http/update-shipping-address-service-http-binding.o
+
+sources/bindings/http/delete-customer-service-http-binding.o : sources/bindings/http/delete-customer-service-http-binding.scm
+	csc -c -extend sources/macros/bindings/http/define-http-binding.scm \
+	sources/bindings/http/delete-customer-service-http-binding.scm -o \
+	sources/bindings/http/delete-customer-service-http-binding.o
 
 sources/bindings/http/get-customer-service-http-binding.o : sources/bindings/http/get-customer-service-http-binding.scm
 	csc -c -extend sources/macros/bindings/http/define-http-binding.scm \
@@ -42,11 +48,19 @@ sources/bindings/http/update-shipping-address-service-http-binding.o : sources/b
 compile-core : compile-core-services \
                compile-core-tables
 
-compile-core-services : sources/core/services/get-customer-service.o \
+compile-core-services : sources/core/services/delete-customer-service.o \
+                        sources/core/services/get-customer-service.o \
                         sources/core/services/get-shipping-addresses-service.o \
                         sources/core/services/new-customer-service.o \
                         sources/core/services/new-shipping-address-service.o \
                         sources/core/services/update-shipping-address-service.o
+
+sources/core/services/delete-customer-service.o : sources/core/services/delete-customer-service.scm
+	csc -c \
+	-extend sources/macros/core/services/define-request.scm \
+	-extend sources/macros/core/services/define-response.scm \
+	sources/core/services/delete-customer-service.scm -o \
+	sources/core/services/delete-customer-service.o
 
 sources/core/services/get-customer-service.o : sources/core/services/get-customer-service.scm
 	csc -c \
@@ -274,11 +288,13 @@ link : compile
 	-ljansson \
 	-lpcre \
 	-lsqlite3 \
+	sources/bindings/http/delete-customer-service-http-binding.o \
 	sources/bindings/http/get-customer-service-http-binding.o \
 	sources/bindings/http/get-shipping-addresses-service-http-binding.o \
 	sources/bindings/http/new-customer-service-http-binding.o \
 	sources/bindings/http/new-shipping-address-service-http-binding.o \
 	sources/bindings/http/update-shipping-address-service-http-binding.o \
+	sources/core/services/delete-customer-service.o \
 	sources/core/services/get-customer-service.o \
 	sources/core/services/get-shipping-addresses-service.o \
 	sources/core/services/new-customer-service.o \
