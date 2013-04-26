@@ -1,4 +1,6 @@
 
+ROOT := $(shell pwd)
+
 make : compile link
 
 compile : compile-bindings \
@@ -330,3 +332,103 @@ link : compile
 
 install :
 	cp scheme /usr/local/apache2/fcgi-bin/
+
+tools : tools-chicken-scheme \
+        tools-fastcgi \
+        tools-httpd \
+        tools-jansson \
+        tools-pcre \
+        tools-sqlite \
+
+tools-chicken-scheme :
+	mkdir /tmp/chicken-scheme
+	tar -x -z -f tools/chicken-scheme/chicken-4.8.0.tar.gz -C /tmp/chicken-scheme
+	cd /tmp/chicken-scheme/chicken-4.8.0
+	make PLATFORM=linux
+	make PLATFORM=linux install
+	cd $(ROOT)
+
+tools-fastcgi : tools-httpd \
+                tools-fastcgi-fcgi \
+                tools-fastcgi-mod-fcgid
+
+tools-fastcgi-fcgi :
+	mkdir /tmp/fcgi
+	tar -x -z -f tools/fastcgi/fcgi-2.4.0.tar.gz -C /tmp/fcgi
+	cd /tmp/fcgi/fcgi-2.4.0
+	sed '25 i #include <stdio.h>' libfcgi/fcgio.cpp > libfcgi/fcgio.cpp.tmp
+	mv libfcgi/fcgio.cpp.tmp libfcgi/fcgio.cpp
+	./configure
+	make
+	make install
+	cd $(ROOT)
+
+tools-fastcgi-mod-fcgid :
+	mkdir /tmp/mod_fcgid
+	tar -x -z -f tools/fastcgi/mod_fcgid-2.3.7.tar.gz -C /tmp/mod_fcgid
+	cd /tmp/mod_fcgid/mod_fcgid-2.3.7
+	export PATH=$PATH:/usr/local/apache2/bin
+	./configure.apxs
+	make
+	make install
+	cd $(ROOT)
+
+tools-httpd : tools-pcre \
+              tools-httpd-apr \
+              tools-httpd-apr-util \
+              tools-httpd-httpd
+
+tools-httpd-apr :
+	mkdir /tmp/apr
+	tar -x -z -f tools/httpd/apr-1.4.6.tar.gz -C /tmp/apr
+	cd /tmp/apr/apr-1.4.6
+	./configure
+	make
+	make install
+	cd $(ROOT)
+
+tools-httpd-apr-util :
+	mkdir /tmp/apr-util
+	tar -x -z -f tools/httpd/apr-util-1.5.1.tar.gz -C /tmp/apr-util
+	cd /tmp/apr-util/apr-util-1.5.1
+	./configure --with-apr=/usr/local/apr
+	make
+	make install
+	cd $(ROOT)
+
+tools-httpd-httpd :
+	mkdir /tmp/httpd
+	tar -x -z -f tools/httpd/httpd-2.4.3.tar.gz -C /tmp/httpd
+	cd /tmp/httpd/httpd-2.4.3
+	./configure --enable-so
+	make
+	make install
+	cd $(ROOT)
+
+tools-jansson :
+	mkdir /tmp/jansson
+	tar -x -z -f tools/jansson/jansson-2.4.tar.gz -C /tmp/jansson
+	cd /tmp/jansson/jansson-2.4
+	./configure
+	make
+	make install
+	cd $(ROOT)
+
+tools-pcre :
+	mkdir /tmp/pcre
+	tar -x -z -f tools/pcre/pcre-8.32.tar.gz -C /tmp/pcre
+	cd /tmp/pcre/pcre-8.32
+	./configure
+	make
+	make install
+	cd $(ROOT)
+
+tools-sqlite :
+	mkdir /tmp/sqlite
+	tar -x -z -f tools/sqlite/sqlite-autoconf-3071502.tar.gz -C /tmp/sqlite
+	cd /tmp/sqlite/sqlite-autoconf-3071502
+	./configure
+	make
+	make install
+	ldconfig
+	cd $(ROOT)
