@@ -1,6 +1,4 @@
 
-ROOT := $(shell pwd)
-
 make : compile link
 
 compile : compile-bindings \
@@ -343,10 +341,9 @@ tools : tools-chicken-scheme \
 tools-chicken-scheme :
 	mkdir /tmp/chicken-scheme
 	tar -x -z -f tools/chicken-scheme/chicken-4.8.0.tar.gz -C /tmp/chicken-scheme
-	cd /tmp/chicken-scheme/chicken-4.8.0
-	make PLATFORM=linux
-	make PLATFORM=linux install
-	cd $(ROOT)
+	$(MAKE) -C /tmp/chicken-scheme/chicken-4.8.0 PLATFORM=linux
+	$(MAKE) -C /tmp/chicken-scheme/chicken-4.8.0 PLATFORM=linux install
+	rm -r /tmp/chicken-scheme
 
 tools-fastcgi : tools-httpd \
                 tools-fastcgi-fcgi \
@@ -355,23 +352,21 @@ tools-fastcgi : tools-httpd \
 tools-fastcgi-fcgi :
 	mkdir /tmp/fcgi
 	tar -x -z -f tools/fastcgi/fcgi-2.4.0.tar.gz -C /tmp/fcgi
-	cd /tmp/fcgi/fcgi-2.4.0
-	sed '25 i #include <stdio.h>' libfcgi/fcgio.cpp > libfcgi/fcgio.cpp.tmp
-	mv libfcgi/fcgio.cpp.tmp libfcgi/fcgio.cpp
-	./configure
-	make
-	make install
-	cd $(ROOT)
+	sed '25 i #include <stdio.h>' /tmp/fcgi/fcgi-2.4.0/libfcgi/fcgio.cpp > /tmp/fcgi/fcgi-2.4.0/libfcgi/fcgio.cpp.tmp
+	mv /tmp/fcgi/fcgi-2.4.0/libfcgi/fcgio.cpp.tmp /tmp/fcgi/fcgi-2.4.0/libfcgi/fcgio.cpp
+	/tmp/fcgi/fcgi-2.4.0/configure
+	$(MAKE) -C /tmp/fcgi/fcgi-2.4.0
+	$(MAKE) -C /tmp/fcgi/fcgi-2.4.0 install
+	rm -r /tmp/fcgi
 
 tools-fastcgi-mod-fcgid :
 	mkdir /tmp/mod_fcgid
 	tar -x -z -f tools/fastcgi/mod_fcgid-2.3.7.tar.gz -C /tmp/mod_fcgid
-	cd /tmp/mod_fcgid/mod_fcgid-2.3.7
 	export PATH=$PATH:/usr/local/apache2/bin
-	./configure.apxs
-	make
-	make install
-	cd $(ROOT)
+	/tmp/mod_fcgid/mod_fcgid-2.3.7/configure.apxs
+	$(MAKE) -C /tmp/mod_fcgid/mod_fcgid-2.3.7
+	$(MAKE) -C /tmp/mod_fcgid/mod_fcgid-2.3.7 install
+	rm -r /tmp/mod_fcgid
 
 tools-httpd : tools-pcre \
               tools-httpd-apr \
@@ -381,54 +376,48 @@ tools-httpd : tools-pcre \
 tools-httpd-apr :
 	mkdir /tmp/apr
 	tar -x -z -f tools/httpd/apr-1.4.6.tar.gz -C /tmp/apr
-	cd /tmp/apr/apr-1.4.6
-	./configure
-	make
-	make install
-	cd $(ROOT)
+	/tmp/apr/apr-1.4.6/configure
+	$(MAKE) -C /tmp/apr/apr-1.4.6
+	$(MAKE) -C /tmp/apr/apr-1.4.6 install
+	rm -r mkdir /tmp/apr
 
 tools-httpd-apr-util :
 	mkdir /tmp/apr-util
 	tar -x -z -f tools/httpd/apr-util-1.5.1.tar.gz -C /tmp/apr-util
-	cd /tmp/apr-util/apr-util-1.5.1
-	./configure --with-apr=/usr/local/apr
-	make
-	make install
-	cd $(ROOT)
+	/tmp/apr-util/apr-util-1.5.1/configure --with-apr=/usr/local/apr
+	$(MAKE) -C /tmp/apr-util/apr-util-1.5.1
+	$(MAKE) -C /tmp/apr-util/apr-util-1.5.1 install
+	rm -r /tmp/apr-util
 
 tools-httpd-httpd :
 	mkdir /tmp/httpd
 	tar -x -z -f tools/httpd/httpd-2.4.3.tar.gz -C /tmp/httpd
-	cd /tmp/httpd/httpd-2.4.3
-	./configure --enable-so
-	make
-	make install
-	cd $(ROOT)
+	/tmp/httpd/httpd-2.4.3/configure --enable-so
+	$(MAKE) -C /tmp/httpd/httpd-2.4.3
+	$(MAKE) -C /tmp/httpd/httpd-2.4.3 install
+	rm -r /tmp/httpd
 
 tools-jansson :
 	mkdir /tmp/jansson
 	tar -x -z -f tools/jansson/jansson-2.4.tar.gz -C /tmp/jansson
-	cd /tmp/jansson/jansson-2.4
-	./configure
-	make
-	make install
-	cd $(ROOT)
+	/tmp/jansson/jansson-2.4/configure
+	$(MAKE) -C /tmp/jansson/jansson-2.4
+	$(MAKE) -C /tmp/jansson/jansson-2.4 install
+	rm -r /tmp/jansson
 
 tools-pcre :
 	mkdir /tmp/pcre
 	tar -x -z -f tools/pcre/pcre-8.32.tar.gz -C /tmp/pcre
-	cd /tmp/pcre/pcre-8.32
-	./configure
-	make
-	make install
-	cd $(ROOT)
+	/tmp/pcre/pcre-8.32/configure
+	$(MAKE) -C /tmp/pcre/pcre-8.32
+	$(MAKE) -C /tmp/pcre/pcre-8.32 install
+	rm -r /tmp/pcre
 
 tools-sqlite :
 	mkdir /tmp/sqlite
 	tar -x -z -f tools/sqlite/sqlite-autoconf-3071502.tar.gz -C /tmp/sqlite
-	cd /tmp/sqlite/sqlite-autoconf-3071502
-	./configure
-	make
-	make install
+	/tmp/sqlite/sqlite-autoconf-3071502/configure
+	$(MAKE) -C /tmp/sqlite/sqlite-autoconf-3071502
+	$(MAKE) -C /tmp/sqlite/sqlite-autoconf-3071502 install
+	rm -r /tmp/sqlite
 	ldconfig
-	cd $(ROOT)
