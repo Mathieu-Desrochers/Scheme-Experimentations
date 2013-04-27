@@ -329,7 +329,7 @@ link : compile
 	-o scheme
 
 install :
-	cp scheme /usr/local/apache2/fcgi-bin/
+	cp scheme /usr/local/apache2/api/
 
 tools : tools-chicken-scheme \
         tools-fastcgi \
@@ -372,7 +372,7 @@ tools-httpd : tools-pcre \
               tools-httpd-apr-util \
               tools-httpd-httpd
 
-tools-httpd-apr : tools/httpd/apr-1.4.6.tar.gz
+tools-httpd-apr :
 	mkdir /tmp/apr
 	tar -x -z -f tools/httpd/apr-1.4.6.tar.gz -C /tmp/apr
 	cd /tmp/apr/apr-1.4.6 && ./configure
@@ -380,7 +380,7 @@ tools-httpd-apr : tools/httpd/apr-1.4.6.tar.gz
 	$(MAKE) -C /tmp/apr/apr-1.4.6 install
 	rm -r /tmp/apr
 
-tools-httpd-apr-util : tools/httpd/apr-util-1.5.1.tar.gz
+tools-httpd-apr-util :
 	mkdir /tmp/apr-util
 	tar -x -z -f tools/httpd/apr-util-1.5.1.tar.gz -C /tmp/apr-util
 	cd /tmp/apr-util/apr-util-1.5.1 && ./configure --with-apr=/usr/local/apr
@@ -388,7 +388,7 @@ tools-httpd-apr-util : tools/httpd/apr-util-1.5.1.tar.gz
 	$(MAKE) -C /tmp/apr-util/apr-util-1.5.1 install
 	rm -r /tmp/apr-util
 
-tools-httpd-httpd : tools/httpd/httpd-2.4.3.tar.gz
+tools-httpd-httpd :
 	mkdir /tmp/httpd
 	tar -x -z -f tools/httpd/httpd-2.4.3.tar.gz -C /tmp/httpd
 	cd /tmp/httpd/httpd-2.4.3 && ./configure --enable-so
@@ -396,7 +396,7 @@ tools-httpd-httpd : tools/httpd/httpd-2.4.3.tar.gz
 	$(MAKE) -C /tmp/httpd/httpd-2.4.3 install
 	rm -r /tmp/httpd
 
-tools-jansson : tools/jansson/jansson-2.4.tar.gz
+tools-jansson :
 	mkdir /tmp/jansson
 	tar -x -z -f tools/jansson/jansson-2.4.tar.gz -C /tmp/jansson
 	cd /tmp/jansson/jansson-2.4 && ./configure
@@ -404,7 +404,7 @@ tools-jansson : tools/jansson/jansson-2.4.tar.gz
 	$(MAKE) -C /tmp/jansson/jansson-2.4 install
 	rm -r /tmp/jansson
 
-tools-pcre : tools/pcre/pcre-8.32.tar.gz
+tools-pcre :
 	mkdir /tmp/pcre
 	tar -x -z -f tools/pcre/pcre-8.32.tar.gz -C /tmp/pcre
 	cd /tmp/pcre/pcre-8.32 && ./configure
@@ -412,7 +412,7 @@ tools-pcre : tools/pcre/pcre-8.32.tar.gz
 	$(MAKE) -C /tmp/pcre/pcre-8.32 install
 	rm -r /tmp/pcre
 
-tools-sqlite : tools/sqlite/sqlite-autoconf-3071502.tar.gz
+tools-sqlite :
 	mkdir /tmp/sqlite
 	tar -x -z -f tools/sqlite/sqlite-autoconf-3071502.tar.gz -C /tmp/sqlite
 	cd /tmp/sqlite/sqlite-autoconf-3071502 && ./configure
@@ -420,3 +420,24 @@ tools-sqlite : tools/sqlite/sqlite-autoconf-3071502.tar.gz
 	$(MAKE) -C /tmp/sqlite/sqlite-autoconf-3071502 install
 	rm -r /tmp/sqlite
 	ldconfig
+
+apache-configuration :
+	mkdir /usr/local/apache2/api
+	echo "" >> /usr/local/apache2/conf/httpd.conf
+	echo "ScriptAlias /api/ \"/usr/local/apache2/api/\"" >> /usr/local/apache2/conf/httpd.conf
+	echo "" >> /usr/local/apache2/conf/httpd.conf
+	echo "<Directory \"/usr/local/apache2/api\">" >> /usr/local/apache2/conf/httpd.conf
+	echo "    AllowOverride None" >> /usr/local/apache2/conf/httpd.conf
+	echo "    Require all granted" >> /usr/local/apache2/conf/httpd.conf
+	echo "    SetHandler fcgid-script" >> /usr/local/apache2/conf/httpd.conf
+	echo "    Options +ExecCGI" >> /usr/local/apache2/conf/httpd.conf
+	echo "    FcgidWrapper /usr/local/apache2/api/scheme virtual" >> /usr/local/apache2/conf/httpd.conf
+	echo "</Directory>" >> /usr/local/apache2/conf/httpd.conf
+	echo "" >> /usr/local/apache2/conf/httpd.conf
+
+database :
+	mkdir /databases
+	sqlite3 /databases/customers.db < sources/database/create-database.sql
+	sqlite3 /databases/customers.db "PRAGMA journal_mode=WAL;"
+	chmod 777 /databases
+	chmod 777 /databases/customers.db
