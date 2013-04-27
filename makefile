@@ -352,9 +352,9 @@ tools-fastcgi : tools-httpd \
 tools-fastcgi-fcgi :
 	mkdir /tmp/fcgi
 	tar -x -z -f tools/fastcgi/fcgi-2.4.0.tar.gz -C /tmp/fcgi
-	sed '25 i #include <stdio.h>' /tmp/fcgi/fcgi-2.4.0/libfcgi/fcgio.cpp > /tmp/fcgi/fcgi-2.4.0/libfcgi/fcgio.cpp.tmp
-	mv /tmp/fcgi/fcgi-2.4.0/libfcgi/fcgio.cpp.tmp /tmp/fcgi/fcgi-2.4.0/libfcgi/fcgio.cpp
-	/tmp/fcgi/fcgi-2.4.0/configure
+	cd /tmp/fcgi/fcgi-2.4.0/libfcgi && sed '25 i #include <stdio.h>' fcgio.cpp > fcgio.cpp.tmp && cd -
+	cd /tmp/fcgi/fcgi-2.4.0/libfcgi && mv fcgio.cpp.tmp fcgio.cpp && cd -
+	cd /tmp/fcgi/fcgi-2.4.0 && ./configure && cd -
 	$(MAKE) -C /tmp/fcgi/fcgi-2.4.0
 	$(MAKE) -C /tmp/fcgi/fcgi-2.4.0 install
 	rm -r /tmp/fcgi
@@ -363,7 +363,7 @@ tools-fastcgi-mod-fcgid :
 	mkdir /tmp/mod_fcgid
 	tar -x -z -f tools/fastcgi/mod_fcgid-2.3.7.tar.gz -C /tmp/mod_fcgid
 	export PATH=$PATH:/usr/local/apache2/bin
-	/tmp/mod_fcgid/mod_fcgid-2.3.7/configure.apxs
+	cd /tmp/mod_fcgid/mod_fcgid-2.3.7 && ./configure.apxs && cd -
 	$(MAKE) -C /tmp/mod_fcgid/mod_fcgid-2.3.7
 	$(MAKE) -C /tmp/mod_fcgid/mod_fcgid-2.3.7 install
 	rm -r /tmp/mod_fcgid
@@ -376,15 +376,15 @@ tools-httpd : tools-pcre \
 tools-httpd-apr :
 	mkdir /tmp/apr
 	tar -x -z -f tools/httpd/apr-1.4.6.tar.gz -C /tmp/apr
-	/tmp/apr/apr-1.4.6/configure
+	cd /tmp/apr/apr-1.4.6 && ./configure && cd -
 	$(MAKE) -C /tmp/apr/apr-1.4.6
 	$(MAKE) -C /tmp/apr/apr-1.4.6 install
-	rm -r mkdir /tmp/apr
+	rm -r /tmp/apr
 
 tools-httpd-apr-util :
 	mkdir /tmp/apr-util
 	tar -x -z -f tools/httpd/apr-util-1.5.1.tar.gz -C /tmp/apr-util
-	/tmp/apr-util/apr-util-1.5.1/configure --with-apr=/usr/local/apr
+	cd /tmp/apr-util/apr-util-1.5.1 && ./configure --with-apr=/usr/local/apr && cd -
 	$(MAKE) -C /tmp/apr-util/apr-util-1.5.1
 	$(MAKE) -C /tmp/apr-util/apr-util-1.5.1 install
 	rm -r /tmp/apr-util
@@ -392,7 +392,7 @@ tools-httpd-apr-util :
 tools-httpd-httpd :
 	mkdir /tmp/httpd
 	tar -x -z -f tools/httpd/httpd-2.4.3.tar.gz -C /tmp/httpd
-	/tmp/httpd/httpd-2.4.3/configure --enable-so
+	cd /tmp/httpd/httpd-2.4.3 && ./configure --enable-so && cd -
 	$(MAKE) -C /tmp/httpd/httpd-2.4.3
 	$(MAKE) -C /tmp/httpd/httpd-2.4.3 install
 	rm -r /tmp/httpd
@@ -400,7 +400,7 @@ tools-httpd-httpd :
 tools-jansson :
 	mkdir /tmp/jansson
 	tar -x -z -f tools/jansson/jansson-2.4.tar.gz -C /tmp/jansson
-	/tmp/jansson/jansson-2.4/configure
+	cd /tmp/jansson/jansson-2.4 && ./configure && cd -
 	$(MAKE) -C /tmp/jansson/jansson-2.4
 	$(MAKE) -C /tmp/jansson/jansson-2.4 install
 	rm -r /tmp/jansson
@@ -408,7 +408,7 @@ tools-jansson :
 tools-pcre :
 	mkdir /tmp/pcre
 	tar -x -z -f tools/pcre/pcre-8.32.tar.gz -C /tmp/pcre
-	/tmp/pcre/pcre-8.32/configure
+	cd /tmp/pcre/pcre-8.32 && ./configure && cd -
 	$(MAKE) -C /tmp/pcre/pcre-8.32
 	$(MAKE) -C /tmp/pcre/pcre-8.32 install
 	rm -r /tmp/pcre
@@ -416,7 +416,7 @@ tools-pcre :
 tools-sqlite :
 	mkdir /tmp/sqlite
 	tar -x -z -f tools/sqlite/sqlite-autoconf-3071502.tar.gz -C /tmp/sqlite
-	/tmp/sqlite/sqlite-autoconf-3071502/configure
+	cd /tmp/sqlite/sqlite-autoconf-3071502 && ./configure && cd -
 	$(MAKE) -C /tmp/sqlite/sqlite-autoconf-3071502
 	$(MAKE) -C /tmp/sqlite/sqlite-autoconf-3071502 install
 	rm -r /tmp/sqlite

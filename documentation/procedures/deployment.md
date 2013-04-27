@@ -3,6 +3,7 @@ Installing the compilers
 ------------------------
 
 - Execute the following commands:
+ - sudo apt-get update
  - sudo apt-get install make
  - sudo apt-get install gcc
  - sudo apt-get install g++
