@@ -2,7 +2,7 @@
 Sample request
 --------------
 
-    POST /fcgi-bin/customers HTTP/1.1
+    POST /api/customers HTTP/1.1
     Host: localhost
 
     {

@@ -2,7 +2,7 @@
 Sample request
 --------------
 
-    DELETE /fcgi-bin/customers/1000 HTTP/1.1
+    DELETE /api/customers/1000 HTTP/1.1
     Host: localhost
 
 Sample response

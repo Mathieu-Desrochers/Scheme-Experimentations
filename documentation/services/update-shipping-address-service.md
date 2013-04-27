@@ -2,7 +2,7 @@
 Sample request
 --------------
 
-    PUT /fcgi-bin/customers/1000/shipping-addresses/2000 HTTP/1.1
+    PUT /api/customers/1000/shipping-addresses/2000 HTTP/1.1
     Host: localhost
 
     {

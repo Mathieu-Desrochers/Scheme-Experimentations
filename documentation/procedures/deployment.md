@@ -25,27 +25,16 @@ Making the tools
 Configuring Apache HTTP Server
 ------------------------------
 
-- Open /usr/local/apache2/conf/httpd.conf
-- Append the following directive:
+- Change directory to the root of the repository
+- Execute the following commands:
+ - sudo make apache-configuration
 
-            ScriptAlias /api/ "/usr/local/apache2/api/"
+Making the database
+-------------------
 
-- Append the following section:
-
-            <Directory "/usr/local/apache2/api">  
-                AllowOverride None  
-                Require all granted  
-                SetHandler fcgid-script  
-                Options +ExecCGI  
-                FcgidWrapper /usr/local/apache2/api/scheme virtual  
-            </Directory>
-
-Configuring the SQLite database
--------------------------------
-
-- Open the database with the sqlite3 command-line utility
-- Execute the following command:
- - PRAGMA journal_mode=WAL;
+- Change directory to the root of the repository
+- Execute the following commands:
+ - sudo make database
 
 Making the application
 ----------------------

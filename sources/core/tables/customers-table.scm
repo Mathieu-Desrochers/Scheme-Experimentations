@@ -12,4 +12,5 @@
     ("first-name" string)
     ("last-name" string)
     ("is-vip" boolean))
-  (custom-selects))
+  (custom-selects)
+  (custom-executes))
