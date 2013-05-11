@@ -50,7 +50,7 @@ FCGX_GetLineEx()
 FCGX_PutS()
 </code></pre>
 
-<p>The <a href="https://github.com/Mathieu-Desrochers/Scheme-Experimentations/tree/master/sources/infrastructure/http">HTTP module</a> then offers the following scheme procedures:</p>
+<p>The <a href="https://github.com/Mathieu-Desrochers/Scheme-Experimentations/blob/master/sources/infrastructure/http/http.scm">HTTP module</a> then offers the following scheme procedures:</p>
 
 <pre><code>(http-request-method)
 (http-read-fastcgi-stream)
@@ -98,7 +98,7 @@ json_object_set()
 json_dumps()
 </code></pre>
 
-<p>The <a href="https://github.com/Mathieu-Desrochers/Scheme-Experimentations/tree/master/sources/infrastructure/json">JSON module</a> then offers the following scheme procedures:</p>
+<p>The <a href="https://github.com/Mathieu-Desrochers/Scheme-Experimentations/blob/master/sources/infrastructure/json/json.scm">JSON module</a> then offers the following scheme procedures:</p>
 
 <pre><code>(with-parsed-json-object)
 (json-object-property)
@@ -114,7 +114,7 @@ json_dumps()
   (is-vip boolean))
 </code></pre>
 
-<p>And you automatically gain code capable of parsing and formatting HTTP requests such as:</p>
+<p>And you automatically gain code capable of parsing HTTP requests such as:</p>
 
 <pre><code>POST /api/customers HTTP/1.1
 Host: localhost
@@ -138,7 +138,7 @@ sqlite3_bind_int()
 sqlite3_step()
 </code></pre>
 
-<p>The <a href="https://github.com/Mathieu-Desrochers/Scheme-Experimentations/tree/master/sources/infrastructure/sql">SQL module</a> then offers the following scheme procedures:</p>
+<p>The <a href="https://github.com/Mathieu-Desrochers/Scheme-Experimentations/blob/master/sources/infrastructure/sql/sql.scm">SQL module</a> then offers the following scheme procedures:</p>
 
 <pre><code>(with-sql-connection)
 (within-sql-transaction)
