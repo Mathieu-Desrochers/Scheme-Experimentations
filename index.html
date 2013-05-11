@@ -41,16 +41,16 @@
 
 <h2>Handling HTTP requests</h2>
 
-<p>Many have explored the idea of writing an HTTP server written in scheme. We instead chose to focus on writing our application logic in scheme, and to rely on the tools offered by Linux for everything else. So we ended up embedding the Chicken Scheme runtime into a FastCGI module hosted by the Apache HTTP server.</p>
+<p>Many have explored the idea of building an HTTP server written in scheme. We instead chose to focus on writing our application logic in scheme, and to rely on the tools offered by Linux for everything else. So we ended up embedding the <a href="http://www.call-cc.org/">Chicken Scheme</a> runtime into a <a href="http://www.fastcgi.com/">FastCGI</a> module hosted by the <a href="http://httpd.apache.org/">Apache HTTP server</a>.</p>
 
-<p>The FastCGI foreign interface provides access to the following low level functions:</p>
+<p>The <a href="https://github.com/Mathieu-Desrochers/Scheme-Experimentations/blob/master/sources/foreign-interfaces/fastcgi.scm">FastCGI foreign interface</a> provides access to the following low level functions:</p>
 
 <pre><code>FCGX_GetParam()
 FCGX_GetLineEx()
 FCGX_PutS()
 </code></pre>
 
-<p>The HTTP module then offers the following scheme procedures:</p>
+<p>The <a href="https://github.com/Mathieu-Desrochers/Scheme-Experimentations/tree/master/sources/infrastructure/http">HTTP module</a> then offers the following scheme procedures:</p>
 
 <pre><code>(http-request-method)
 (http-read-fastcgi-stream)
@@ -58,7 +58,7 @@ FCGX_PutS()
 (http-write-body)
 </code></pre>
 
-<p>The request processing code is macro generated, so all you have to code looks like this:</p>
+<p>The request processing code is <a href="https://github.com/Mathieu-Desrochers/Scheme-Experimentations/blob/master/documentation/macros/services/define-request.md">macro generated</a>, so all you have to code looks like this:</p>
 
 <pre><code>(define-http-binding
   "GET"
@@ -90,7 +90,7 @@ FCGX_PutS()
 
 <h2>Parsing and formatting JSON</h2>
 
-<p>We chose the ubiquitous JSON format to carry our HTTP payloads. The Jansson library fitted our needs nicely, so we built the Jansson foreign interface to provide access to the following low level functions:</p>
+<p>We chose the ubiquitous JSON format to carry our HTTP payloads. The <a href="http://www.digip.org/jansson/">Jansson library</a> fitted our needs nicely, so we built the <a href="https://github.com/Mathieu-Desrochers/Scheme-Experimentations/blob/master/sources/foreign-interfaces/jansson.scm">Jansson foreign interface</a> to provide access to the following low level functions:</p>
 
 <pre><code>json_loads()
 json_integer_value()
@@ -98,7 +98,7 @@ json_object_set()
 json_dumps()
 </code></pre>
 
-<p>The JSON module then offers the following scheme procedures:</p>
+<p>The <a href="https://github.com/Mathieu-Desrochers/Scheme-Experimentations/tree/master/sources/infrastructure/json">JSON module</a> then offers the following scheme procedures:</p>
 
 <pre><code>(with-parsed-json-object)
 (json-object-property)
@@ -106,7 +106,7 @@ json_dumps()
 (json-object-&gt;string)
 </code></pre>
 
-<p>The parsing and formatting code for the JSON requests and responses is macro generated, so all you have to code looks like this:</p>
+<p>The parsing and formatting code for the JSON requests and responses is <a href="https://github.com/Mathieu-Desrochers/Scheme-Experimentations/blob/master/documentation/macros/services/define-request.md">macro generated</a>, so all you have to code looks like this:</p>
 
 <pre><code>(define-request new-customer-request
   (first-name string #t 1 50)
@@ -128,9 +128,9 @@ Host: localhost
 
 <h2>Storing persistent data</h2>
 
-<p>We intended to fully exploit our fine-grained control over the HTTP requests, notably through aggressive HTTP caching. So we relaxed our performance requirements at the database level, and ended up leveraging the widely used SQLite library.</p>
+<p>We intended to fully exploit our fine-grained control over the HTTP requests, notably through aggressive HTTP caching. So we relaxed our performance requirements at the database level, and ended up leveraging the widely used <a href="http://www.sqlite.org/">SQLite library</a>.</p>
 
-<p>The SQLite foreign interface provides access to the following low level functions:</p>
+<p>The <a href="https://github.com/Mathieu-Desrochers/Scheme-Experimentations/blob/master/sources/foreign-interfaces/sqlite.scm">SQLite foreign interface</a> provides access to the following low level functions:</p>
 
 <pre><code>sqlite3_open()
 sqlite3_prepare_v2()
@@ -138,7 +138,7 @@ sqlite3_bind_int()
 sqlite3_step()
 </code></pre>
 
-<p>The SQL module then offers the following scheme procedures:</p>
+<p>The <a href="https://github.com/Mathieu-Desrochers/Scheme-Experimentations/tree/master/sources/infrastructure/sql">SQL module</a> then offers the following scheme procedures:</p>
 
 <pre><code>(with-sql-connection)
 (within-sql-transaction)
@@ -146,7 +146,7 @@ sqlite3_step()
 (sql-read)
 </code></pre>
 
-<p>The code for the basic CRUD operations is macro generated, so all you have to code looks like this:</p>
+<p>The code for the basic CRUD operations is <a href="https://github.com/Mathieu-Desrochers/Scheme-Experimentations/tree/master/sources/infrastructure/sql">macro generated</a>, so all you have to code looks like this:</p>
 
 <pre><code>(define-table
   (customers-table
