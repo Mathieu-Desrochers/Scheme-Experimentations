@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Scheme-experimentations : Could the beautiful scheme language be used to develop a database driven web application ?" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Scheme-experimentations</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/Mathieu-Desrochers/Scheme-Experimentations">View on GitHub</a>
+
+          <h1 id="project_title">Scheme-experimentations</h1>
+          <h2 id="project_tagline">Could the beautiful scheme language be used to develop a database driven web application ?</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/Mathieu-Desrochers/Scheme-Experimentations/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/Mathieu-Desrochers/Scheme-Experimentations/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>You love scheme</h1>
+
+<p>And so do we.</p>
+
+<p>You understand that simplicity is beautiful, and that scheme is the very essence of what it means to write software. But somehow, scheme is perceived as an abstract ideal that can hardly be used in the real world. We begged to differ, so we challenged ourselves to build a credible web application written in our beloved language, and this project was born.</p>
+
+<p>We hope you can find inspiration in it.</p>
+
+<h2>Handling HTTP requests</h2>
+
+<p>Many have explored the idea of writing an HTTP server written in scheme. We instead chose to focus on writing our application logic in scheme, and to rely on the tools offered by Linux for everything else. So we ended up embedding the Chicken Scheme runtime into a FastCGI module hosted by the Apache HTTP server.</p>
+
+<p>The FastCGI foreign interface provides access to the following low level functions:</p>
+
+<pre><code>FCGX_GetParam()
+FCGX_GetLineEx()
+FCGX_PutS()
+</code></pre>
+
+<p>The HTTP module then offers the following scheme procedures:</p>
+
+<pre><code>(http-request-method)
+(http-read-fastcgi-stream)
+(http-write-header)
+(http-write-body)
+</code></pre>
+
+<p>The request processing code is macro generated, so all you have to code looks like this:</p>
+
+<pre><code>(define-http-binding
+  "GET"
+  "^customers/(\\d{1,6})$"
+  get-customer-service
+  http-parse-get-customer-request
+  http-format-get-customer-response)
+
+(define (http-parse-get-customer-request route-captures request-body)
+  (make-get-customer-request
+    (string-&gt;number (car route-captures))))
+
+(define (http-format-get-customer-response response)
+  (json-format-response response json-format-get-customer-response))
+</code></pre>
+
+<p>Then all is registered to the Apache HTTP server with this simple configuration:</p>
+
+<pre><code>ScriptAlias /api/ "/usr/local/apache2/api/"
+
+&lt;Directory "/usr/local/apache2/api"&gt;
+  AllowOverride None
+  Require all granted
+  SetHandler fcgid-script
+  Options +ExecCGI
+  FcgidWrapper /usr/local/apache2/api/scheme virtual
+&lt;/Directory&gt;
+</code></pre>
+
+<h2>Parsing and formatting JSON</h2>
+
+<p>We chose the ubiquitous JSON format to carry our HTTP payloads. The Jansson library fitted our needs nicely, so we built the Jansson foreign interface to provide access to the following low level functions:</p>
+
+<pre><code>json_loads()
+json_integer_value()
+json_object_set()
+json_dumps()
+</code></pre>
+
+<p>The JSON module then offers the following scheme procedures:</p>
+
+<pre><code>(with-parsed-json-object)
+(json-object-property)
+(json-object-property-set!)
+(json-object-&gt;string)
+</code></pre>
+
+<p>The parsing and formatting code for the JSON requests and responses is macro generated, so all you have to code looks like this:</p>
+
+<pre><code>(define-request new-customer-request
+  (first-name string #t 1 50)
+  (last-name string #t 1 50)
+  (is-vip boolean))
+</code></pre>
+
+<p>And you automatically gain code capable of parsing and formatting HTTP requests such as:</p>
+
+<pre><code>POST /api/customers HTTP/1.1
+Host: localhost
+
+{
+  "first-name": "Alice",
+  "last-name": "Allison",
+  "is-vip": true
+}
+</code></pre>
+
+<h2>Storing persistent data</h2>
+
+<p>We intended to fully exploit our fine-grained control over the HTTP requests, notably through aggressive HTTP caching. So we relaxed our performance requirements at the database level, and ended up leveraging the widely used SQLite library.</p>
+
+<p>The SQLite foreign interface provides access to the following low level functions:</p>
+
+<pre><code>sqlite3_open()
+sqlite3_prepare_v2()
+sqlite3_bind_int()
+sqlite3_step()
+</code></pre>
+
+<p>The SQL module then offers the following scheme procedures:</p>
+
+<pre><code>(with-sql-connection)
+(within-sql-transaction)
+(sql-execute)
+(sql-read)
+</code></pre>
+
+<p>The code for the basic CRUD operations is macro generated, so all you have to code looks like this:</p>
+
+<pre><code>(define-table
+  (customers-table
+    "customers")
+  (customer-row
+    ("customer-id" integer)
+    ("first-name" string)
+    ("last-name" string)
+    ("is-vip" boolean))
+  (custom-selects)
+  (custom-executes))
+</code></pre>
+
+<p>And you automatically gain the following procedures:</p>
+
+<pre><code>(make-customer-row)
+(customers-table-insert)
+(customers-table-select-by-customer-id)
+(customers-table-update)
+(customers-table-delete)
+</code></pre>
+
+<h2>Spread the scheme love</h2>
+
+<p>As you can see, we took great care not impose any design decisions on anyone who would like to build upon this project. Simply knowing you used our foreign interfaces will make us smile. You liked our modules, or even reused some macros? We are happy like it's our birthday.</p>
+
+<p>Please fork this project and build the next big thing in scheme.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Scheme-experimentations maintained by <a href="https://github.com/Mathieu-Desrochers">Mathieu-Desrochers</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
