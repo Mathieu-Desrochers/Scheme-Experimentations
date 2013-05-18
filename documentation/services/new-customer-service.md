@@ -21,7 +21,7 @@ Sample response
 ---------------
 
     HTTP/1.1 200 OK
-    Content-Type: text/json; charset=utf-8
+    Content-Type: application/json; charset=utf-8
     
     {
       "customer-id": 1000

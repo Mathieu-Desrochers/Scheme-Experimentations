@@ -99,7 +99,7 @@
 ;; sends a 200 ok
 (define (http-send-200-ok response-body fastcgi-output-stream*)
   (http-write-header "Status: 200 OK" fastcgi-output-stream*)
-  (http-write-header "Content-Type: text/json; charset=utf-8" fastcgi-output-stream*)
+  (http-write-header "Content-Type: application/json; charset=utf-8" fastcgi-output-stream*)
   (http-close-headers fastcgi-output-stream*)
   (http-write-body response-body fastcgi-output-stream*))
 
@@ -123,7 +123,7 @@
 
   ;; write the response headers
   (http-write-header "Status: 422 Unprocessable Entity" fastcgi-output-stream*)
-  (http-write-header "Content-Type: text/json; charset=utf-8" fastcgi-output-stream*)
+  (http-write-header "Content-Type: application/json; charset=utf-8" fastcgi-output-stream*)
   (http-close-headers fastcgi-output-stream*)
 
   ;; formats the validation errors into a json array
