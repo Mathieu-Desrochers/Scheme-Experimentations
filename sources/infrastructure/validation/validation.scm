@@ -3,7 +3,7 @@
 
 (declare (unit validation))
 
-(declare (uses datetime))
+(declare (uses date-time))
 
 ;; validates a boolean
 (define (validate-boolean value)
@@ -17,11 +17,11 @@
         ((not (date-valid? value)) 'invalid)
         (else #f)))
 
-;; validates a datetime
-(define (validate-datetime value required)
+;; validates a date-time
+(define (validate-date-time value required)
   (cond ((not value) (if (not required) #f 'missing))
-        ((not (datetime? value)) 'wrong-type)
-        ((not (datetime-valid? value)) 'invalid)
+        ((not (date-time? value)) 'wrong-type)
+        ((not (date-time-valid? value)) 'invalid)
         (else #f)))
 
 ;; validates a day-of-week

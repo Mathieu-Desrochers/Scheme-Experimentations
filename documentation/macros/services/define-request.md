@@ -17,7 +17,7 @@ __Definition__
 - Supported field types (flags):
  - boolean
  - date (required)
- - datetime (required)
+ - date-time (required)
  - day-of-week (required)
  - integer (required min-value max-value)
  - number (required min-value max-value)

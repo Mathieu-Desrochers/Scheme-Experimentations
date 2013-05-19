@@ -151,7 +151,7 @@ sources/foreign-interfaces/sqlite.o : sources/foreign-interfaces/sqlite.scm
 	sources/foreign-interfaces/sqlite.scm -o \
 	sources/foreign-interfaces/sqlite.o
 
-compile-infrastructure : compile-infrastructure-datetime \
+compile-infrastructure : compile-infrastructure-date-time \
                          compile-infrastructure-exceptions \
                          compile-infrastructure-http \
                          compile-infrastructure-json \
@@ -160,18 +160,18 @@ compile-infrastructure : compile-infrastructure-datetime \
                          compile-infrastructure-sql \
                          compile-infrastructure-validation
 
-compile-infrastructure-datetime : sources/infrastructure/datetime/datetime.o \
-                                  sources/infrastructure/datetime/datetime-intern.o
+compile-infrastructure-date-time : sources/infrastructure/date-time/date-time.o \
+                                  sources/infrastructure/date-time/date-time-intern.o
 
-sources/infrastructure/datetime/datetime.o : sources/infrastructure/datetime/datetime.scm
+sources/infrastructure/date-time/date-time.o : sources/infrastructure/date-time/date-time.scm
 	csc -c \
-	sources/infrastructure/datetime/datetime.scm -o \
-	sources/infrastructure/datetime/datetime.o
+	sources/infrastructure/date-time/date-time.scm -o \
+	sources/infrastructure/date-time/date-time.o
 
-sources/infrastructure/datetime/datetime-intern.o : sources/infrastructure/datetime/datetime-intern.scm
+sources/infrastructure/date-time/date-time-intern.o : sources/infrastructure/date-time/date-time-intern.scm
 	csc -c \
-	sources/infrastructure/datetime/datetime-intern.scm -o \
-	sources/infrastructure/datetime/datetime-intern.o
+	sources/infrastructure/date-time/date-time-intern.scm -o \
+	sources/infrastructure/date-time/date-time-intern.o
 
 compile-infrastructure-exceptions : sources/infrastructure/exceptions/exceptions.o
 
@@ -307,8 +307,8 @@ link : compile
 	sources/foreign-interfaces/pcre.o \
 	sources/foreign-interfaces/scdtl.o \
 	sources/foreign-interfaces/sqlite.o \
-	sources/infrastructure/datetime/datetime.o \
-	sources/infrastructure/datetime/datetime-intern.o \
+	sources/infrastructure/date-time/date-time.o \
+	sources/infrastructure/date-time/date-time-intern.o \
 	sources/infrastructure/exceptions/exceptions.o \
 	sources/infrastructure/http/http.o \
 	sources/infrastructure/http/http-bindings.o \

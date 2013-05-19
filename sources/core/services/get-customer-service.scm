@@ -2,7 +2,7 @@
 (declare (unit get-customer-service))
 
 (declare (uses customers-table))
-(declare (uses datetime))
+(declare (uses date-time))
 (declare (uses shipping-addresses-table))
 (declare (uses validation))
 

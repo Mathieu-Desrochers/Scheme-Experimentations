@@ -20,7 +20,7 @@ __Definition__
 - Supported column types:
  - boolean
  - date
- - datetime
+ - date-time
  - day-of-week
  - integer
  - number
