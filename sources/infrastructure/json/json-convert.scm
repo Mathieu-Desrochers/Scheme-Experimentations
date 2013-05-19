@@ -12,6 +12,7 @@
         (if upgraded-value upgraded-value value))))
   (cond ((eq? field-type 'date) (json-upgrade-from-string string->date))
         ((eq? field-type 'datetime) (json-upgrade-from-string string->datetime))
+        ((eq? field-type 'day-of-week) (json-upgrade-from-string string->day-of-week))
         ((eq? field-type 'time) (json-upgrade-from-string string->time))
         (else value)))
 
@@ -20,5 +21,6 @@
 (define (json-downgrade-value value)
   (cond ((date? value) (date->string value))
         ((datetime? value) (datetime->string value))
+        ((day-of-week? value) (day-of-week->string value))
         ((time? value) (time->string value))
         (else value)))

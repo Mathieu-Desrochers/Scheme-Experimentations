@@ -13,6 +13,9 @@
 ;; encapsulates a time
 (define-record time hour minute second)
 
+;; encapsulates a day-of-week
+(define-record day-of-week name)
+
 ;; parses a string representing a date
 (define (string->date string)
   (datetime-with-parsed-scdtl-tm* string "%Y-%m-%d"
@@ -42,6 +45,20 @@
         (scdtl-tm-hour scdtl-tm*)
         (scdtl-tm-min scdtl-tm*)
         (scdtl-tm-sec scdtl-tm*)))))
+
+;; parses a string representing a day-of-week
+(define (string->day-of-week string)
+  (make-day-of-week string))
+
+;; parses an integer representing a day-of-week
+(define (integer->day-of-week integer)
+  (cond ((equal? integer 0) (make-day-of-week "Sunday"))
+        ((equal? integer 1) (make-day-of-week "Monday"))
+        ((equal? integer 2) (make-day-of-week "Tuesday"))
+        ((equal? integer 3) (make-day-of-week "Wednesday"))
+        ((equal? integer 4) (make-day-of-week "Thursday"))
+        ((equal? integer 5) (make-day-of-week "Friday"))
+        ((equal? integer 6) (make-day-of-week "Saturday"))))
 
 ;; serializes a date to string
 (define (date->string date)
@@ -75,6 +92,21 @@
     (time-minute time)
     (time-second time)
     "%H:%M:%S"))
+
+;; serializes a day-of-week to string
+(define (day-of-week->string day-of-week)
+  (day-of-week-name day-of-week))
+
+;; serializes a day-of-week to integer
+(define (day-of-week->integer day-of-week)
+  (let ((day-of-week-name (day-of-week-name day-of-week)))
+    (cond ((equal? day-of-week-name "Sunday") 0)
+          ((equal? day-of-week-name "Monday") 1)
+          ((equal? day-of-week-name "Tuesday") 2)
+          ((equal? day-of-week-name "Wednesday") 3)
+          ((equal? day-of-week-name "Thursday") 4)
+          ((equal? day-of-week-name "Friday") 5)
+          ((equal? day-of-week-name "Saturday") 6))))
 
 ;; returns whether a date is valid
 (define (date-valid? date)
@@ -116,6 +148,17 @@
     (lambda (year month day hour minute second)
       (let ((normalized-time (make-time hour minute second)))
         (equal? time normalized-time)))))
+
+;; returns whether a day-of-week is valid
+(define (day-of-week-valid? day-of-week)
+  (let ((day-of-week-name (day-of-week-name day-of-week)))
+    (or (equal? day-of-week-name "Sunday")
+        (equal? day-of-week-name "Monday")
+        (equal? day-of-week-name "Tuesday")
+        (equal? day-of-week-name "Wednesday")
+        (equal? day-of-week-name "Thursday")
+        (equal? day-of-week-name "Friday")
+        (equal? day-of-week-name "Saturday"))))
 
 ;; returns the current date
 (define (date-now)

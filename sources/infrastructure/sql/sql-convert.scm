@@ -9,6 +9,7 @@
   (cond ((eq? column-type 'boolean) (eq? value 1))
         ((eq? column-type 'date) (string->date value))
         ((eq? column-type 'datetime) (string->datetime value))
+        ((eq? column-type 'day-of-week) (integer->day-of-week value))
         ((eq? column-type 'time) (string->time value))
         (else value)))
 
@@ -18,5 +19,6 @@
   (cond ((boolean? value) (if value 1 0))
         ((date? value) (date->string value))
         ((datetime? value) (datetime->string value))
+        ((day-of-week? value) (day-of-week->integer value))
         ((time? value) (time->string value))
         (else value)))

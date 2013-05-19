@@ -17,6 +17,16 @@ __Definition__
  - A second column of type string named billing-address
  - A third column of type number named credit-limit
 
+- Supported column types:
+ - boolean
+ - date
+ - datetime
+ - day-of-week
+ - integer
+ - number
+ - string
+ - time
+
 __Contructor and selectors__
 
     (define customer-row (make-customer-row 0 "Address" 5000.00))

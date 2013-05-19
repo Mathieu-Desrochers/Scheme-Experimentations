@@ -24,6 +24,13 @@
         ((not (datetime-valid? value)) 'invalid)
         (else #f)))
 
+;; validates a day-of-week
+(define (validate-day-of-week value required)
+  (cond ((not value) (if (not required) #f 'missing))
+        ((not (day-of-week? value)) 'wrong-type)
+        ((not (day-of-week-valid? value)) 'invalid)
+        (else #f)))
+
 ;; validates an integer
 (define (validate-integer value required min-value max-value)
   (cond ((not value) (if (not required) #f 'missing))

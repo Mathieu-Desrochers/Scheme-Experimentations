@@ -9,9 +9,20 @@ __Definition__
       (credit-score integer #t 1 10)
       (credit-limit number #f 0.00 10000.00))
 
-- A required name of type string between 1 and 100 characters long
-- A required credit score of type integer between the values 1 and 10
-- An optional credit limit of type number between the values 0.00 and 10000.00
+- Defines a request composed of:
+ - A required name of type string between 1 and 100 characters long
+ - A required credit score of type integer between the values 1 and 10
+ - An optional credit limit of type number between the values 0.00 and 10000.00
+
+- Supported field types (flags):
+ - boolean
+ - date (required)
+ - datetime (required)
+ - day-of-week (required)
+ - integer (required min-value max-value)
+ - number (required min-value max-value)
+ - string (required min-length max-length)
+ - time (required)
 
 __Contructor and selectors__
 
@@ -45,8 +56,14 @@ __Definition__
       (sizes list #t 1 5 (size integer #t 1 25))
       (colors list #t 1 10 (color string #t 1 100)))
 
-- A required list of 1 to 5 sizes of type integer between the values of 1 and 25
-- A required list of 1 to 10 colors of type string between 1 and 100 characters long
+- Defines a request composed of:
+ - A required list of 1 to 5 sizes of type integer between the values of 1 and 25
+ - A required list of 1 to 10 colors of type string between 1 and 100 characters long
+
+- Value list flags:
+  - required
+  - min-length
+  - max-length
 
 __List validation__
 
@@ -89,10 +106,13 @@ __Definition__
       (city string #t 1 100)
       (postal-code string #f 1 10))
 
-- A required address subrequest composed of:
+- Defines a required subrequest composed of:
  - A required street of type string between 1 and 100 characters long
  - A required city of type string between 1 and 100 characters long
  - An optional postal code of type string between 1 and 10 characters long
+
+- Subrequest flags:
+ - required
 
 __Request validation__
 
@@ -136,9 +156,14 @@ __Definition__
       (name string #t 1 100)
       (price number #t 0.00 100000.00))
 
-- A required list of 1 to 3 supplier subrequests composed of:
+- Defines a required list of 1 to 3 supplier subrequests composed of:
  - A required name of type string between 1 and 100 characters long
  - A required price of type number between 0.00 and 100000.00
+
+- Subrequest list flags:
+ - required
+ - min-length
+ - max-length
 
 __List validation__
 
