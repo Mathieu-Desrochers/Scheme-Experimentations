@@ -18,6 +18,7 @@ __Definition__
  - boolean
  - date (required)
  - date-time (required)
+ - date-time-without-seconds (required)
  - day-of-week (required)
  - integer (required min-value max-value)
  - number (required min-value max-value)

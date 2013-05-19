@@ -10,6 +10,9 @@
 ;; encapsulates a date-time expressed in UTC
 (define-record date-time year month day hour minute second)
 
+;; encapsulates a date-time-without-seconds expressed in UTC
+(define-record date-time-without-seconds year month day hour minute)
+
 ;; encapsulates a time
 (define-record time hour minute second)
 
@@ -36,6 +39,17 @@
         (scdtl-tm-hour scdtl-tm*)
         (scdtl-tm-min scdtl-tm*)
         (scdtl-tm-sec scdtl-tm*)))))
+
+;; parses a string representing a date-time-without-seconds
+(define (string->date-time-without-seconds string)
+  (date-time-with-parsed-scdtl-tm* string "%Y-%m-%dT%H:%MZ"
+    (lambda (scdtl-tm*)
+      (make-date-time-without-seconds
+        (+ (scdtl-tm-year scdtl-tm*) 1900)
+        (+ (scdtl-tm-mon scdtl-tm*) 1)
+        (scdtl-tm-mday scdtl-tm*)
+        (scdtl-tm-hour scdtl-tm*)
+        (scdtl-tm-min scdtl-tm*)))))
 
 ;; parses a string representing a time
 (define (string->time string)
@@ -81,6 +95,17 @@
     (date-time-minute date-time)
     (date-time-second date-time)
     "%Y-%m-%dT%H:%M:%SZ"))
+
+;; serializes a date-time-without-seconds to string
+(define (date-time-without-seconds->string date-time-without-seconds)
+  (format-date-time
+    (date-time-without-seconds-year date-time-without-seconds)
+    (date-time-without-seconds-month date-time-without-seconds)
+    (date-time-without-seconds-day date-time-without-seconds)
+    (date-time-without-seconds-hour date-time-without-seconds)
+    (date-time-without-seconds-minute date-time-without-seconds)
+    0
+    "%Y-%m-%dT%H:%MZ"))
 
 ;; serializes a time to string
 (define (time->string time)
@@ -134,6 +159,20 @@
     (lambda (year month day hour minute second)
       (let ((normalized-date-time (make-date-time year month day hour minute second)))
         (and (equal? date-time normalized-date-time)
+             (> year 1000))))))
+
+;; returns whether a date-time-without-seconds is valid
+(define (date-time-without-seconds-valid? date-time-without-seconds)
+  (with-normalized-date-time
+    (date-time-without-seconds-year date-time-without-seconds)
+    (date-time-without-seconds-month date-time-without-seconds)
+    (date-time-without-seconds-day date-time-without-seconds)
+    (date-time-without-seconds-hour date-time-without-seconds)
+    (date-time-without-seconds-minute date-time-without-seconds)
+    0
+    (lambda (year month day hour minute second)
+      (let ((normalized-date-time-without-seconds (make-date-time-without-seconds year month day hour minute)))
+        (and (equal? date-time-without-seconds normalized-date-time-without-seconds)
              (> year 1000))))))
 
 ;; returns whether a time is valid

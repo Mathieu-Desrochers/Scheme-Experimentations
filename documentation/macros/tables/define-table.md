@@ -21,6 +21,7 @@ __Definition__
  - boolean
  - date
  - date-time
+ - date-time-without-seconds
  - day-of-week
  - integer
  - number
