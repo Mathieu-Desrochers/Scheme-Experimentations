@@ -17,16 +17,17 @@ __Definition__
  - A second column of type string named billing-address
  - A third column of type number named credit-limit
 
-- Supported column types:
- - boolean
- - date
- - date-time
- - date-time-without-seconds
- - day-of-week
- - integer
- - number
- - string
- - time
+- Supported column types (SQLite type):
+ - boolean (INTEGER)
+ - date (TEXT)
+ - date-time (TEXT)
+ - date-time-without-seconds (TEXT)
+ - day-of-week (INTEGER)
+ - integer (INTEGER)
+ - number (REAL)
+ - string (TEXT)
+ - time (TEXT)
+ - time-without-seconds (TEXT)
 
 __Contructor and selectors__
 

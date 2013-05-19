@@ -15,6 +15,7 @@
         ((eq? field-type 'date-time-without-seconds) (json-upgrade-from-string string->date-time-without-seconds))
         ((eq? field-type 'day-of-week) (json-upgrade-from-string string->day-of-week))
         ((eq? field-type 'time) (json-upgrade-from-string string->time))
+        ((eq? field-type 'time-without-seconds) (json-upgrade-from-string string->time-without-seconds))
         (else value)))
 
 ;; downgrades a value to a field type
@@ -25,4 +26,5 @@
         ((date-time-without-seconds? value) (date-time-without-seconds->string value))
         ((day-of-week? value) (day-of-week->string value))
         ((time? value) (time->string value))
+        ((time-without-seconds? value) (time-without-seconds->string value))
         (else value)))

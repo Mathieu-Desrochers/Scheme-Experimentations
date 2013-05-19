@@ -24,6 +24,7 @@ __Definition__
  - number (required min-value max-value)
  - string (required min-length max-length)
  - time (required)
+ - time-without-seconds (required)
 
 __Contructor and selectors__
 

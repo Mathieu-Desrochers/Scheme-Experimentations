@@ -12,6 +12,7 @@
         ((eq? column-type 'date-time-without-seconds) (string->date-time-without-seconds value))
         ((eq? column-type 'day-of-week) (integer->day-of-week value))
         ((eq? column-type 'time) (string->time value))
+        ((eq? column-type 'time-without-seconds) (string->time-without-seconds value))
         (else value)))
 
 ;; downgrades a value to a column type
@@ -23,4 +24,5 @@
         ((date-time-without-seconds? value) (date-time-without-seconds->string value))
         ((day-of-week? value) (day-of-week->integer value))
         ((time? value) (time->string value))
+        ((time-without-seconds? value) (time-without-seconds->string value))
         (else value)))

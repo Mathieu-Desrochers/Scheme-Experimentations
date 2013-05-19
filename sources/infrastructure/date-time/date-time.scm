@@ -7,16 +7,19 @@
 ;; encapsulates a date
 (define-record date year month day)
 
-;; encapsulates a date-time expressed in UTC
+;; encapsulates a date time expressed in UTC
 (define-record date-time year month day hour minute second)
 
-;; encapsulates a date-time-without-seconds expressed in UTC
+;; encapsulates a date time without seconds expressed in UTC
 (define-record date-time-without-seconds year month day hour minute)
 
 ;; encapsulates a time
 (define-record time hour minute second)
 
-;; encapsulates a day-of-week
+;; encapsulates a time without seconds
+(define-record time-without-seconds hour minute)
+
+;; encapsulates a day of week
 (define-record day-of-week name)
 
 ;; parses a string representing a date
@@ -28,7 +31,7 @@
         (+ (scdtl-tm-mon scdtl-tm*) 1)
         (scdtl-tm-mday scdtl-tm*)))))
 
-;; parses a string representing a date-time
+;; parses a string representing a date time
 (define (string->date-time string)
   (date-time-with-parsed-scdtl-tm* string "%Y-%m-%dT%H:%M:%SZ"
     (lambda (scdtl-tm*)
@@ -40,7 +43,7 @@
         (scdtl-tm-min scdtl-tm*)
         (scdtl-tm-sec scdtl-tm*)))))
 
-;; parses a string representing a date-time-without-seconds
+;; parses a string representing a date time without seconds
 (define (string->date-time-without-seconds string)
   (date-time-with-parsed-scdtl-tm* string "%Y-%m-%dT%H:%MZ"
     (lambda (scdtl-tm*)
@@ -60,11 +63,19 @@
         (scdtl-tm-min scdtl-tm*)
         (scdtl-tm-sec scdtl-tm*)))))
 
-;; parses a string representing a day-of-week
+;; parses a string representing a time without seconds
+(define (string->time-without-seconds string)
+  (date-time-with-parsed-scdtl-tm* string "%H:%M"
+    (lambda (scdtl-tm*)
+      (make-time-without-seconds
+        (scdtl-tm-hour scdtl-tm*)
+        (scdtl-tm-min scdtl-tm*)))))
+
+;; parses a string representing a day of week
 (define (string->day-of-week string)
   (make-day-of-week string))
 
-;; parses an integer representing a day-of-week
+;; parses an integer representing a day of week
 (define (integer->day-of-week integer)
   (cond ((equal? integer 0) (make-day-of-week "Sunday"))
         ((equal? integer 1) (make-day-of-week "Monday"))
@@ -85,7 +96,7 @@
     0
     "%Y-%m-%d"))
 
-;; serializes a date-time to string
+;; serializes a date time to string
 (define (date-time->string date-time)
   (format-date-time
     (date-time-year date-time)
@@ -96,7 +107,7 @@
     (date-time-second date-time)
     "%Y-%m-%dT%H:%M:%SZ"))
 
-;; serializes a date-time-without-seconds to string
+;; serializes a date time without seconds to string
 (define (date-time-without-seconds->string date-time-without-seconds)
   (format-date-time
     (date-time-without-seconds-year date-time-without-seconds)
@@ -118,11 +129,22 @@
     (time-second time)
     "%H:%M:%S"))
 
-;; serializes a day-of-week to string
+;; serializes a time without seconds to string
+(define (time-without-seconds->string time-without-seconds)
+  (format-date-time
+    0
+    0
+    0
+    (time-without-seconds-hour time-without-seconds)
+    (time-without-seconds-minute time-without-seconds)
+    0
+    "%H:%M"))
+
+;; serializes a day of week to string
 (define (day-of-week->string day-of-week)
   (day-of-week-name day-of-week))
 
-;; serializes a day-of-week to integer
+;; serializes a day of week to integer
 (define (day-of-week->integer day-of-week)
   (let ((day-of-week-name (day-of-week-name day-of-week)))
     (cond ((equal? day-of-week-name "Sunday") 0)
@@ -147,7 +169,7 @@
         (and (equal? date normalized-date)
              (> year 1000))))))
 
-;; returns whether a date-time is valid
+;; returns whether a date time is valid
 (define (date-time-valid? date-time)
   (with-normalized-date-time
     (date-time-year date-time)
@@ -161,7 +183,7 @@
         (and (equal? date-time normalized-date-time)
              (> year 1000))))))
 
-;; returns whether a date-time-without-seconds is valid
+;; returns whether a date time without seconds is valid
 (define (date-time-without-seconds-valid? date-time-without-seconds)
   (with-normalized-date-time
     (date-time-without-seconds-year date-time-without-seconds)
@@ -188,7 +210,20 @@
       (let ((normalized-time (make-time hour minute second)))
         (equal? time normalized-time)))))
 
-;; returns whether a day-of-week is valid
+;; returns whether a time without seconds is valid
+(define (time-without-seconds-valid? time-without-seconds)
+  (with-normalized-date-time
+    0
+    0
+    0
+    (time-without-seconds-hour time-without-seconds)
+    (time-without-seconds-minute time-without-seconds)
+    0
+    (lambda (year month day hour minute second)
+      (let ((normalized-time-without-seconds (make-time-without-seconds hour minute)))
+        (equal? time-without-seconds normalized-time-without-seconds)))))
+
+;; returns whether a day of week is valid
 (define (day-of-week-valid? day-of-week)
   (let ((day-of-week-name (day-of-week-name day-of-week)))
     (or (equal? day-of-week-name "Sunday")
@@ -205,7 +240,7 @@
     (lambda (year month day hour minute second)
       (make-date year month day))))
 
-;; returns the current date-time
+;; returns the current date time
 (define (date-time-now)
   (with-date-time-now
     (lambda (year month day hour minute second)
@@ -248,7 +283,7 @@
     (lambda (year month day hour minute second)
       (make-date year month day))))
 
-;; adds years to a date-time
+;; adds years to a date time
 (define (date-time-add-years date-time years)
   (make-date-time
     (+ (date-time-year date-time) years)
@@ -258,7 +293,7 @@
     (date-time-minute date-time)
     (date-time-second date-time)))
 
-;; adds months to a date-time
+;; adds months to a date time
 (define (date-time-add-months date-time months)
   (with-normalized-date-time
     (date-time-year date-time)
@@ -270,7 +305,7 @@
     (lambda (year month day hour minute second)
       (make-date-time year month day hour minute second))))
 
-;; adds days to a date-time
+;; adds days to a date time
 (define (date-time-add-days date-time days)
   (with-normalized-date-time
     (date-time-year date-time)
@@ -282,7 +317,7 @@
     (lambda (year month day hour minute second)
       (make-date-time year month day hour minute second))))
 
-;; adds hours to a date-time
+;; adds hours to a date time
 (define (date-time-add-hours date-time hours)
   (with-normalized-date-time
     (date-time-year date-time)
@@ -294,7 +329,7 @@
     (lambda (year month day hour minute second)
       (make-date-time year month day hour minute second))))
 
-;; adds minutes to a date-time
+;; adds minutes to a date time
 (define (date-time-add-minutes date-time minutes)
   (with-normalized-date-time
     (date-time-year date-time)
@@ -306,7 +341,7 @@
     (lambda (year month day hour minute second)
       (make-date-time year month day hour minute second))))
 
-;; adds seconds to a date-time
+;; adds seconds to a date time
 (define (date-time-add-seconds date-time seconds)
   (with-normalized-date-time
     (date-time-year date-time)

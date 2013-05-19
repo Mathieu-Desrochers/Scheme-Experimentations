@@ -17,21 +17,21 @@
         ((not (date-valid? value)) 'invalid)
         (else #f)))
 
-;; validates a date-time
+;; validates a date time
 (define (validate-date-time value required)
   (cond ((not value) (if (not required) #f 'missing))
         ((not (date-time? value)) 'wrong-type)
         ((not (date-time-valid? value)) 'invalid)
         (else #f)))
 
-;; validates a date-time-without-seconds
+;; validates a date time without seconds
 (define (validate-date-time-without-seconds value required)
   (cond ((not value) (if (not required) #f 'missing))
         ((not (date-time-without-seconds? value)) 'wrong-type)
         ((not (date-time-without-seconds-valid? value)) 'invalid)
         (else #f)))
 
-;; validates a day-of-week
+;; validates a day of week
 (define (validate-day-of-week value required)
   (cond ((not value) (if (not required) #f 'missing))
         ((not (day-of-week? value)) 'wrong-type)
@@ -67,6 +67,13 @@
   (cond ((not value) (if (not required) #f 'missing))
         ((not (time? value)) 'wrong-type)
         ((not (time-valid? value)) 'invalid)
+        (else #f)))
+
+;; validates a time without seconds
+(define (validate-time-without-seconds value required)
+  (cond ((not value) (if (not required) #f 'missing))
+        ((not (time-without-seconds? value)) 'wrong-type)
+        ((not (time-without-seconds-valid? value)) 'invalid)
         (else #f)))
 
 ;; validates a list
