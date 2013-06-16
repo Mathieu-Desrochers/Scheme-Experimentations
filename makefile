@@ -151,7 +151,8 @@ sources/foreign-interfaces/sqlite.o : sources/foreign-interfaces/sqlite.scm
 	sources/foreign-interfaces/sqlite.scm -o \
 	sources/foreign-interfaces/sqlite.o
 
-compile-infrastructure : compile-infrastructure-date-time \
+compile-infrastructure : compile-infrastructure-compare \
+                         compile-infrastructure-date-time \
                          compile-infrastructure-exceptions \
                          compile-infrastructure-http \
                          compile-infrastructure-json \
@@ -160,8 +161,15 @@ compile-infrastructure : compile-infrastructure-date-time \
                          compile-infrastructure-sql \
                          compile-infrastructure-validation
 
+compile-infrastructure-compare : sources/infrastructure/compare/compare.o
+
+sources/infrastructure/compare/compare.o : sources/infrastructure/compare/compare.scm
+	csc -c \
+	sources/infrastructure/compare/compare.scm -o \
+	sources/infrastructure/compare/compare.o
+
 compile-infrastructure-date-time : sources/infrastructure/date-time/date-time.o \
-                                  sources/infrastructure/date-time/date-time-intern.o
+                                   sources/infrastructure/date-time/date-time-intern.o
 
 sources/infrastructure/date-time/date-time.o : sources/infrastructure/date-time/date-time.scm
 	csc -c \
@@ -307,6 +315,7 @@ link : compile
 	sources/foreign-interfaces/pcre.o \
 	sources/foreign-interfaces/scdtl.o \
 	sources/foreign-interfaces/sqlite.o \
+	sources/infrastructure/compare/compare.o \
 	sources/infrastructure/date-time/date-time.o \
 	sources/infrastructure/date-time/date-time-intern.o \
 	sources/infrastructure/exceptions/exceptions.o \
