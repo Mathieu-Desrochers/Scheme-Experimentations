@@ -264,7 +264,7 @@ Returns the current UTC date.
 
 __result__
 
-  (make-date 1972 4 28)
+    (make-date 1972 4 28)
 
 date-time-now
 -------------

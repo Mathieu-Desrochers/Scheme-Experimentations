@@ -5,9 +5,10 @@ Compares two set of elements.
 
 __original-elements__  
 
-    ('order-item-row 1005 "Chocolate bar" 5)
-    ('order-item-row 2822 "Ninja costume" 3)
-    ('order-item-row 6001 "Soccer ball" 1)
+    (list
+      ('order-item-row 1005 "Chocolate bar" 5)
+      ('order-item-row 2822 "Ninja costume" 3)
+      ('order-item-row 6001 "Soccer ball" 1))
 
 __original-element-id-procedure__  
 Procedure that returns an original element's id.  
@@ -15,9 +16,10 @@ This would be the four digit numbers in this example.
 
 __current-elements__
 
-    ('order-item-subrequest 1005 "Chocolate bar" 25)
-    ('order-item-subrequest 2822 "Ninja costume" 3)
-    ('order-item-subrequest 6027 "Baseball hat" 2)
+    (list
+      ('order-item-subrequest 1005 "Chocolate bar" 25)
+      ('order-item-subrequest 2822 "Ninja costume" 3)
+      ('order-item-subrequest 6027 "Baseball hat" 2))
 
 __current-element-id-procedure__  
 Procedure that returns a current element's id.  
