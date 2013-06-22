@@ -1,5 +1,6 @@
 
 (use data-structures)
+(use srfi-1)
 (use srfi-69)
 
 (declare (unit compare))

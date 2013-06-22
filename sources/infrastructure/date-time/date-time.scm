@@ -83,7 +83,8 @@
         ((equal? integer 3) (make-day-of-week "Wednesday"))
         ((equal? integer 4) (make-day-of-week "Thursday"))
         ((equal? integer 5) (make-day-of-week "Friday"))
-        ((equal? integer 6) (make-day-of-week "Saturday"))))
+        ((equal? integer 6) (make-day-of-week "Saturday"))
+        (else (make-day-of-week ""))))
 
 ;; serializes a date to string
 (define (date->string date)
@@ -153,7 +154,8 @@
           ((equal? day-of-week-name "Wednesday") 3)
           ((equal? day-of-week-name "Thursday") 4)
           ((equal? day-of-week-name "Friday") 5)
-          ((equal? day-of-week-name "Saturday") 6))))
+          ((equal? day-of-week-name "Saturday") 6)
+          (else #f))))
 
 ;; returns whether a date is valid
 (define (date-valid? date)

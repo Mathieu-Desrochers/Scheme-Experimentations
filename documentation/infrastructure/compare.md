@@ -76,18 +76,18 @@ Has to return an element representing the element deletion.
 
 __result__  
 Returns the four following lists.  
-Added elements :
+added-elements:
 
     (list ('start-item-production-request 6027 2))
 
-Changed elements :
+changed-elements:
 
     (list ('alter-item-production-request 1005 +20))
 
-Unchanged elements :
+unchanged-elements:
 
     (list #f)
 
-Deleted elements :
+deleted-elements:
 
     (list (stop-item-production-request 6001 1))

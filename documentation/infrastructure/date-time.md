@@ -175,7 +175,7 @@ Returns #f upon failure.
 
 __day-of-week__
 
-    "Monday"
+    (make-day-of-week "Monday")
 
 __result__
 
@@ -344,7 +344,7 @@ __years__
 
 __result__
 
-    (make-date-time 1972 4 28 13 54 27)
+    (make-date-time 1977 4 28 13 54 27)
 
 date-time-add-months
 --------------------
@@ -392,7 +392,7 @@ __hours__
 
 __result__
 
-    (make-date-time 1972 4 29 5 54 27)
+    (make-date-time 1972 4 29 4 54 27)
 
 date-time-add-minutes
 ---------------------
@@ -424,7 +424,7 @@ __seconds__
 
 __result__
 
-    (make-date-time 1972 4 28 14 20 29)
+    (make-date-time 1972 4 28 13 55 29)
 
 time-add-hours
 --------------
@@ -440,7 +440,7 @@ __hours__
 
 __result__
 
-    (make-time 5 54 27)
+    (make-time 4 54 27)
 
 time-add-minutes
 ----------------
@@ -472,4 +472,4 @@ __seconds__
 
 __result__
 
-    (make-time 14 20 29)
+    (make-time 13 55 29)
