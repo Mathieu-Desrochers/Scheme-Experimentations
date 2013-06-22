@@ -4,13 +4,13 @@
 
 (declare (unit compare))
 
-;; encapsulates a compare result
-(define-record compare-result element status)
+;; encapsulates compare results
+(define-record compare-results added-elements changed-elements unchanged-elements deleted-elements)
 
 ;; compares two sets of elements
 ;; elements are matched according to their id
 (define
-  (compare-by-id
+  (compare-elements
     original-elements
     original-element-id-procedure
     current-elements
@@ -21,44 +21,40 @@
     make-unchanged-compare-result-element-procedure
     make-deleted-compare-result-element-procedure)
 
-  ;; make the hash-tables
+  ;; make a hash-table for each set of elements
   (let ((original-elements-hashtable (make-hash-table = number-hash))
         (current-elements-hashtable (make-hash-table = number-hash)))
 
     ;; hashes elements according to their id
-    ;; provides unique negative ids for elements without one
     (define (hash-elements elements hashtable element-id-procedure)
       (map
-        (lambda (element-index)
-          (let* ((element (list-ref elements element-index))
-                 (element-id (element-id-procedure element)))
-            (if element-id
-              (hash-table-set! hashtable element-id element)
-              (hash-table-set! hashtable (+ -10000000 element-index) element))))
-        (iota (length elements))))
+        (lambda (element)
+          (let ((element-id (element-id-procedure element)))
+	    (hash-table-set! hashtable element-id element)))
+        elements))
 
     ;; hash the elements according to their id
     (hash-elements original-elements original-elements-hashtable original-element-id-procedure)
     (hash-elements current-elements current-elements-hashtable current-element-id-procedure)
 
-    ;; merge the elements id
+    ;; combine the elements id
     (let* ((original-elements-id (hash-table-keys original-elements-hashtable))
            (current-elements-id (hash-table-keys current-elements-hashtable))
            (elements-id (sort (lset-union eq? original-elements-id current-elements-id) <)))
 
       ;; makes an added compare result
       (define (make-added-compare-result current-element)
-        (make-compare-result (make-added-compare-result-element-procedure current-element) 'added))
+        (cons (make-added-compare-result-element-procedure current-element) 'added))
 
       ;; makes an changed/unchanged compare result
       (define (make-changed/unchanged-compare-result original-element current-element)
         (if (element-changed?-procedure original-element current-element)
-          (make-compare-result (make-changed-compare-result-element-procedure original-element current-element) 'changed)
-          (make-compare-result (make-unchanged-compare-result-element-procedure original-element current-element) 'unchanged)))
+          (cons (make-changed-compare-result-element-procedure original-element current-element) 'changed)
+          (cons (make-unchanged-compare-result-element-procedure original-element current-element) 'unchanged)))
         
       ;; makes a deleted compare result
       (define (make-deleted-compare-result original-element)
-        (make-compare-result (make-deleted-compare-result-element-procedure original-element) 'deleted))
+        (cons (make-deleted-compare-result-element-procedure original-element) 'deleted))
 
       ;; compares an element
       (define (compare-element element-id)
@@ -69,6 +65,19 @@
                 (else (make-changed/unchanged-compare-result original-element current-element)))))
 
       ;; compare the elements
-      (map
-        compare-element
-        elements-id))))
+      (let ((compare-results (map compare-element elements-id)))
+
+        ;; filters the compare results element
+        (define (filter-compare-results-element status)
+          (map car
+            (filter
+              (lambda (compare-result)
+                (eq? (cdr compare-result) status))
+              compare-results)))
+
+        ;; make the compare results
+        (make-compare-results
+          (filter-compare-results-element 'added)
+          (filter-compare-results-element 'changed)
+          (filter-compare-results-element 'unchanged)
+          (filter-compare-results-element 'deleted))))))
