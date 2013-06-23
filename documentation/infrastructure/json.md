@@ -6,7 +6,7 @@ Throws an exception if the string cannot be parsed.
 
 __string__
 
-    {"Name": "Alice"}
+    "{\"Name\": \"Alice\"}"
 
 __procedure__  
 
@@ -106,6 +106,110 @@ Returns whether a json object represents an array.
 __json-object__
 
     ["One", "Two", "Three"] <-- json-object
+
+__result__
+
+    #t
+
+with-new-json-object
+--------------------
+Invokes a procedure with a json object representing an object.
+
+__procedure__
+
+    (lambda (json-object) ...)
+
+__result__
+
+    {} <-- json-object
+
+with-new-json-object-from-value
+-------------------------------
+Invokes a procedure with a json object representing a value.
+
+__value__
+
+    "Alice"
+
+__procedure__
+
+    (lambda (json-object) ...)
+
+__result__
+
+    "Alice" <-- json-object
+
+with-new-json-object-array
+--------------------------
+Invokes a procedure with a json object representing an array.
+
+__procedure__
+
+    (lambda (json-object) ...)
+
+__result__
+
+    [] <-- json-object
+
+json-object-property-set!
+-------------------------
+Adds a property to a json object of type object.  
+Throws an exception if the json object is of the wrong type.  
+See also json-object-type-object?.
+
+__json-object__
+
+    {} <-- json-object
+
+__property-name__
+
+    "Name"
+
+__json-object-value__
+
+    "Alice" <-- json-object-value
+
+__result__
+
+    {"Name": "Alice"} <-- json-object
+
+json-object-array-append!
+-------------------------
+Adds an element to a json object of type array.  
+Throws an exception if the json object is of the wrong type.  
+See also json-object-type-array?.
+
+__json-object__
+
+    [] <-- json-object
+
+__json-object-element__
+
+    "Alice" <-- json-object-element
+
+__result__
+
+    ["Alice"] <-- json-object
+
+json-object->string
+-------------------
+Serializes a json-object to string.
+
+__json-object__
+
+    {"Name": "Alice"} <-- json-object
+
+__result__
+
+    "{\"Name\": \"Alice\"}"
+
+is-empty-json-object-string?
+----------------------------
+Returns whether a string represents an empty json object.
+
+__string__
+
+    "{}"
 
 __result__
 
