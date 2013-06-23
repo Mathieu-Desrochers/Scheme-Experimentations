@@ -18,13 +18,11 @@ __Definition__
  - boolean
  - date (required)
  - date-time (required)
- - date-time-without-seconds (required)
  - day-of-week (required)
  - integer (required min-value max-value)
  - number (required min-value max-value)
  - string (required min-length max-length)
  - time (required)
- - time-without-seconds (required)
 
 __Contructor and selectors__
 

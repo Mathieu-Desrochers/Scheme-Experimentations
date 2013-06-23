@@ -3,7 +3,7 @@ string->date
 ------------
 Parses a date expressed under the format YYYY-MM-DD.  
 The result still needs to be validated using date-valid?.  
-Returns #f if the format cannot be matched.
+Returns #f if the format is not matched.
 
 __string__
 
@@ -18,7 +18,7 @@ string->date-time
 -----------------
 Parses a UTC date and time expressed under the format YYYY-MM-DDTHH:MM:SSZ.  
 The result still needs to be validated using date-time-valid?.  
-Returns #f if the format cannot be matched.
+Returns #f if the format is not matched.
 
 __string__
 
@@ -28,25 +28,11 @@ __result__
 
     (make-date-time 1972 4 28 13 54 27)
 
-string->date-time-without-seconds
----------------------------------
-Parses a UTC date and time expressed under the format YYYY-MM-DDTHH:MMZ.  
-The result still needs to be validated using date-time-without-seconds-valid?.  
-Returns #f if the format cannot be matched.
-
-__string__
-
-    "1972-04-28T13:54Z"
-
-__result__
-
-    (make-date-time-without-seconds 1972 4 28 13 54)
-
 string->time
 ------------
 Parses a time expressed under the format HH:MM:SS.  
 The result still needs to be validated using time-valid?.  
-Returns #f if the format cannot be matched.
+Returns #f if the format is not matched.
 
 __string__
 
@@ -55,20 +41,6 @@ __string__
 __result__
 
     (make-time 13 54 27)
-
-string->time-without-seconds
-----------------------------
-Parses a time expressed under the format HH:MM.  
-The result still needs to be validated using time-without-seconds-valid?.  
-Returns #f if the format cannot be matched.
-
-__string__
-
-    "13:54"
-
-__result__
-
-    (make-time-without-seconds 13 54)
 
 string->day-of-week
 -------------------
@@ -120,18 +92,6 @@ __result__
 
     "1972-04-28T13:54:27Z"
 
-date-time-without-seconds->string
----------------------------------
-Formats a UTC date and time under the format YYYY-MM-DDTHH:MMZ.
-
-__date-time-without-seconds__
-
-    (make-date-time-without-seconds 1972 4 28 13 54)
-
-__result__
-
-    "1972-04-28T13:54Z"
-
 time->string
 ------------
 Formats a time under the format HH:MM:SS.
@@ -144,21 +104,9 @@ __result__
 
     "13:54:27"
 
-time-without-seconds->string
-----------------------------
-Formats a time under the format HH:MM.
-
-__time-without-seconds__
-
-    (make-time-without-seconds 13 54)
-
-__result__
-
-    "13:54"
-
 day-of-week->string
 -------------------
-Formats a day of week.
+Formats a day of week to string.
 
 __day-of-week__
 
@@ -184,7 +132,7 @@ __result__
 date-valid?
 -----------
 Returns whether a date is valid.  
-Will return #f if any number is not in its allowed range.
+Used to make sure the combinaison of numbers represents a valid date.
 
 __date__
 
@@ -197,7 +145,7 @@ __result__
 date-time-valid?
 ----------------
 Returns whether a UTC date and time is valid.  
-Will return #f if any number is not in its allowed range.
+Used to make sure the combinaison of numbers represents a valid date time.
 
 __date__
 
@@ -207,40 +155,14 @@ __result__
 
     #t
 
-date-time-without-seconds-valid?
---------------------------------
-Returns whether a UTC date and time without seconds is valid.  
-Will return #f if any number is not in its allowed range.
-
-__date__
-
-    (make-date-time-without-seconds 1972 4 28 13 54)
-
-__result__
-
-    #t
-
 time-valid?
 -----------
 Returns whether a time is valid.  
-Will return #f if any number is not in its allowed range.
+Used to make sure the combinaison of numbers represents a valid time.
 
 __date__
 
     (make-time 13 54 27)
-
-__result__
-
-    #t
-
-time-without-seconds-valid?
----------------------------
-Returns whether a time without seconds is valid.  
-Will return #f if any number is not in its allowed range.
-
-__date__
-
-    (make-time-without-seconds 13 54)
 
 __result__
 
@@ -268,7 +190,7 @@ __result__
 
 date-time-now
 -------------
-Returns the current UTC date and time.
+Returns the current UTC date time.
 
 __result__
 
@@ -282,194 +204,50 @@ __result__
 
     (make-time 13 54 27)
 
-date-add-years
---------------
-Adds years to a date.
+date-add
+--------
+Adds two dates.
 
-__date__
-
-    (make-date 1972 4 28)
-
-__years__
-
-    5
-
-__result__
-
-    (make-date 1977 4 28)
-
-date-add-months
----------------
-Adds months to a date.
-
-__date__
+__first-date__
 
     (make-date 1972 4 28)
 
-__months__
+__second-date__
 
-    14
+    (make-date 1 15 2)
 
 __result__
 
-    (make-date 1973 6 28)
+    (make-date 1974 7 30)
 
-date-add-days
+date-time-add
 -------------
-Adds days to a date.
+Adds two date times.
 
-__date__
-
-    (make-date 1972 4 28)
-
-__days__
-
-    370
-
-__result__
-
-    (make-date 1973 5 3)
-
-date-time-add-years
--------------------
-Adds years to a date and time.
-
-__date-time__
+__first-date-time__
 
     (make-date-time 1972 4 28 13 54 27)
 
-__years__
+__second-date-time__
 
-    5
-
-__result__
-
-    (make-date-time 1977 4 28 13 54 27)
-
-date-time-add-months
---------------------
-Adds months to a date and time.
-
-__date-time__
-
-    (make-date-time 1972 4 28 13 54 27)
-
-__months__
-
-    14
+    (make-date-time 1 15 2 30 2 15)
 
 __result__
 
-    (make-date-time 1973 6 28 13 54 27)
+    (make-date-time 1974 7 31 19 56 42)
 
-date-time-add-days
-------------------
-Adds days to a date and time.
+time-add
+---------
+Adds two times.
 
-__date-time__
-
-    (make-date-time 1972 4 28 13 54 27)
-
-__days__
-
-    370
-
-__result__
-
-    (make-date-time 1973 5 3 13 54 27)
-
-date-time-add-hours
--------------------
-Adds hours to a date and time.
-
-__date-time__
-
-    (make-date-time 1972 4 28 13 54 27)
-
-__hours__
-
-    15
-
-__result__
-
-    (make-date-time 1972 4 29 4 54 27)
-
-date-time-add-minutes
----------------------
-Adds minutes to a date and time.
-
-__date-time__
-
-    (make-date-time 1972 4 28 13 54 27)
-
-__minutes__
-
-    25
-
-__result__
-
-    (make-date-time 1972 4 28 14 19 27)
-
-date-time-add-seconds
----------------------
-Adds seconds to a date and time.
-
-__date-time__
-
-    (make-date-time 1972 4 28 13 54 27)
-
-__seconds__
-
-    62
-
-__result__
-
-    (make-date-time 1972 4 28 13 55 29)
-
-time-add-hours
---------------
-Adds hours to a time.
-
-__time__
+__first-time__
 
     (make-time 13 54 27)
 
-__hours__
+__second-time__
 
-    15
-
-__result__
-
-    (make-time 4 54 27)
-
-time-add-minutes
-----------------
-Adds minutes to a time.
-
-__time__
-
-    (make-time 13 54 27)
-
-__minutes__
-
-    25
+    (make-time 30 2 15)
 
 __result__
 
-    (make-time 14 19 27)
-
-time-add-seconds
-----------------
-Adds seconds to a time.
-
-__time__
-
-    (date-time 1972 4 28 13 54 27)
-
-__seconds__
-
-    62
-
-__result__
-
-    (make-time 13 55 29)
+    (make-time 19 56 42)

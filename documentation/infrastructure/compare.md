@@ -1,7 +1,7 @@
 
 compare-elements
 ----------------
-Compares two set of elements.
+Compares two sets of elements.
 
 __original-elements__  
 
