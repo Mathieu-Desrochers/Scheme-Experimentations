@@ -9,10 +9,8 @@
   (cond ((eq? column-type 'boolean) (eq? value 1))
         ((eq? column-type 'date) (string->date value))
         ((eq? column-type 'date-time) (string->date-time value))
-        ((eq? column-type 'date-time-without-seconds) (string->date-time-without-seconds value))
         ((eq? column-type 'day-of-week) (integer->day-of-week value))
         ((eq? column-type 'time) (string->time value))
-        ((eq? column-type 'time-without-seconds) (string->time-without-seconds value))
         (else value)))
 
 ;; downgrades a value to a column type
@@ -21,8 +19,6 @@
   (cond ((boolean? value) (if value 1 0))
         ((date? value) (date->string value))
         ((date-time? value) (date-time->string value))
-        ((date-time-without-seconds? value) (date-time-without-seconds->string value))
         ((day-of-week? value) (day-of-week->integer value))
         ((time? value) (time->string value))
-        ((time-without-seconds? value) (time-without-seconds->string value))
         (else value)))

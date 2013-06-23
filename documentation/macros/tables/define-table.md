@@ -21,13 +21,11 @@ __Definition__
  - boolean (INTEGER)
  - date (TEXT)
  - date-time (TEXT)
- - date-time-without-seconds (TEXT)
  - day-of-week (INTEGER)
  - integer (INTEGER)
  - number (REAL)
  - string (TEXT)
  - time (TEXT)
- - time-without-seconds (TEXT)
 
 __Contructor and selectors__
 

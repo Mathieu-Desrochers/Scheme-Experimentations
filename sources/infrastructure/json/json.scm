@@ -1,4 +1,6 @@
 
+(use srfi-1)
+
 (declare (unit json))
 
 (declare (uses jansson))
@@ -17,17 +19,7 @@
           (with-make-json-object jansson* procedure))
         jansson-error*))))
 
-;; returns the value of a json object
-(define (json-object-value json-object)
-  (let* ((jansson* (json-object-jansson* json-object))
-         (jansson-type (jansson-typeof jansson*)))
-    (cond ((eq? jansson-type jansson-type-string) (jansson-string-value jansson*))
-          ((eq? jansson-type jansson-type-integer) (jansson-integer-value jansson*))
-          ((eq? jansson-type jansson-type-real) (jansson-real-value jansson*))
-          ((eq? jansson-type jansson-type-true) #t)
-          (else #f))))
-
-;; returns whether a json-object is of type object
+;; returns whether a json object is of type object
 (define (json-object-type-object? json-object)
   (let* ((jansson* (json-object-jansson* json-object))
          (jansson-type (jansson-typeof jansson*)))
@@ -41,7 +33,7 @@
       (make-json-object jansson-property*)
       #f)))
 
-;; returns whether a json-object is of type array
+;; returns whether a json object is of type array
 (define (json-object-type-array? json-object)
   (let* ((jansson* (json-object-jansson* json-object))
          (jansson-type (jansson-typeof jansson*)))
@@ -59,6 +51,21 @@
               (make-json-object jansson-element*)))
           (iota jansson-array-size)))
       #f)))
+
+;; returns whether a json object is of type value
+(define (json-object-type-value? json-object)
+  (not (or (json-object-type-object? json-object)
+           (json-object-type-array? json-object))))
+
+;; returns the value of a json object
+(define (json-object-value json-object)
+  (let* ((jansson* (json-object-jansson* json-object))
+         (jansson-type (jansson-typeof jansson*)))
+    (cond ((eq? jansson-type jansson-type-string) (jansson-string-value jansson*))
+          ((eq? jansson-type jansson-type-integer) (jansson-integer-value jansson*))
+          ((eq? jansson-type jansson-type-real) (jansson-real-value jansson*))
+          ((eq? jansson-type jansson-type-true) #t)
+          (else #f))))
 
 ;; invokes a procedure with a new json object
 (define (with-new-json-object procedure)
