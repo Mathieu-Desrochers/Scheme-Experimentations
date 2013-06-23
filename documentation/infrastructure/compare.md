@@ -77,19 +77,13 @@ Has to return an element representing the element deletion.
     (stop-item-production-request 6001 1)
 
 __result__  
-Returns the four following lists.  
-added-elements:
 
-    (list ('start-item-production-request 6027 2))
-
-changed-elements:
-
-    (list ('alter-item-production-request 1005 +20))
-
-unchanged-elements:
-
-    (list #f)
-
-deleted-elements:
-
-    (list (stop-item-production-request 6001 1))
+    (make-compare-results
+      (list
+        ('start-item-production-request 6027 2))
+      (list
+        ('alter-item-production-request 1005 +20))
+      (list
+        #f)
+      (list
+        (stop-item-production-request 6001 1)))

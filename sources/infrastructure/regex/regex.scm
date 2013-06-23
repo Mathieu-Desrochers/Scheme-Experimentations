@@ -1,4 +1,6 @@
 
+(use srfi-1)
+
 (declare (unit regex))
 
 (declare (uses regex-intern))
