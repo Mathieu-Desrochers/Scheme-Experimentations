@@ -157,7 +157,7 @@
 
           (declare (uses json-convert))
           (declare (uses json-parse))
-          (declare (uses validation))
+          (declare (uses validation-service-request))
 
           ;; encapsulates a request
           (define-record ,request-symbol ,@fields-symbol)

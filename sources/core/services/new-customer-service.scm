@@ -4,7 +4,7 @@
 (declare (uses customers-table))
 (declare (uses date-time))
 (declare (uses shipping-addresses-table))
-(declare (uses validation))
+(declare (uses validation-service-request))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; request definition

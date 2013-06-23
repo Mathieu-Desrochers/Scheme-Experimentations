@@ -159,7 +159,8 @@ compile-infrastructure : compile-infrastructure-compare \
                          compile-infrastructure-regex \
                          compile-infrastructure-services \
                          compile-infrastructure-sql \
-                         compile-infrastructure-validation
+                         compile-infrastructure-validation \
+                         compile-infrastructure-validation-service-request
 
 compile-infrastructure-compare : sources/infrastructure/compare/compare.o
 
@@ -290,6 +291,13 @@ sources/infrastructure/validation/validation.o : sources/infrastructure/validati
 	sources/infrastructure/validation/validation.scm -o \
 	sources/infrastructure/validation/validation.o
 
+compile-infrastructure-validation-service-request : sources/infrastructure/validation/validation-service-request.o
+
+sources/infrastructure/validation/validation-service-request.o : sources/infrastructure/validation/validation-service-request.scm
+	csc -c \
+	sources/infrastructure/validation/validation-service-request.scm -o \
+	sources/infrastructure/validation/validation-service-request.o
+
 link : compile
 	csc \
 	-lfcgi \
@@ -335,6 +343,7 @@ link : compile
 	sources/infrastructure/sql/sql-convert.o \
 	sources/infrastructure/sql/sql-intern.o \
 	sources/infrastructure/validation/validation.o \
+	sources/infrastructure/validation/validation-service-request.o \
 	-o scheme
 
 install :
