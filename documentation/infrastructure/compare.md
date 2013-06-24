@@ -4,6 +4,7 @@ compare-elements
 Compares two sets of elements.
 
 __original-elements__  
+The list of original elements.
 
     (list
       ('order-item-row 1005 "Chocolate bar" 5)
@@ -11,10 +12,13 @@ __original-elements__
       ('order-item-row 6001 "Soccer ball" 1))
 
 __original-element-id-procedure__  
-Procedure that returns an original element's id.  
-This would be the four digit numbers in this example.
+A procedure that returns an original element's id.  
 
-__current-elements__
+    (lambda (order-item-row)
+      (order-item-row-id order-item-row))
+
+__current-elements__  
+The list of current elements.
 
     (list
       ('order-item-subrequest 1005 "Chocolate bar" 25)
@@ -22,14 +26,18 @@ __current-elements__
       ('order-item-subrequest 6027 "Baseball hat" 2))
 
 __current-element-id-procedure__  
-Procedure that returns a current element's id.  
-This would be the four digit numbers in this example.
+A procedure that returns a current element's id.  
+
+    (lambda (order-item-subrequest)
+      (order-item-subrequest-id order-item-subrequest))
 
 __element-changed?-procedure__  
-Procedure invoked with every pair of original and current elements that match by id.  
-Must return whether the elements are considered to have changed.
+A procedure invoked with every pair of original and current elements that have matched by id.  
+It must return whether the elements are considered to have changed.
 
-This pair would have changed :  
+    (lambda (order-item-row order-item-subrequest) ...)
+
+This pair would be considered to have changed :  
 
     ('order-item-row 1005 "Chocolate bar" 5)
     ('order-item-subrequest 1005 "Chocolate bar" 25)
@@ -40,43 +48,45 @@ This pair would not :
     ('order-item-subrequest 2822 "Ninja costume" 3)
 
 __make-added-compare-result-element-procedure__  
-Procedure invoked with every current element that was not matched.
+A procedure invoked with every current element that was not matched.
 
     ('order-item-subrequest 6027 "Baseball hat" 2)
 
-Has to return an element representing the addition.
+It has to return an element representing the addition.
 
     ('start-item-production-request 6027 2)
 
 __make-changed-compare-result-element-procedure__  
-Procedure invoked with every pair of matched elements that have changed.
+A procedure invoked with every pair of matched elements that have changed.
 
     ('order-item-row 1005 "Chocolate bar" 5)
     ('order-item-subrequest 1005 "Chocolate bar" 25)
 
-Has to return an element representing the modification.
+It has to return an element representing the modification.
 
     ('alter-item-production-request 1005 +20)
 
 __make-unchanged-compare-result-element-procedure__  
-Procedure invoked with every pair of matched elements that have not changed.
+A procedure invoked with every pair of matched elements that have not changed.
 
     ('order-item-row 2822 "Ninja costume" 3)
     ('order-item-subrequest 2822 "Ninja costume" 3)
 
-Has to return an element representing the non modification.  
+It has to return an element representing the non modification.  
 This would be #f in this example.
 
 __make-deleted-compare-result-element-procedure__  
-Procedure invoked with every unmatched original elements.
+A procedure invoked with every unmatched original elements.
 
     ('order-item-row 6001 "Soccer ball" 1)
 
-Has to return an element representing the element deletion.  
+It has to return an element representing the element deletion.  
 
     (stop-item-production-request 6001 1)
 
 __result__  
+A compare results composed of the lists of added,  
+changed, unchanged and deleted elements.
 
     (make-compare-results
       (list

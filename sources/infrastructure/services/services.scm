@@ -4,7 +4,7 @@
 (declare (uses sql))
 
 ;; invokes a service
-(define (invoke-service service request success-procedure error-procedure)
+(define (invoke-service service request success-procedure validation-errors-procedure)
 
   ;; open a database connection
   (with-sql-connection "/databases/customers.db"
@@ -27,7 +27,7 @@
               ;; through the error procedure
               (if (validation-exception? exception)
                 (let ((validation-errors (validation-errors exception)))
-                  (error-procedure validation-errors))
+                  (validation-errors-procedure validation-errors))
                 (original-exception-handler exception))
 
               ;; invoke the service

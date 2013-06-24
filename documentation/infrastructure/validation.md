@@ -204,20 +204,20 @@ abort-validation-error
 Raises an exception with one validation error symbol.
 
 __validation-error__  
-One of the validation symbols returned by the validation procedures.
+A validation error symbol.
 
-    'missing
+    'customer-id-missing
 
 abort-validation-errors
 -----------------------
 Raises an exception with multiple validation error symbols.
 
 __validation-errors__  
-A list of the validation symbols returned by the validation procedures.
+A list of validation error symbols.
 
     (list
-      'missing
-      'wrong-type)
+      'customer-id-missing
+      'age-wrong-type)
 
 validation-exception?
 ---------------------
@@ -239,5 +239,5 @@ __result__
 The list of validation error symbols.
 
     (list
-      'missing
-      'wrong-type)
+      'customer-id-missing
+      'age-wrong-type)

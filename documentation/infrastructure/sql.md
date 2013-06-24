@@ -9,7 +9,8 @@ Throws an exception if the file cannot be opened.
 
     "/var/database.db"
 
-__procedure__
+__procedure__  
+A procedure invokes with the sql connection.
 
     (lambda (sql-connection) ...)
 

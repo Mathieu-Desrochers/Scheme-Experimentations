@@ -22,15 +22,15 @@ with-guaranteed-release
 Makes sure a resource is released even in the face of an exception.
 
 __allocation-procedure__  
-Procedure that allocates and returns a resource.
+A procedure that allocates and returns a resource.
 
 __procedure__  
-Procedure invoked with the allocated resource.  
-Can perform work without worrying about its release.
+A procedure invoked with the allocated resource.  
+It can perform work without worrying about its release.
 
 __release-procedure__  
-Procedure invoked with the allocated resource.  
-Responsible for its release.
+A procedure invoked with the allocated resource.  
+It is responsible for its release.
 
 __invocation__
 
