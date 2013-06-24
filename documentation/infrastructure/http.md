@@ -32,11 +32,11 @@ The service procedure to match.
 
 __parse-request-procedure__  
 A procedure responsible for parsing matched http requests.  
-See the define-http-binding macro.
+See the define-http-binding macro for details.
 
 __format-response-procedure__  
 A procedure responsible for formatting service responses.  
-See the define-http-binding macro.
+See the define-http-binding macro for details.
 
 http-handle-request
 -------------------
@@ -47,23 +47,23 @@ If none is found, it writes a 404 response.
 
     (make-http-bindings)
 
-This procedure then invokes the parse-request-procedure of the matched http-binding.  
-Should the parse procedure returns #f, this procedure writes a 400 response. 
+It then invokes the parse-request-procedure of the matched http-binding.  
+Should the parse procedure return #f, it writes a 400 response. 
 
-    (define (http-parse-get-customer-request route-captures request-body)
-      ...)
+    (http-parse-get-customer-request ...)
 
-This procedure then invokes the service.  
+It procedure then invokes the service.  
 If a validation exception is raised, it writes a 422 response.  
 The response body will then contain an array of validation error symbols.  
 See also validation-exception? and validation-errors.
+
+    (get-customer-service ...)
 
 If the service succeeds, this procedure invokes the  
 format-response-procedure of the matched http-binding.  
 It then writes a 200 response with that body content.
 
-    (define (http-format-get-customer-response response)
-      ...)
+    (http-format-get-customer-response ...)
 
 __fastcgi-request*__  
 A pointer to a fast cgi request.
