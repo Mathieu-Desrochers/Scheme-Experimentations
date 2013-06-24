@@ -52,7 +52,7 @@ Should the parse procedure return #f, it writes a 400 response.
 
     (http-parse-get-customer-request ...)
 
-It procedure then invokes the service.  
+It then invokes the service.  
 If a validation exception is raised, it writes a 422 response.  
 The response body will then contain an array of validation error symbols.  
 See also validation-exception? and validation-errors.
