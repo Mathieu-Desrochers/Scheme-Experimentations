@@ -39,6 +39,10 @@ __Validation__
 - credit-score-missing
 - credit-limit-too-high
 
+__Json parsing__
+
+    (json-parse-new-customer-request json-object)
+
 __Json representation__
 
     {

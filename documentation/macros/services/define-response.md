@@ -20,6 +20,10 @@ __Contructor and selectors__
     (get-customer-response-credit-score get-customer-response)
     (get-customer-response-credit-limit get-customer-response)
 
+__Json formatting__
+
+    (json-format-get-customer-response response json-object)
+
 __Json representation__
 
     {
