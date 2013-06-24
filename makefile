@@ -190,7 +190,7 @@ sources/infrastructure/exceptions/exceptions.o : sources/infrastructure/exceptio
 	sources/infrastructure/exceptions/exceptions.o
 
 compile-infrastructure-http : sources/infrastructure/http/http.o \
-                              sources/infrastructure/http/http-bindings.o \
+                              sources/infrastructure/http/http-intern.o \
                               sources/infrastructure/http/http-toplevel.o \
                               sources/infrastructure/http/main.o
 
@@ -199,10 +199,10 @@ sources/infrastructure/http/http.o : sources/infrastructure/http/http.scm
 	sources/infrastructure/http/http.scm -o \
 	sources/infrastructure/http/http.o
 
-sources/infrastructure/http/http-bindings.o : sources/infrastructure/http/http-bindings.scm
+sources/infrastructure/http/http-intern.o : sources/infrastructure/http/http-intern.scm
 	csc -c \
-	sources/infrastructure/http/http-bindings.scm -o \
-	sources/infrastructure/http/http-bindings.o
+	sources/infrastructure/http/http-intern.scm -o \
+	sources/infrastructure/http/http-intern.o
 
 sources/infrastructure/http/http-toplevel.o : sources/infrastructure/http/http-toplevel.scm
 	csc -c -e \
@@ -328,7 +328,7 @@ link : compile
 	sources/infrastructure/date-time/date-time-intern.o \
 	sources/infrastructure/exceptions/exceptions.o \
 	sources/infrastructure/http/http.o \
-	sources/infrastructure/http/http-bindings.o \
+	sources/infrastructure/http/http-intern.o \
 	sources/infrastructure/http/http-toplevel.o \
 	sources/infrastructure/http/main.o \
 	sources/infrastructure/json/json.o \
