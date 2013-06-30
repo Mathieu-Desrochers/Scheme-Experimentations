@@ -156,6 +156,7 @@ compile-infrastructure : compile-infrastructure-compare \
                          compile-infrastructure-exceptions \
                          compile-infrastructure-http \
                          compile-infrastructure-json \
+                         compile-infrastructure-list \
                          compile-infrastructure-regex \
                          compile-infrastructure-services \
                          compile-infrastructure-sql \
@@ -244,6 +245,13 @@ sources/infrastructure/json/json-parse.o : sources/infrastructure/json/json-pars
 	csc -c \
 	sources/infrastructure/json/json-parse.scm -o \
 	sources/infrastructure/json/json-parse.o
+
+compile-infrastructure-list : sources/infrastructure/list/list.o
+
+sources/infrastructure/list/list.o : sources/infrastructure/list/list.scm
+	csc -c \
+	sources/infrastructure/list/list.scm -o \
+	sources/infrastructure/list/list.o
 
 compile-infrastructure-regex : sources/infrastructure/regex/regex.o \
                                sources/infrastructure/regex/regex-intern.o
@@ -336,6 +344,7 @@ link : compile
 	sources/infrastructure/json/json-format.o \
 	sources/infrastructure/json/json-intern.o \
 	sources/infrastructure/json/json-parse.o \
+	sources/infrastructure/list/list.o \
 	sources/infrastructure/regex/regex.o \
 	sources/infrastructure/regex/regex-intern.o \
 	sources/infrastructure/services/services.o \
