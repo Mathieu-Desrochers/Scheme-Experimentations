@@ -219,6 +219,33 @@ A list of validation error symbols.
       'customer-id-missing
       'age-wrong-type)
 
+make-numbered-validation-errors
+-------------------------------
+Generates a list of numbered validation error symbols.
+
+__validation-error-prefix__  
+A prefix applied to the validation error symbols.
+
+    'customer
+
+__numbers__  
+A validation error symbol is generated for every number is this list.
+
+    '(0 4 7)
+
+__validation-error-suffix__  
+A suffix applied to the validation error symbols.
+
+    '-invalid-id
+
+__result__  
+The list of generated error symbols.
+
+    (list
+      'customer0-invalid-id
+      'customer4-invalid-id
+      'customer7-invalid-id)
+
 validation-exception?
 ---------------------
 Returns whether an exception was raised because of a validation error.  

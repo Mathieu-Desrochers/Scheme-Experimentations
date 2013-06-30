@@ -85,6 +85,16 @@
   (let ((condition (make-property-condition 'validation 'errors validation-errors)))
     (abort condition)))
 
+;; makes a list of numbered validation errors
+(define (make-numbered-validation-errors validation-error-prefix numbers validation-error-suffix)
+  (map
+    (lambda (number)
+      (symbol-append
+        validation-error-prefix
+        (string->symbol (number->string number))
+        validation-error-suffix))
+    numbers))
+
 ;; returns whether an exception was caused by validation errors
 (define (validation-exception? exception)
   ((condition-predicate 'validation) exception))

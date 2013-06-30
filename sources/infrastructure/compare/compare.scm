@@ -27,16 +27,21 @@
         (current-elements-hashtable (make-hash-table = number-hash)))
 
     ;; hashes elements according to their id
-    (define (hash-elements elements hashtable element-id-procedure)
-      (map
-        (lambda (element)
-          (let ((element-id (element-id-procedure element)))
-	    (hash-table-set! hashtable element-id element)))
-        elements))
+    ;; if the element-id-procedure returns false,
+    ;; the next-negative-id is used instead
+    (define (hash-elements elements hashtable element-id-procedure next-negative-id)
+      (if (not (null? elements))
+        (let* ((element (car elements))
+               (element-id (element-id-procedure element)))
+          (if element-id
+            (hash-table-set! hashtable element-id element)
+            (hash-table-set! hashtable next-negative-id element))
+          (hash-elements (cdr elements) hashtable element-id-procedure (- next-negative-id 1)))))
 
     ;; hash the elements according to their id
-    (hash-elements original-elements original-elements-hashtable original-element-id-procedure)
-    (hash-elements current-elements current-elements-hashtable current-element-id-procedure)
+    (hash-elements original-elements original-elements-hashtable original-element-id-procedure -1)
+    (hash-elements current-elements current-elements-hashtable current-element-id-procedure
+      (- 0 (length original-elements) 1))
 
     ;; combine the elements id
     (let* ((original-elements-id (hash-table-keys original-elements-hashtable))

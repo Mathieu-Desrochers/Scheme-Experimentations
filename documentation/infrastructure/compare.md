@@ -7,9 +7,9 @@ __original-elements__
 The list of original elements.
 
     (list
-      ('order-item-row 1005 "Chocolate bar" 5)
-      ('order-item-row 2822 "Ninja costume" 3)
-      ('order-item-row 6001 "Soccer ball" 1))
+      (make-order-item-row 1005 "Chocolate bar" 5)
+      (make-order-item-row 2822 "Ninja costume" 3)
+      (make-order-item-row 6001 "Soccer ball" 1))
 
 __original-element-id-procedure__  
 A procedure that returns an original element's id.  
@@ -21,9 +21,9 @@ __current-elements__
 The list of current elements.
 
     (list
-      ('order-item-subrequest 1005 "Chocolate bar" 25)
-      ('order-item-subrequest 2822 "Ninja costume" 3)
-      ('order-item-subrequest 6027 "Baseball hat" 2))
+      (make-order-item-subrequest 1005 "Chocolate bar" 25)
+      (make-order-item-subrequest 2822 "Ninja costume" 3)
+      (make-order-item-subrequest 6027 "Baseball hat" 2))
 
 __current-element-id-procedure__  
 A procedure that returns a current element's id.  
