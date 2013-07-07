@@ -23,18 +23,18 @@
     make-deleted-compare-result-element-procedure)
 
   ;; make a hash-table for each set of elements
-  (let ((original-elements-hashtable (make-hash-table = number-hash))
-        (current-elements-hashtable (make-hash-table = number-hash)))
+  (let ((original-elements-hash-table (make-hash-table = number-hash))
+        (current-elements-hash-table (make-hash-table = number-hash)))
 
     ;; hashes elements according to their id
-    (define (hash-elements elements hashtable element-id-procedure next-unique-id)
+    (define (hash-elements elements hash-table element-id-procedure next-unique-id)
       (if (not (null? elements))
         (let* ((element (car elements))
                (element-id (element-id-procedure element)))
           (if element-id
-            (hash-table-set! hashtable element-id element)
-            (hash-table-set! hashtable next-unique-id element))
-          (hash-elements (cdr elements) hashtable element-id-procedure (+ next-unique-id 1)))))
+            (hash-table-set! hash-table element-id element)
+            (hash-table-set! hash-table next-unique-id element))
+          (hash-elements (cdr elements) hash-table element-id-procedure (+ next-unique-id 1)))))
 
     ;; if the element-id-procedures return false,
     ;; elements will be assigned a unique negative id
@@ -42,12 +42,12 @@
           (first-current-elements-negative-id (- 0 (length current-elements))))
 
       ;; hash the elements according to their id
-      (hash-elements original-elements original-elements-hashtable original-element-id-procedure first-original-elements-negative-id)
-      (hash-elements current-elements current-elements-hashtable current-element-id-procedure first-current-elements-negative-id)
+      (hash-elements original-elements original-elements-hash-table original-element-id-procedure first-original-elements-negative-id)
+      (hash-elements current-elements current-elements-hash-table current-element-id-procedure first-current-elements-negative-id)
 
       ;; combine the elements id
-      (let* ((original-elements-id (hash-table-keys original-elements-hashtable))
-             (current-elements-id (hash-table-keys current-elements-hashtable))
+      (let* ((original-elements-id (hash-table-keys original-elements-hash-table))
+             (current-elements-id (hash-table-keys current-elements-hash-table))
              (elements-id (sort (lset-union eq? original-elements-id current-elements-id) <)))
 
         ;; makes an added compare result
@@ -66,8 +66,8 @@
 
         ;; compares an element
         (define (compare-element element-id)
-          (let ((original-element (hash-table-ref/default original-elements-hashtable element-id #f))
-                (current-element (hash-table-ref/default current-elements-hashtable element-id #f)))
+          (let ((original-element (hash-table-ref/default original-elements-hash-table element-id #f))
+                (current-element (hash-table-ref/default current-elements-hash-table element-id #f)))
             (cond ((not original-element) (make-added-compare-result current-element))
                   ((not current-element) (make-deleted-compare-result original-element))
                   (else (make-changed/unchanged-compare-result original-element current-element)))))

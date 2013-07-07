@@ -154,6 +154,7 @@ sources/foreign-interfaces/sqlite.o : sources/foreign-interfaces/sqlite.scm
 compile-infrastructure : compile-infrastructure-compare \
                          compile-infrastructure-date-time \
                          compile-infrastructure-exceptions \
+                         compile-infrastructure-hash \
                          compile-infrastructure-http \
                          compile-infrastructure-json \
                          compile-infrastructure-list \
@@ -189,6 +190,13 @@ sources/infrastructure/exceptions/exceptions.o : sources/infrastructure/exceptio
 	csc -c \
 	sources/infrastructure/exceptions/exceptions.scm -o \
 	sources/infrastructure/exceptions/exceptions.o
+
+compile-infrastructure-hash : sources/infrastructure/hash/hash.o
+
+sources/infrastructure/hash/hash.o : sources/infrastructure/hash/hash.scm
+	csc -c \
+	sources/infrastructure/hash/hash.scm -o \
+	sources/infrastructure/hash/hash.o
 
 compile-infrastructure-http : sources/infrastructure/http/http.o \
                               sources/infrastructure/http/http-intern.o \
@@ -335,6 +343,7 @@ link : compile
 	sources/infrastructure/date-time/date-time.o \
 	sources/infrastructure/date-time/date-time-intern.o \
 	sources/infrastructure/exceptions/exceptions.o \
+	sources/infrastructure/hash/hash.o \
 	sources/infrastructure/http/http.o \
 	sources/infrastructure/http/http-intern.o \
 	sources/infrastructure/http/http-toplevel.o \
