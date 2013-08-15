@@ -23,10 +23,11 @@
 
 ;; formats a subresponse
 (define (json-format-subresponse json-object property-name value format-subresponse-procedure)
-  (with-new-json-object
-    (lambda (json-object-subresponse)
-      (format-subresponse-procedure value json-object-subresponse)
-      (json-object-property-set! json-object property-name json-object-subresponse))))
+  (when value
+    (with-new-json-object
+      (lambda (json-object-subresponse)
+        (format-subresponse-procedure value json-object-subresponse)
+        (json-object-property-set! json-object property-name json-object-subresponse)))))
 
 ;; formats a subresponse list
 (define (json-format-subresponse-list json-object property-name value format-subresponse-procedure)
