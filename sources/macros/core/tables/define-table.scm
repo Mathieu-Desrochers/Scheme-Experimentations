@@ -51,14 +51,6 @@
             (iota (length columns)))
           ", "))
 
-      ;; returns a sql statement where SELECT *
-      ;; has been replaced by SELECT [column names]
-      (define (replace-star-by-columns-name custom-select-sql columns)
-        `(string-replace
-          ,custom-select-sql
-          ,(join-columns-name columns)
-          7 8))
-
       ;; returns a procedure that makes a row
       ;; from a result of the sql-read procedure
       (define (make-row-from-sql-read-result row-symbol columns)
@@ -77,9 +69,10 @@
       (define (sql-downgrade-row-values row-symbol columns)
         (map
           (lambda (column)
-            `(sql-downgrade-value 
-              (,(symbol-append row-symbol '- (column-symbol column))
-               ,row-symbol)))
+            (let ((downgrade-false-to-zero (eq? (column-type column) 'boolean)))
+              `(sql-downgrade-value 
+                (,(symbol-append row-symbol '- (column-symbol column)) ,row-symbol)
+                ,downgrade-false-to-zero)))
           columns))
 
       ;; parses the expression
@@ -115,7 +108,7 @@
             (map ,(make-row-from-sql-read-result row-symbol columns)
               (sql-read sql-connection
                 ,(string-append
-                  "SELECT " (join-columns-name columns)
+                  "SELECT * "
                   "FROM \"" table-name "\" "
                   "WHERE \"" (column-name id-column) "\" = ?1;")
                 ,(column-symbol id-column))))
@@ -125,8 +118,8 @@
             (map ,(make-row-from-sql-read-result row-symbol columns)
               (sql-read sql-connection
                 ,(string-append
-                  "SELECT " (join-columns-name columns)
-                  "FROM \"" table-name "\" "))))
+                  "SELECT * "
+                  "FROM \"" table-name "\";"))))
 
           ;; updates a row
           (define (,(symbol-append table-symbol '-update) sql-connection ,row-symbol)
@@ -147,18 +140,24 @@
               (,(symbol-append row-symbol '- (column-symbol id-column)) ,row-symbol)))
 
           ;; selects based on custom statements
+          ;; always downgrade false to zero, considering
+          ;; that the following clause makes no sense in SQL:
+          ;; WHERE customer-id = NULL
           ,@(map
             (lambda (custom-select)
               (let ((custom-select-symbol (car custom-select))
                     (custom-select-sql (cadr custom-select))
-                    (custom-select-parameters (cddr custom-select)))
+                    (custom-select-parameters (cddr custom-select))
+                    (downgrade-false-to-zero #t))
                 `(define (,custom-select-symbol sql-connection ,@custom-select-parameters)
                   (map ,(make-row-from-sql-read-result row-symbol columns)
                     (sql-read sql-connection
-                      ,(replace-star-by-columns-name custom-select-sql columns)
+                      ,custom-select-sql
                       ,@(map
                         (lambda (custom-select-parameter)
-                          `(sql-downgrade-value ,custom-select-parameter))
+                          `(sql-downgrade-value
+                            ,custom-select-parameter
+                            ,downgrade-false-to-zero))
                         custom-select-parameters))))))
             custom-selects)
 
