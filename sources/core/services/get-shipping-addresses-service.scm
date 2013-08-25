@@ -15,14 +15,14 @@
 ;; response definition
 
 (define-response get-shipping-addresses-response
-  (shipping-addresses list get-shipping-addresses-subresponse))
+  (shipping-addresses list (shipping-address get-shipping-addresses-subresponse)))
 
 (define-response get-shipping-addresses-subresponse
-  (shipping-address-id)
-  (effective-date)
-  (street)
-  (city)
-  (state))
+  (shipping-address-id integer)
+  (effective-date date)
+  (street string)
+  (city string)
+  (state string))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; service logic

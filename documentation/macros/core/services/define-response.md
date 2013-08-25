@@ -5,13 +5,24 @@ Value fields
 __Definition__
 
     (define-response get-customer-response
-      (name)
-      (credit-score)
-      (credit-limit))
+      (name string)
+      (credit-score integer)
+      (credit-limit number))
 
-- A name
-- A credit score
-- A credit limit
+- Defines a response composed of:
+ - A name of type string
+ - A credit score of type integer
+ - A credit limit of type number
+
+- Supported field types:
+ - boolean
+ - date
+ - date-time
+ - day-of-week
+ - integer
+ - number
+ - string
+ - time
 
 __Contructor and selectors__
 
@@ -38,11 +49,12 @@ Value list fields
 __Definition__
 
     (define-response get-product-response
-      (sizes list)
-      (colors list))
+      (sizes list (size integer))
+      (colors list (color string)))
 
-- A list of sizes
-- A list of colors
+- Defines a response composed of:
+ - A list of sizes of type integer
+ - A list of colors of type string
 
 __Json representation__
 
@@ -60,14 +72,14 @@ __Definition__
       (address new-customer-address-subresponse))
 
     (define-response new-customer-address-subresponse
-      (street)
-      (city)
-      (postal-code))
+      (street string)
+      (city string)
+      (postal-code string))
 
-- An address subresponse composed of:
- - A street
- - A city
- - A postal code
+- Defines a subresponse composed of:
+ - A street of type string
+ - A city of type string
+ - A postal code of type string
 
 __Json representation__
 
@@ -86,15 +98,15 @@ Subresponse list fields
 __Definition__
 
     (define-response new-product-response
-      (suppliers list new-product-supplier-subresponse))
+      (suppliers list (supplier new-product-supplier-subresponse)))
 
     (define-response new-product-supplier-subresponse
-      (name)
-      (price))
+      (name string)
+      (price number))
 
-- A list of supplier subresponses composed of:
- - A name
- - A price
+- Defines a list of supplier subresponses composed of:
+ - A name of type string
+ - A price of type number
 
 __Json representation__
 

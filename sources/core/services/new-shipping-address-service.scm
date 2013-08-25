@@ -20,7 +20,7 @@
 ;; response definition
 
 (define-response new-shipping-address-response
-  (shipping-address-id))
+  (shipping-address-id integer))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; service logic

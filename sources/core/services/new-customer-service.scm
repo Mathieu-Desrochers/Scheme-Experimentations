@@ -24,7 +24,7 @@
 ;; response definition
 
 (define-response new-customer-response
-  (customer-id))
+  (customer-id integer))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; service logic

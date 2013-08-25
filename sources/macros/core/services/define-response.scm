@@ -12,36 +12,48 @@
 
       ;; whether a field is a value field
       (define (value-field? field)
-        (eq? (length field) 1))
+        (let ((field-type (list-ref field 1)))
+          (and (not (eq? field-type 'list))
+               (not (symbol-contains? field-type "subresponse")))))
 
       ;; whether a field is a value list field
       (define (value-list-field? field)
-        (and (eq? (length field) 2)
-             (eq? (cadr field) 'list)))
+        (let ((field-type (list-ref field 1)))
+          (if (eq? field-type 'list)
+            (let* ((element-field (list-ref field 2))
+                   (element-field-type (list-ref element-field 1)))
+              (not (symbol-contains? element-field-type "subresponse")))
+            #f)))
 
       ;; whether a field is a subresponse field
       (define (subresponse-field? field)
-        (and (eq? (length field) 2)
-             (symbol-contains? (cadr field) "subresponse")))
+        (let ((field-type (list-ref field 1)))
+          (symbol-contains? field-type "subresponse")))
 
       ;; whether a field is a subresponse list field
       (define (subresponse-list-field? field)
-        (and (eq? (length field) 3)
-             (eq? (cadr field) 'list)
-             (symbol-contains? (caddr field) "subresponse")))
+        (let ((field-type (list-ref field 1)))
+          (if (eq? field-type 'list)
+            (let* ((element-field (list-ref field 2))
+                   (element-field-type (list-ref element-field 1)))
+              (symbol-contains? element-field-type "subresponse"))
+            #f)))
 
       ;; json formats a value field
       (define (json-format-value-field field)
-        (let* ((field-symbol (car field))
-               (field-symbol-string (symbol->string field-symbol)))
+        (let* ((field-symbol (list-ref field 0))
+               (field-symbol-string (symbol->string field-symbol))
+               (field-type (list-ref field 1))
+               (field-type-is-boolean (eq? field-type 'boolean)))
           `(json-format-value
             json-object
             ,field-symbol-string
-            (json-downgrade-value ,field-symbol))))
+            (json-downgrade-value ,field-symbol)
+            ,field-type-is-boolean)))
 
       ;; json formats a value list field
       (define (json-format-value-list-field field)
-        (let* ((field-symbol (car field))
+        (let* ((field-symbol (list-ref field 0))
                (field-symbol-string (symbol->string field-symbol)))
           `(json-format-value-list
             json-object
@@ -50,7 +62,7 @@
 
       ;; json formats a subresponse field
       (define (json-format-subresponse-field field)
-        (let* ((field-symbol (car field))
+        (let* ((field-symbol (list-ref field 0))
                (field-symbol-string (symbol->string field-symbol))
                (field-subresponse-type (cadr field)))
           `(json-format-subresponse
@@ -61,14 +73,15 @@
 
       ;; json formats a subresponse list field
       (define (json-format-subresponse-list-field field)
-        (let* ((field-symbol (car field))
+        (let* ((field-symbol (list-ref field 0))
                (field-symbol-string (symbol->string field-symbol))
-               (field-subresponse-type (caddr field)))
+               (element-field (list-ref field 2))
+               (element-field-subresponse-type (list-ref element-field 1)))
           `(json-format-subresponse-list
             json-object
             ,field-symbol-string
             ,field-symbol
-            ,(symbol-append 'json-format- field-subresponse-type))))
+            ,(symbol-append 'json-format- element-field-subresponse-type))))
 
       ;; parses the expression
       (let* ((response-symbol (cadr exp))

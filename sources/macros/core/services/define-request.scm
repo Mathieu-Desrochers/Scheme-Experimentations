@@ -12,30 +12,30 @@
 
       ;; whether a field is a value field
       (define (value-field? field)
-        (let ((field-type (cadr field)))
+        (let ((field-type (list-ref field 1)))
           (and (not (eq? field-type 'list))
                (not (symbol-contains? field-type "subrequest")))))
 
       ;; whether a field is a value list field
       (define (value-list-field? field)
-        (let ((field-type (cadr field)))
+        (let ((field-type (list-ref field 1)))
           (if (eq? field-type 'list)
             (let* ((element-field (list-ref field 5))
-                   (element-field-type (cadr element-field)))
+                   (element-field-type (list-ref element-field 1)))
               (not (symbol-contains? element-field-type "subrequest")))
             #f)))
 
       ;; whether a field is a subrequest field
       (define (subrequest-field? field)
-        (let ((field-type (cadr field)))
+        (let ((field-type (list-ref field 1)))
           (symbol-contains? field-type "subrequest")))
 
       ;; whether a field is a subrequest list field
       (define (subrequest-list-field? field)
-        (let ((field-type (cadr field)))
+        (let ((field-type (list-ref field 1)))
           (if (eq? field-type 'list)
             (let* ((element-field (list-ref field 5))
-                   (element-field-type (cadr element-field)))
+                   (element-field-type (list-ref element-field 1)))
               (symbol-contains? element-field-type "subrequest"))
             #f)))
 

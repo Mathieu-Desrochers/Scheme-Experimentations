@@ -4,10 +4,11 @@
 (declare (uses json))
 
 ;; formats a value
-(define (json-format-value json-object property-name value)
-  (with-new-json-object-from-value value
-    (lambda (json-object-value)
-      (json-object-property-set! json-object property-name json-object-value))))
+(define (json-format-value json-object property-name value value-is-boolean)
+  (when (or value value-is-boolean)
+    (with-new-json-object-from-value value
+      (lambda (json-object-value)
+        (json-object-property-set! json-object property-name json-object-value)))))
 
 ;; formats a value list
 (define (json-format-value-list json-object property-name value)

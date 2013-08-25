@@ -16,17 +16,17 @@
 ;; response definition
 
 (define-response get-customer-response
-  (customer-id)
-  (first-name)
-  (last-name)
-  (is-vip)
+  (customer-id integer)
+  (first-name string)
+  (last-name string)
+  (is-vip boolean)
   (shipping-address get-customer-shipping-address-subresponse))
 
 (define-response get-customer-shipping-address-subresponse
-  (shipping-address-id)
-  (street)
-  (city)
-  (state))
+  (shipping-address-id integer)
+  (street string)
+  (city string)
+  (state string))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; service logic
