@@ -5,8 +5,9 @@
 
 (declare (unit list))
 
+(declare (uses list-intern))
+
 ;; returns the index of the duplicates in a list
-;; elements with a false value are ignored
 (define (list-duplicates-index elements element-value-procedure)
 
   ;; get the elements value
@@ -16,12 +17,11 @@
     ;; count the elements value
     (map
       (lambda (element-value)
-        (when element-value
-          (hash-table-update!
-            elements-value-count-hash-table
-            element-value
-            (lambda (element-value-count) (+ element-value-count 1))
-            (lambda () 0))))
+        (hash-table-update!
+          elements-value-count-hash-table
+          element-value
+          (lambda (element-value-count) (+ element-value-count 1))
+          (lambda () 0)))
       elements-value)
 
     ;; return the index of the elements value
@@ -30,55 +30,47 @@
       (lambda (element-value-with-index)
         (let ((element-value (car element-value-with-index))
               (element-index (cadr element-value-with-index)))
-          (if element-value
-            (if (> (hash-table-ref elements-value-count-hash-table element-value) 1)
-              element-index
-              #f)
+          (if (> (hash-table-ref elements-value-count-hash-table element-value) 1)
+            element-index
             #f)))
       (zip elements-value (iota (length elements-value))))))
 
-;; returns the index of the differences between two lists
-;; elements with a false value are ignored
-(define (list-differences-index
-          tested-elements
-          tested-element-value-procedure
-          reference-elements
-          reference-element-value-procedure)
+;; returns the index of the left elements
+;; whose value is found among the right elements
+(define (list-matches-index
+          left-elements
+          left-element-value-procedure
+          right-elements
+          right-element-value-procedure)
 
-  ;; get the elements value
-  (let ((tested-elements-value (map tested-element-value-procedure tested-elements))
-        (reference-elements-value (map reference-element-value-procedure reference-elements))
-        (reference-elements-value-hash-table (make-hash-table = number-hash)))
+  (list-match-elements-value-index
+    left-elements
+    left-element-value-procedure
+    right-elements
+    right-element-value-procedure
+    #t
+    #f))
 
-    ;; hash the reference elements value
-    (map
-      (lambda (reference-element-value)
-        (when reference-element-value
-          (hash-table-set!
-            reference-elements-value-hash-table
-            reference-element-value
-            #t)))
-      reference-elements-value)
+;; returns the index of the left elements
+;; whose value is not found among the right elements
+(define (list-non-matches-index
+          left-elements
+          left-element-value-procedure
+          right-elements
+          right-element-value-procedure)
 
-    ;; return the index of the tested elements value
-    ;; that are not among the reference elements value
-    (filter-map
-      (lambda (tested-element-value-with-index)
-        (let ((tested-element-value (car tested-element-value-with-index))
-              (tested-element-index (cadr tested-element-value-with-index)))
-          (if tested-element-value
-            (if (hash-table-ref/default reference-elements-value-hash-table tested-element-value #f)
-              #f
-              tested-element-index)
-            #f)))
-      (zip tested-elements-value (iota (length tested-elements-value))))))
+  (list-match-elements-value-index
+    left-elements
+    left-element-value-procedure
+    right-elements
+    right-element-value-procedure
+    #f
+    #t))
 
 ;; sorts a list of elements
-(define (list-sort elements element-sort-value-procedure element-value-procedure)
-  (map
-    element-value-procedure
-    (sort
-      elements
-      (lambda (x y)
-        (< (element-sort-value-procedure x)
-           (element-sort-value-procedure y))))))
+(define (list-sort elements element-sort-value-procedure)
+  (sort
+    elements
+    (lambda (x y)
+      (< (element-sort-value-procedure x)
+         (element-sort-value-procedure y)))))

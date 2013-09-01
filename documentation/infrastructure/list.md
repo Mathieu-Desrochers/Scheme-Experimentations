@@ -1,7 +1,7 @@
 
 list-duplicates-index
 ---------------------
-Returns the index of the duplicates in a list.
+Returns the index of the elements whose value is duplicated.
 
 __elements__  
 The list of elements.
@@ -12,57 +12,88 @@ The list of elements.
       (make-order-item-row 1005 "Chocolate bar" 2))
 
 __element-value-procedure__  
-A procedure that returns an element's value.
+A procedure that returns the value of an element.
 
-    (lambda (order-item-row)
-      (order-item-row-id order-item-row))
+    order-item-row-id
 
 __result__  
-Returns the index of the elements having a duplicated value.
+The index of the duplicates.
 
     '(0 2)
 
-list-differences-index
-----------------------
-Returns the index of the elements in a first list  
-that are missing in a second list.
+list-matches-index
+------------------
+Returns the index of the left elements whose value  
+is found among the values of the right elements.
 
-__tested-elements__  
-The first list of elements.
+__left-elements__  
+The list of left elements.
 
     (list
       (make-order-item-row 1005 "Chocolate bar" 5)
       (make-order-item-row 2822 "Ninja costume" 3)
-      (make-order-item-row 6001 "Soccer ball" 1))
+      (make-order-item-row 6027 "Soccer ball" 1))
 
-__tested-element-value-procedure__  
-A procedure that returns a tested element's value.
+__left-element-value-procedure__  
+A procedure that returns the value of a left element.
 
-    (lambda (order-item-row)
-      (order-item-row-id order-item-row))
+    order-item-row-id
 
-__reference-elements__  
-The second list of elements.
+__right-elements__  
+The list of right elements.
 
     (list
       (make-order-item-row 1005 "Chocolate bar" 5)
       (make-order-item-row 6027 "Baseball hat" 2))
 
-__reference-element-value-procedure__  
-A procedure that returns a reference element's value.
+__right-element-value-procedure__  
+A procedure that returns the value of a right element.
 
-    (lambda (order-item-row)
-      (order-item-row-id order-item-row))
+    order-item-row-id
 
 __result__  
-Returns the index of the tested elements having a value  
-that was not found among the reference elements.
+The index of the matching left elements. 
 
-    '(1 2)
+    '(0 2)
+
+list-non-matches-index
+----------------------
+Returns the index of the left elements whose value  
+is not found among the values of the right elements.
+
+__left-elements__  
+The list of left elements.
+
+    (list
+      (make-order-item-row 1005 "Chocolate bar" 5)
+      (make-order-item-row 2822 "Ninja costume" 3)
+      (make-order-item-row 6027 "Soccer ball" 1))
+
+__left-element-value-procedure__  
+A procedure that returns the value of a left element.
+
+    order-item-row-id
+
+__right-elements__  
+The list of right elements.
+
+    (list
+      (make-order-item-row 1005 "Chocolate bar" 5)
+      (make-order-item-row 6027 "Baseball hat" 2))
+
+__right-element-value-procedure__  
+A procedure that returns the value of a right element.
+
+    order-item-row-id
+
+__result__  
+The index of the non matching left elements. 
+
+    '(1)
 
 list-sort
 ---------
-Sorts a list of elements.
+Sorts a list of elements according to their sort value.
 
 __elements__  
 The list of elements.
@@ -70,23 +101,17 @@ The list of elements.
     (list
       (make-order-item-row 1005 "Chocolate bar" 5)
       (make-order-item-row 2822 "Ninja costume" 3)
-      (make-order-item-row 6001 "Soccer ball" 1))
+      (make-order-item-row 6027 "Soccer ball" 1))
 
 __element-sort-value-procedure__  
-A procedure that returns an element's sort value.
+A procedure that returns the sort value of an element.
 
     order-item-row-quantity
 
-__element-value-procedure__  
-A procedure that returns an element's value.
-
-    order-item-row-product-name
-
 __result__  
-Returns a list of the elements' value, as they were ordered  
-after being sorted by their sort value.
+The list of sorted elements.
 
     (list
-      "Soccer ball"
-      "Ninja costume"
-      "Chocolate bar")
+      (make-order-item-row 6027 "Soccer ball" 1)
+      (make-order-item-row 2822 "Ninja costume" 3)
+      (make-order-item-row 1005 "Chocolate bar" 5))
