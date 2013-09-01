@@ -17,11 +17,12 @@
     ;; count the elements value
     (map
       (lambda (element-value)
-        (hash-table-update!
-          elements-value-count-hash-table
-          element-value
-          (lambda (element-value-count) (+ element-value-count 1))
-          (lambda () 0)))
+        (when element-value
+          (hash-table-update!
+            elements-value-count-hash-table
+            element-value
+            (lambda (element-value-count) (+ element-value-count 1))
+            (lambda () 0))))
       elements-value)
 
     ;; return the index of the elements value
@@ -30,8 +31,10 @@
       (lambda (element-value-with-index)
         (let ((element-value (car element-value-with-index))
               (element-index (cadr element-value-with-index)))
-          (if (> (hash-table-ref elements-value-count-hash-table element-value) 1)
-            element-index
+          (if element-value
+            (if (> (hash-table-ref elements-value-count-hash-table element-value) 1)
+              element-index
+              #f)
             #f)))
       (zip elements-value (iota (length elements-value))))))
 

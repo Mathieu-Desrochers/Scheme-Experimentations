@@ -24,10 +24,11 @@
     (let ((right-elements-value-hash-table (make-hash-table = number-hash)))
       (map
         (lambda (right-element-value)
-          (hash-table-set!
-            right-elements-value-hash-table
-            right-element-value
-            #t))
+          (when right-element-value
+            (hash-table-set!
+              right-elements-value-hash-table
+              right-element-value
+              #t)))
         right-elements-value)
 
       ;; sort the left elements index
@@ -39,9 +40,11 @@
           (lambda (left-element-value-with-index)
             (let ((left-element-value (car left-element-value-with-index))
                   (left-element-index (cadr left-element-value-with-index)))
-              (if (hash-table-ref/default right-elements-value-hash-table left-element-value #f)
-                (if keep-matches-index left-element-index #f)
-                (if keep-non-matches-index left-element-index #f))))
+              (if left-element-value
+                (if (hash-table-ref/default right-elements-value-hash-table left-element-value #f)
+                  (if keep-matches-index left-element-index #f)
+                  (if keep-non-matches-index left-element-index #f))
+                #f)))
 
           ;; pair the left elements value
           ;; with their index
