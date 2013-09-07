@@ -77,3 +77,12 @@
     (lambda (x y)
       (< (element-sort-value-procedure x)
          (element-sort-value-procedure y)))))
+
+;; returns whether a list of elements has values
+;; that make a consecutive sequence.
+(define (list-is-consecutive-sequence
+          elements
+          element-value-procedure)
+  (equal?
+    (sort (map element-value-procedure elements) <)
+    (iota (length elements) 1)))

@@ -115,3 +115,26 @@ The list of sorted elements.
       (make-order-item-row 6027 "Soccer ball" 1)
       (make-order-item-row 2822 "Ninja costume" 3)
       (make-order-item-row 1005 "Chocolate bar" 5))
+
+list-is-consecutive-sequence
+----------------------------
+Returns whether a list of elements has values  
+that make a consecutive sequence.
+
+__elements__  
+The list of elements.
+
+    (list
+      (make-pirate-level 1 "Caring")
+      (make-pirate-level 3 "Evil")
+      (make-pirate-level 2 "Brutish"))
+
+__element-value-procedure__
+A procedure that returns the value of an element.
+
+    pirate-level-rank
+
+__result__
+Whether the values make a consecutive sequence.
+
+    #t
