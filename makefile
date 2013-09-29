@@ -158,6 +158,7 @@ compile-infrastructure : compile-infrastructure-compare \
                          compile-infrastructure-http \
                          compile-infrastructure-json \
                          compile-infrastructure-list \
+                         compile-infrastructure-records \
                          compile-infrastructure-regex \
                          compile-infrastructure-services \
                          compile-infrastructure-sql \
@@ -267,6 +268,13 @@ sources/infrastructure/list/list-intern.o : sources/infrastructure/list/list-int
 	sources/infrastructure/list/list-intern.scm -o \
 	sources/infrastructure/list/list-intern.o
 
+compile-infrastructure-records : sources/infrastructure/records/records.o
+
+sources/infrastructure/records/records.o : sources/infrastructure/records/records.scm
+	csc -c \
+	sources/infrastructure/records/records.scm -o \
+	sources/infrastructure/records/records.o
+
 compile-infrastructure-regex : sources/infrastructure/regex/regex.o \
                                sources/infrastructure/regex/regex-intern.o
 
@@ -361,6 +369,7 @@ link : compile
 	sources/infrastructure/json/json-parse.o \
 	sources/infrastructure/list/list.o \
 	sources/infrastructure/list/list-intern.o \
+	sources/infrastructure/records/records.o \
 	sources/infrastructure/regex/regex.o \
 	sources/infrastructure/regex/regex-intern.o \
 	sources/infrastructure/services/services.o \
