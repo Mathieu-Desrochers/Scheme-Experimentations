@@ -6,7 +6,7 @@ Increments a record value.
 __record__  
 The record to update.
 
-  (make-customer-row 1001 "Alice" 25)
+    (make-customer-row 1001 "Alice" 25)
 
 __get-procedure__  
 A procedure that gets the value to be incremented.
