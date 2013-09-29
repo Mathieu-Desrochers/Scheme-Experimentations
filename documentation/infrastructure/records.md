@@ -26,4 +26,4 @@ The number by which to increment the value.
 __result__  
 Updates the record.
 
-    (get-customer-row-age alice) ==> 26
+    (customer-row-age alice) ==> 26
