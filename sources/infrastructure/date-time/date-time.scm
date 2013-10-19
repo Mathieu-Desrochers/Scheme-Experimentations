@@ -215,3 +215,23 @@
     (+ (time-second first-time) (time-second second-time))
     (lambda (year month day hour minute second)
       (make-time hour minute second))))
+
+;; calculates an age based on a birthdate
+(define (date-calculate-age birthdate)
+
+  ;; calculate the difference
+  ;; between the birthdate and today
+  (let* ((negative-birthdate
+            (make-date
+              (* -1 (date-year birthdate))
+              (* -1 (date-month birthdate))
+              (* -1 (date-day birthdate))))
+         (date-difference
+            (date-add
+              (date-now)
+              negative-birthdate)))
+
+    ;; calculate the age
+    (+ (date-year date-difference)
+       (/ (date-month date-difference) 12)
+       (/ (date-day date-difference) 365))))

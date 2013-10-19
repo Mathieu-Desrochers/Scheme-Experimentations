@@ -251,3 +251,15 @@ __second-time__
 __result__
 
     (make-time 19 56 42)
+
+date-calculate-age
+------------------
+Calculates an age based on a birthdate.
+
+__birthdate__  
+
+    (make-date 1972 4 28)
+
+__result__  
+
+    41.4769
