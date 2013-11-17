@@ -24,7 +24,7 @@
 
 ;; binds the parameters of a sqlite3-stmt*
 (define (sql-bind-parameters sqlite3-stmt* parameter-values)
-  (map
+  (for-each
     (lambda (parameter-index)
       (let* ((parameter-number (+ parameter-index 1))
              (parameter-value (list-ref parameter-values parameter-index))

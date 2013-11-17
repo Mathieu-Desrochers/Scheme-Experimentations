@@ -7,7 +7,8 @@
 
 (declare (uses list-intern))
 
-;; returns the index of the duplicates in a list
+;; returns the index of the elements
+;; that appear more than once in a list
 (define (list-duplicates-index elements element-value-procedure)
 
   ;; get the elements value
@@ -15,7 +16,7 @@
         (elements-value-count-hash-table (make-hash-table = number-hash)))
 
     ;; count the elements value
-    (map
+    (for-each
       (lambda (element-value)
         (when element-value
           (hash-table-update!
@@ -38,35 +39,67 @@
             #f)))
       (zip elements-value (iota (length elements-value))))))
 
-;; returns the index of the left elements
-;; whose value is found among the right elements
+;; returns the index of the elements in a first list
+;; whose value can be matched in a second list
 (define (list-matches-index
-          left-elements
-          left-element-value-procedure
-          right-elements
-          right-element-value-procedure)
+          first-elements
+          first-element-value-procedure
+          second-elements
+          second-element-value-procedure)
 
-  (list-match-elements-value-index
-    left-elements
-    left-element-value-procedure
-    right-elements
-    right-element-value-procedure
+  (list-matches-or-non-matches-index
+    first-elements
+    first-element-value-procedure
+    second-elements
+    second-element-value-procedure
     #t
     #f))
 
-;; returns the index of the left elements
-;; whose value is not found among the right elements
+;; returns the index of the elements in a first list
+;; whose value cannot be matched in a second list
 (define (list-non-matches-index
-          left-elements
-          left-element-value-procedure
-          right-elements
-          right-element-value-procedure)
+          first-elements
+          first-element-value-procedure
+          second-elements
+          second-element-value-procedure)
 
-  (list-match-elements-value-index
-    left-elements
-    left-element-value-procedure
-    right-elements
-    right-element-value-procedure
+  (list-matches-or-non-matches-index
+    first-elements
+    first-element-value-procedure
+    second-elements
+    second-element-value-procedure
+    #f
+    #t))
+
+;; returns the index at which the elements
+;; of two lists share the same value
+(define (list-same-values-index
+          first-elements
+          first-element-value-procedure
+          second-elements
+          second-element-value-procedure)
+
+  (list-same-or-different-values-index
+    first-elements
+    first-element-value-procedure
+    second-elements
+    second-element-value-procedure
+    #t
+    #f))
+
+;; returns the index at which the elements
+;; of two lists do not share the same value
+(define (list-different-values-index
+          first-elements
+          first-element-value-procedure
+          second-elements
+          second-element-value-procedure)
+
+  (list-same-or-different-values-index
+    first-elements
+    first-element-value-procedure
+    second-elements
+    second-element-value-procedure
     #f
     #t))
 
@@ -78,8 +111,8 @@
       (< (element-sort-value-procedure x)
          (element-sort-value-procedure y)))))
 
-;; returns whether a list of elements has values
-;; that make a consecutive sequence.
+;; returns whether the elements in a list form a
+;; consecutive sequence that starts from one
 (define (list-is-consecutive-sequence
           elements
           element-value-procedure)

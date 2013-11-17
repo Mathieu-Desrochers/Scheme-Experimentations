@@ -14,7 +14,7 @@
 (define (json-format-value-list json-object property-name value)
   (with-new-json-object-array
     (lambda (json-object-array)
-      (map
+      (for-each
         (lambda (element-value)
           (with-new-json-object-from-value element-value
             (lambda (json-object-element)
@@ -34,7 +34,7 @@
 (define (json-format-subresponse-list json-object property-name value format-subresponse-procedure)
   (with-new-json-object-array
     (lambda (json-object-array)
-      (map
+      (for-each
         (lambda (element-value)
           (with-new-json-object
             (lambda (json-object-element)

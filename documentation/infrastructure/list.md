@@ -1,140 +1,173 @@
 
 list-duplicates-index
 ---------------------
-Returns the index of the elements whose value is duplicated.
+Returns the index of the elements that appear more than once in a list.
 
 __elements__  
 The list of elements.
 
-    (list
-      (make-order-item-row 1005 "Chocolate bar" 5)
-      (make-order-item-row 2822 "Ninja costume" 3)
-      (make-order-item-row 1005 "Chocolate bar" 2))
+    (list 2 6 7 2)
 
 __element-value-procedure__  
 A procedure that returns the value of an element.
 
-    order-item-row-id
+    identity
 
 __result__  
 The index of the duplicates.
 
-    '(0 2)
+    '(0 3)
 
 list-matches-index
 ------------------
-Returns the index of the left elements whose value  
-is found among the values of the right elements.
+Returns the index of the elements in a first list whose value can be matched in a second list.
 
-__left-elements__  
-The list of left elements.
+__first-elements__  
+The first list of elements.
 
-    (list
-      (make-order-item-row 1005 "Chocolate bar" 5)
-      (make-order-item-row 2822 "Ninja costume" 3)
-      (make-order-item-row 6027 "Soccer ball" 1))
+    (list 1 2 3 4)
 
-__left-element-value-procedure__  
-A procedure that returns the value of a left element.
+__first-element-value-procedure__  
+A procedure that returns the value of a first list element.
 
-    order-item-row-id
+    identity
 
-__right-elements__  
-The list of right elements.
+__second-elements__  
+The second list of elements.
 
-    (list
-      (make-order-item-row 1005 "Chocolate bar" 5)
-      (make-order-item-row 6027 "Baseball hat" 2))
+    (list 9 8 7 6 5 4 3)
 
-__right-element-value-procedure__  
-A procedure that returns the value of a right element.
+__second-element-value-procedure__  
+A procedure that returns the value of a second list element.
 
-    order-item-row-id
+    identity
 
 __result__  
-The index of the matching left elements. 
+The index of the matched elements.
 
-    '(0 2)
+    '(2 3)
 
 list-non-matches-index
 ----------------------
-Returns the index of the left elements whose value  
-is not found among the values of the right elements.
+Returns the index of the elements in a first list whose value cannot be matched in a second list.
 
-__left-elements__  
-The list of left elements.
+__first-elements__  
+The first list of elements.
 
-    (list
-      (make-order-item-row 1005 "Chocolate bar" 5)
-      (make-order-item-row 2822 "Ninja costume" 3)
-      (make-order-item-row 6027 "Soccer ball" 1))
+    (list 1 2 3 4)
 
-__left-element-value-procedure__  
-A procedure that returns the value of a left element.
+__first-element-value-procedure__  
+A procedure that returns the value of a first list element.
 
-    order-item-row-id
+    identity
 
-__right-elements__  
-The list of right elements.
+__second-elements__  
+The second list of elements.
 
-    (list
-      (make-order-item-row 1005 "Chocolate bar" 5)
-      (make-order-item-row 6027 "Baseball hat" 2))
+    (list 9 8 7 6 5 4 3)
 
-__right-element-value-procedure__  
-A procedure that returns the value of a right element.
+__second-element-value-procedure__  
+A procedure that returns the value of a second list element.
 
-    order-item-row-id
+    identity
 
 __result__  
-The index of the non matching left elements. 
+The index of the unmatched elements.
 
-    '(1)
+    '(0 1)
+
+list-same-values-index
+----------------------
+Returns the index at which the elements of two lists share the same value.
+
+__first-elements__  
+The first list of elements.
+
+    (list 1 2 3 4)
+
+__first-element-value-procedure__  
+A procedure that returns the value of a first list element.
+
+    identity
+
+__second-elements__  
+The second list of elements.
+
+    (list 1 20 3 40)
+
+__second-element-value-procedure__  
+A procedure that returns the value of a second list element.
+
+    identity
+
+__result__  
+The index of the elements that share the same value.
+
+    '(0 2)
+
+list-different-values-index
+---------------------------
+Returns the index at which the elements of two lists do not share the same value.
+
+__first-elements__  
+The first list of elements.
+
+    (list 1 2 3 4)
+
+__first-element-value-procedure__  
+A procedure that returns the value of a first list element.
+
+    identity
+
+__second-elements__  
+The second list of elements.
+
+    (list 1 20 3 40)
+
+__second-element-value-procedure__  
+A procedure that returns the value of a second list element.
+
+    identity
+
+__result__  
+The index of the elements that do not share the same value.
+
+    '(1 3)
 
 list-sort
 ---------
-Sorts a list of elements according to their sort value.
+Sorts a list of elements.
 
 __elements__  
 The list of elements.
 
-    (list
-      (make-order-item-row 1005 "Chocolate bar" 5)
-      (make-order-item-row 2822 "Ninja costume" 3)
-      (make-order-item-row 6027 "Soccer ball" 1))
+    (list 5 3 2 8)
 
 __element-sort-value-procedure__  
 A procedure that returns the sort value of an element.
 
-    order-item-row-quantity
+    identity
 
 __result__  
 The list of sorted elements.
 
-    (list
-      (make-order-item-row 6027 "Soccer ball" 1)
-      (make-order-item-row 2822 "Ninja costume" 3)
-      (make-order-item-row 1005 "Chocolate bar" 5))
+    (list 2 3 5 8)
 
 list-is-consecutive-sequence
 ----------------------------
-Returns whether a list of elements has values  
-that make a consecutive sequence.
+Returns whether the elements in a list form a consecutive sequence that starts from one.
 
 __elements__  
 The list of elements.
 
-    (list
-      (make-pirate-level 1 "Caring")
-      (make-pirate-level 3 "Evil")
-      (make-pirate-level 2 "Brutish"))
+    (list 1 2 3)
 
-__element-value-procedure__
+__element-value-procedure__  
 A procedure that returns the value of an element.
 
-    pirate-level-rank
+    identity
 
-__result__
-Whether the values make a consecutive sequence.
+__result__  
+Whether the elements form a consecutive sequence.
 
     #t
