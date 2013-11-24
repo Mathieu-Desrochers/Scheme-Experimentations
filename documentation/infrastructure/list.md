@@ -134,9 +134,9 @@ The index of the elements that do not share the same value.
 
     '(1 3)
 
-list-sort
----------
-Sorts a list of elements.
+list-sort-by-number
+-------------------
+Sorts a list of elements by their numeric value.
 
 __elements__  
 The list of elements.
@@ -144,7 +144,7 @@ The list of elements.
     (list 5 3 2 8)
 
 __element-sort-value-procedure__  
-A procedure that returns the sort value of an element.
+A procedure that returns the numeric value of an element.
 
     identity
 
@@ -152,6 +152,84 @@ __result__
 The list of sorted elements.
 
     (list 2 3 5 8)
+
+list-sort-by-string
+-------------------
+Sorts a list of elements by their string value.
+
+__elements__  
+The list of elements.
+
+    (list "e" "c" "b" "h")
+
+__element-sort-value-procedure__  
+A procedure that returns the string value of an element.
+
+    identity
+
+__result__  
+The list of sorted elements.
+
+    (list "b" "c" "e" "h")
+
+list-sort-by-date
+-----------------
+Sorts a list of elements by their date value.
+
+__elements__  
+The list of elements.
+
+    (list
+      (make-date 2005 5 5)
+      (make-date 2003 3 3)
+      (make-date 2002 2 2)
+      (make-date 2008 8 8))
+
+__element-sort-value-procedure__  
+A procedure that returns the date value of an element.
+
+    identity
+
+__result__  
+The list of sorted elements.
+
+    (list
+      (make-date 2002 2 2)
+      (make-date 2003 3 3)
+      (make-date 2005 5 5)
+      (make-date 2008 8 8))
+
+list-sort-by-day-of-week-and-time
+---------------------------------
+Sorts a list of elements by their day of week and time values.
+
+__elements__  
+The list of elements.
+
+    (list
+      (cons (make-day-of-week "Wednesday") (make-time 5 5 5))
+      (cons (make-day-of-week "Wednesday") (make-time 3 3 3))
+      (cons (make-day-of-week "Sunday") (make-time 2 2 2))
+      (cons (make-day-of-week "Sunday") (make-time 8 8 8)))
+
+__element-day-of-week-sort-value-procedure__  
+A procedure that returns the day of week value of an element.
+
+    car
+
+__element-time-sort-value-procedure__  
+A procedure that returns the time value of an element.
+
+    cadr
+
+__result__  
+The list of sorted elements.
+
+    (list
+      (cons (make-day-of-week "Sunday") (make-time 2 2 2))
+      (cons (make-day-of-week "Sunday") (make-time 8 8 8))
+      (cons (make-day-of-week "Wednesday") (make-time 3 3 3))
+      (cons (make-day-of-week "Wednesday") (make-time 5 5 5)))
 
 list-is-consecutive-sequence
 ----------------------------

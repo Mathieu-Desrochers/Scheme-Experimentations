@@ -13,7 +13,6 @@ __result__
 
     (make-date 1972 4 28)
 
-
 string->date-time
 -----------------
 Parses a UTC date and time expressed under the format YYYY-MM-DDTHH:MM:SSZ.  

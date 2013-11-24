@@ -5,6 +5,7 @@
 
 (declare (unit list))
 
+(declare (uses date-time))
 (declare (uses list-intern))
 
 ;; returns the index of the elements
@@ -103,13 +104,58 @@
     #f
     #t))
 
-;; sorts a list of elements
-(define (list-sort elements element-sort-value-procedure)
+;; sorts a list of elements by their numeric value
+(define (list-sort-by-number elements element-sort-value-procedure)
   (sort
     elements
     (lambda (x y)
       (< (element-sort-value-procedure x)
          (element-sort-value-procedure y)))))
+
+;; sorts a list of elements by their string value
+(define (list-sort-by-string elements element-sort-value-procedure)
+  (sort
+    elements
+    (lambda (x y)
+      (<
+        (string-compare3
+          (element-sort-value-procedure x)
+          (element-sort-value-procedure y))
+        0))))
+
+;; sorts a list of elements by their date value
+(define (list-sort-by-date elements element-sort-value-procedure)
+
+  ;; returns a sortable string for the
+  ;; date value of an element
+  (define (sortable-string element)
+    (let ((date (element-sort-value-procedure element)))
+      (date->string date)))
+  
+  ;; sort the elements according to their sortable strings
+  (list-sort-by-string
+    elements
+    sortable-string))
+
+;; sorts a list of elements by their day-of-week and time values
+(define (list-sort-by-day-of-week-and-time
+          elements
+          element-day-of-week-sort-value-procedure
+          element-time-sort-value-procedure)
+
+  ;; returns a sortable string for the
+  ;; day-of-week and time values of an element
+  (define (sortable-string element)
+    (let ((day-of-week (element-day-of-week-sort-value-procedure element))
+          (time (element-time-sort-value-procedure element)))
+      (string-append
+        (number->string (day-of-week->integer day-of-week))
+        (time->string time))))
+  
+  ;; sort the elements according to their sortable strings
+  (list-sort-by-string
+    elements
+    sortable-string))
 
 ;; returns whether the elements in a list form a
 ;; consecutive sequence that starts from one
