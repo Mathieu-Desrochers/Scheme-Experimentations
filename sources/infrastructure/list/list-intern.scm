@@ -5,6 +5,8 @@
 
 (declare (unit list-intern))
 
+(declare (uses hash))
+
 ;; returns the index of the elements in a first list
 ;; whose value can be matched in a second list or not
 (define (list-matches-or-non-matches-index
@@ -20,7 +22,14 @@
         (second-elements-value (map second-element-value-procedure second-elements)))
 
     ;; hash the second elements value
-    (let ((second-elements-value-hash-table (make-hash-table = number-hash)))
+    (let* ((hash-procedures
+              (get-hash-procedures
+                second-elements
+                second-element-value-procedure))
+           (second-elements-value-hash-table
+              (make-hash-table
+                (car hash-procedures)
+                (cdr hash-procedures))))
       (map
         (lambda (second-element-value)
           (when second-element-value
