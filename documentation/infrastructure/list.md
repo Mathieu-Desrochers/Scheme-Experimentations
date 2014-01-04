@@ -300,7 +300,7 @@ The list of elements.
 __result__  
 The possible element combinaisons.
 
-  (() (1) (2) (1 2) (3) (1 3) (2 3) (1 2 3))
+    (() (1) (2) (1 2) (3) (1 3) (2 3) (1 2 3))
 
 list-sum
 --------
