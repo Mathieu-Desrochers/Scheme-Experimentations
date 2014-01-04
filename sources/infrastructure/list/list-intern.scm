@@ -88,3 +88,21 @@
       (map first-element-value-procedure first-elements)
       (map second-element-value-procedure second-elements)
       (iota (length first-elements)))))
+
+;; returns the element having the limit value
+;; according to a comparaison procedure
+(define (list-limit-element
+          elements
+          element-value-procedure
+          comparaison-procedure)
+  (if (not (null? elements))
+    (fold 
+      (lambda (element minimum-element)
+        (if (comparaison-procedure
+              (element-value-procedure element)
+              (element-value-procedure minimum-element))
+          element
+          minimum-element))
+      (car elements)
+      (cdr elements))
+    #f))

@@ -249,3 +249,74 @@ __result__
 Whether the elements form a consecutive sequence.
 
     #t
+
+list-minimum-element
+--------------------
+Returns the element in a list that has the minimum value.
+
+__elements__  
+The list of elements.
+
+    (list 1 2 3)
+
+__element-value-procedure__  
+A procedure that returns the value of an element.
+
+    identity
+
+__result__  
+The element that has the minimum value
+
+    1
+
+list-maximum-element
+--------------------
+Returns the element in a list that has the maximum value.
+
+__elements__  
+The list of elements.
+
+    (list 1 2 3)
+
+__element-value-procedure__  
+A procedure that returns the value of an element.
+
+    identity
+
+__result__  
+The element that has the maximum value
+
+    3
+
+list-combinaisons
+-----------------
+Returns a list of all the possible element combinaisons.
+
+__elements__  
+The list of elements.
+
+    (list 1 2 3)
+
+__result__  
+The possible element combinaisons.
+
+  (() (1) (2) (1 2) (3) (1 3) (2 3) (1 2 3))
+
+list-sum
+--------
+Returns the sum of the elements value.
+
+__elements__  
+The list of elements.
+
+    (list 1 2 3)
+
+__element-value-procedure__  
+A procedure that returns the value of an element.
+
+    identity
+
+__result__  
+The sum of the elements value.
+
+    6

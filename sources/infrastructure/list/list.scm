@@ -10,7 +10,9 @@
 
 ;; returns the index of the elements
 ;; that appear more than once in a list
-(define (list-duplicates-index elements element-value-procedure)
+(define (list-duplicates-index
+          elements
+          element-value-procedure)
 
   ;; get the elements value
   (let ((elements-value (map element-value-procedure elements))
@@ -105,7 +107,9 @@
     #t))
 
 ;; sorts a list of elements by their numeric value
-(define (list-sort-by-number elements element-sort-value-procedure)
+(define (list-sort-by-number
+          elements
+          element-sort-value-procedure)
   (sort
     elements
     (lambda (x y)
@@ -113,7 +117,9 @@
          (element-sort-value-procedure y)))))
 
 ;; sorts a list of elements by their string value
-(define (list-sort-by-string elements element-sort-value-procedure)
+(define (list-sort-by-string
+          elements
+          element-sort-value-procedure)
   (sort
     elements
     (lambda (x y)
@@ -124,7 +130,9 @@
         0))))
 
 ;; sorts a list of elements by their date value
-(define (list-sort-by-date elements element-sort-value-procedure)
+(define (list-sort-by-date
+          elements
+          element-sort-value-procedure)
 
   ;; returns a sortable string for the
   ;; date value of an element
@@ -165,3 +173,53 @@
   (equal?
     (sort (map element-value-procedure elements) <)
     (iota (length elements) 1)))
+
+;; returns the element having the minimum value
+(define (list-minimum-element
+          elements
+          element-value-procedure)
+  (list-limit-element
+    elements
+    element-value-procedure
+    <))
+
+;; returns the element having the maximum value
+(define (list-maximum-element
+          elements
+          element-value-procedure)
+  (list-limit-element
+    elements
+    element-value-procedure
+    >))
+
+;; returns a list of all the possible element combinaisons
+(define (list-combinaisons elements)
+  (map
+    (lambda (bit-mask)
+      (fold
+
+        ;; returns the elements
+        ;; flagged in the bit-mask
+        (lambda (bit-index flagged-elements)
+          (if (bit-set? bit-mask bit-index)
+            (append
+              flagged-elements
+              (list (list-ref elements bit-index)))
+            flagged-elements))
+        '()
+
+        ;; check every bit in the bit-mask
+        ;; 000, 000, 000...
+        ;;   ^   ^   ^
+        (iota (length elements))))
+
+    ;; build the bit-masks representing
+    ;; all the element index combinaisons
+    ;; 000, 001, 010, 011...
+    (iota (expt 2 (length elements)))))
+
+;; returns the sum of the elements value
+(define (list-sum
+          elements
+          element-value-procedure)
+  (fold + 0 (map element-value-procedure elements)))
