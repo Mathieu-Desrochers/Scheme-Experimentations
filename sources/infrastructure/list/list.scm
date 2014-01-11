@@ -223,3 +223,43 @@
           elements
           element-value-procedure)
   (fold + 0 (map element-value-procedure elements)))
+
+;; returns the number of elements
+;; whose value matches a filter
+(define (list-count
+          elements
+          element-value-procedure
+          filter-procedure)
+  (length
+    (filter
+      filter-procedure
+      (map
+        element-value-procedure
+        elements))))
+
+;; returns the index of the elements
+;; whose value evaluates to true
+(define (list-filtered-index
+          elements
+          element-value-procedure)
+
+  ;; inner procedure that accumulates the result
+  (define (list-filtered-index-inner elements-inner index result)
+    (if (null? elements-inner)
+      result
+      (if (element-value-procedure (car elements-inner))
+        (list-filtered-index-inner
+          (cdr elements-inner)
+          (+ index 1)
+          (cons index result))
+        (list-filtered-index-inner
+          (cdr elements-inner)
+          (+ index 1)
+          result))))
+
+  ;; reverse the result
+  (reverse
+    (list-filtered-index-inner
+      elements
+      0
+      (list))))

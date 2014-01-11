@@ -320,3 +320,46 @@ __result__
 The sum of the elements value.
 
     6
+
+list-count
+----------
+Returns the number of elements whose value matches a filter.
+
+__elements__  
+The list of elements.
+
+    (list 1 2 3 4 5)
+
+__element-value-procedure__  
+A procedure that returns the value of an element.
+
+    identity
+
+__filter-procedure__  
+A procedure that returns whether the value of an element is filtered.
+
+    even?
+
+__result__  
+The number of filtered elements.
+
+    2
+
+list-filtered-index
+-------------------
+Returns the index of the elements whose value evaluates to true.
+
+__elements__  
+The list of elements.
+
+    (list 1 2 3 4 5)
+
+__element-value-procedure__  
+A procedure that returns the value of an element.
+
+    even?
+
+__result__  
+The index of the filtered elements.
+
+    (1 3)
