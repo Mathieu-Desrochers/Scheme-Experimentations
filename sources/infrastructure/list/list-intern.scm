@@ -5,8 +5,6 @@
 
 (declare (unit list-intern))
 
-(declare (uses hash))
-
 ;; returns the index of the elements in a first list
 ;; whose value can be matched in a second list or not
 (define (list-matches-or-non-matches-index
@@ -14,51 +12,45 @@
           first-element-value-procedure
           second-elements
           second-element-value-procedure
+          element-value-equal?
+          element-value-hash
           keep-matches-index
           keep-non-matches-index)
 
-  ;; get the first and second elements value
-  (let ((first-elements-value (map first-element-value-procedure first-elements))
-        (second-elements-value (map second-element-value-procedure second-elements)))
+  ;; hash the second elements value
+  (let ((second-elements-value-hash-table
+          (make-hash-table
+            element-value-equal?
+            element-value-hash)))
+    (map
+      (lambda (second-element-value)
+        (when second-element-value
+          (hash-table-set!
+            second-elements-value-hash-table
+            second-element-value
+            #t)))
+      second-elements-value)
 
-    ;; hash the second elements value
-    (let* ((hash-procedures
-              (get-hash-procedures
-                second-elements
-                second-element-value-procedure))
-           (second-elements-value-hash-table
-              (make-hash-table
-                (car hash-procedures)
-                (cdr hash-procedures))))
-      (map
-        (lambda (second-element-value)
-          (when second-element-value
-            (hash-table-set!
-              second-elements-value-hash-table
-              second-element-value
-              #t)))
-        second-elements-value)
+    ;; sort the returned indexes
+    (sort
 
-      ;; sort the returned indexes
-      (sort
+      ;; search the first elements value
+      ;; among the second elements value
+      (filter-map
+        (lambda (first-element-value-with-index)
+          (let ((first-element-value (car first-element-value-with-index))
+                (first-element-index (cadr first-element-value-with-index)))
+            (if first-element-value
+              (if (hash-table-ref/default second-elements-value-hash-table first-element-value #f)
+                (if keep-matches-index first-element-index #f)
+                (if keep-non-matches-index first-element-index #f))
+              #f)))
 
-        ;; search the first elements value
-        ;; among the second elements value
-        (filter-map
-          (lambda (first-element-value-with-index)
-            (let ((first-element-value (car first-element-value-with-index))
-                  (first-element-index (cadr first-element-value-with-index)))
-              (if first-element-value
-                (if (hash-table-ref/default second-elements-value-hash-table first-element-value #f)
-                  (if keep-matches-index first-element-index #f)
-                  (if keep-non-matches-index first-element-index #f))
-                #f)))
+        ;; zip the first elements value
+        ;; with their index
+        (zip first-elements-value (iota (length first-elements-value))))
 
-          ;; zip the first elements value
-          ;; with their index
-          (zip first-elements-value (iota (length first-elements-value))))
-
-        <))))
+      <)))
 
 ;; returns the index at which the elements
 ;; of two lists share the same value or not

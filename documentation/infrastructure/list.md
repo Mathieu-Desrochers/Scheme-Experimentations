@@ -18,9 +18,9 @@ The index of the duplicates.
 
     '(0 3)
 
-list-matches-index
-------------------
-Returns the index of the elements in a first list whose value can be matched in a second list.
+list-numeric-matches-index
+--------------------------
+Returns the index of the elements in a first list whose numeric value can be matched in a second list.
 
 __first-elements__  
 The first list of elements.
@@ -47,9 +47,9 @@ The index of the matched elements.
 
     '(2 3)
 
-list-non-matches-index
-----------------------
-Returns the index of the elements in a first list whose value cannot be matched in a second list.
+list-numeric-non-matches-index
+------------------------------
+Returns the index of the elements in a first list whose numeric value cannot be matched in a second list.
 
 __first-elements__  
 The first list of elements.
@@ -65,6 +65,64 @@ __second-elements__
 The second list of elements.
 
     (list 9 8 7 6 5 4 3)
+
+__second-element-value-procedure__  
+A procedure that returns the value of a second list element.
+
+    identity
+
+__result__  
+The index of the unmatched elements.
+
+    '(0 1)
+
+list-string-matches-index
+--------------------------
+Returns the index of the elements in a first list whose string value can be matched in a second list.
+
+__first-elements__  
+The first list of elements.
+
+    (list "1" "2" "3" "4")
+
+__first-element-value-procedure__  
+A procedure that returns the value of a first list element.
+
+    identity
+
+__second-elements__  
+The second list of elements.
+
+    (list "9" "8" "7" "6" "5" "4" "3")
+
+__second-element-value-procedure__  
+A procedure that returns the value of a second list element.
+
+    identity
+
+__result__  
+The index of the matched elements.
+
+    '(2 3)
+
+list-string-non-matches-index
+-----------------------------
+Returns the index of the elements in a first list whose string value cannot be matched in a second list.
+
+__first-elements__  
+The first list of elements.
+
+    (list "1" "2" "3" "4")
+
+__first-element-value-procedure__  
+A procedure that returns the value of a first list element.
+
+    identity
+
+__second-elements__  
+The second list of elements.
+
+    (list "9" "8" "7" "6" "5" "4" "3")
 
 __second-element-value-procedure__  
 A procedure that returns the value of a second list element.
@@ -321,8 +379,8 @@ The sum of the elements value.
 
     6
 
-list-count
-----------
+list-filtered-count
+-------------------
 Returns the number of elements whose value matches a filter.
 
 __elements__  

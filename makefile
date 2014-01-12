@@ -193,12 +193,18 @@ sources/infrastructure/exceptions/exceptions.o : sources/infrastructure/exceptio
 	sources/infrastructure/exceptions/exceptions.scm -o \
 	sources/infrastructure/exceptions/exceptions.o
 
-compile-infrastructure-hash : sources/infrastructure/hash/hash.o
+compile-infrastructure-hash : sources/infrastructure/hash/hash.o \
+                              sources/infrastructure/hash/hash-intern.o
 
 sources/infrastructure/hash/hash.o : sources/infrastructure/hash/hash.scm
 	csc -c \
 	sources/infrastructure/hash/hash.scm -o \
 	sources/infrastructure/hash/hash.o
+
+sources/infrastructure/hash/hash-intern.o : sources/infrastructure/hash/hash-intern.scm
+	csc -c \
+	sources/infrastructure/hash/hash-intern.scm -o \
+	sources/infrastructure/hash/hash-intern.o
 
 compile-infrastructure-http : sources/infrastructure/http/http.o \
                               sources/infrastructure/http/http-intern.o \
@@ -366,6 +372,7 @@ link : compile
 	sources/infrastructure/date-time/date-time-intern.o \
 	sources/infrastructure/exceptions/exceptions.o \
 	sources/infrastructure/hash/hash.o \
+	sources/infrastructure/hash/hash-intern.o \
 	sources/infrastructure/http/http.o \
 	sources/infrastructure/http/http-intern.o \
 	sources/infrastructure/http/http-toplevel.o \

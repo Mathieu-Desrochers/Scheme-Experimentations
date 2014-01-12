@@ -43,8 +43,8 @@
       (zip elements-value (iota (length elements-value))))))
 
 ;; returns the index of the elements in a first list
-;; whose value can be matched in a second list
-(define (list-matches-index
+;; whose numeric value can be matched in a second list
+(define (list-numeric-matches-index
           first-elements
           first-element-value-procedure
           second-elements
@@ -55,12 +55,14 @@
     first-element-value-procedure
     second-elements
     second-element-value-procedure
+    =
+    number-hash
     #t
     #f))
 
 ;; returns the index of the elements in a first list
-;; whose value cannot be matched in a second list
-(define (list-non-matches-index
+;; whose numeric value cannot be matched in a second list
+(define (list-numeric-non-matches-index
           first-elements
           first-element-value-procedure
           second-elements
@@ -71,6 +73,44 @@
     first-element-value-procedure
     second-elements
     second-element-value-procedure
+    =
+    number-hash
+    #f
+    #t))
+
+;; returns the index of the elements in a first list
+;; whose string value can be matched in a second list
+(define (list-string-matches-index
+          first-elements
+          first-element-value-procedure
+          second-elements
+          second-element-value-procedure)
+
+  (list-matches-or-non-matches-index
+    first-elements
+    first-element-value-procedure
+    second-elements
+    second-element-value-procedure
+    string=?
+    string-hash
+    #t
+    #f))
+
+;; returns the index of the elements in a first list
+;; whose string value cannot be matched in a second list
+(define (list-string-non-matches-index
+          first-elements
+          first-element-value-procedure
+          second-elements
+          second-element-value-procedure)
+
+  (list-matches-or-non-matches-index
+    first-elements
+    first-element-value-procedure
+    second-elements
+    second-element-value-procedure
+    string=?
+    string-hash
     #f
     #t))
 
@@ -226,7 +266,7 @@
 
 ;; returns the number of elements
 ;; whose value matches a filter
-(define (list-count
+(define (list-filtered-count
           elements
           element-value-procedure
           filter-procedure)
