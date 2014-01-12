@@ -5,7 +5,7 @@
 (declare (unit hash-intern))
 
 ;; hashes elements according to their unique key
-(define (hash-with-unique-numeric-keys
+(define (hash-with-unique-keys
           elements
           element-key-procedure
           element-value-procedure
@@ -31,7 +31,7 @@
     elements-hash-table))
 
 ;; hashes elements according to their shared key
-(define (hash-with-shared-numeric-keys
+(define (hash-with-shared-keys
           elements
           element-key-procedure
           element-value-procedure

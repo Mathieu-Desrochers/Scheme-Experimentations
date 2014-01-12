@@ -114,6 +114,42 @@
     #f
     #t))
 
+;; returns the index of the elements in a first list
+;; whose list value can be matched in a second list
+(define (list-list-matches-index
+          first-elements
+          first-element-value-procedure
+          second-elements
+          second-element-value-procedure)
+
+  (list-matches-or-non-matches-index
+    first-elements
+    first-element-value-procedure
+    second-elements
+    second-element-value-procedure
+    equal?
+    equal?-hash
+    #t
+    #f))
+
+;; returns the index of the elements in a first list
+;; whose list value cannot be matched in a second list
+(define (list-list-non-matches-index
+          first-elements
+          first-element-value-procedure
+          second-elements
+          second-element-value-procedure)
+
+  (list-matches-or-non-matches-index
+    first-elements
+    first-element-value-procedure
+    second-elements
+    second-element-value-procedure
+    equal?
+    equal?-hash
+    #f
+    #t))
+
 ;; returns the index at which the elements
 ;; of two lists share the same value
 (define (list-same-values-index

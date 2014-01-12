@@ -16,7 +16,7 @@
           element-key-procedure
           element-value-procedure)
 
-  (hash-with-unique-numeric-keys
+  (hash-with-unique-keys
     elements
     element-key-procedure
     element-value-procedure
@@ -33,7 +33,7 @@
           element-key-procedure
           element-value-procedure)
 
-  (hash-with-shared-numeric-keys
+  (hash-with-shared-keys
     elements
     element-key-procedure
     element-value-procedure
