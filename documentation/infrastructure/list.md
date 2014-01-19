@@ -6,6 +6,26 @@ Returns the index of the elements that appear more than once in a list.
 __elements__  
 The list of elements.
 
+    (list 2 #t "7" 2)
+
+__element-value-procedure__  
+A procedure that returns the value of an element.
+
+    identity
+
+__result__  
+The index of the duplicates.
+
+    '(0 3)
+
+list-number-duplicates-index
+----------------------------
+Returns the index of the elements that appear more than once in a list.
+Used as an optimization when all the elements are known to be numbers.
+
+__elements__  
+The list of elements.
+
     (list 2 6 7 2)
 
 __element-value-procedure__  
@@ -18,9 +38,68 @@ The index of the duplicates.
 
     '(0 3)
 
-list-numeric-matches-index
---------------------------
-Returns the index of the elements in a first list whose numeric value can be matched in a second list.
+list-matches-index
+------------------
+Returns the index of the elements in a first list whose value can be matched in a second list.
+
+__first-elements__  
+The first list of elements.
+
+    (list 1 #t "3" 4)
+
+__first-element-value-procedure__  
+A procedure that returns the value of a first list element.
+
+    identity
+
+__second-elements__  
+The second list of elements.
+
+    (list 9 #f 7 "6" 5 4 "3")
+
+__second-element-value-procedure__  
+A procedure that returns the value of a second list element.
+
+    identity
+
+__result__  
+The index of the matched elements.
+
+    '(2 3)
+
+list-non-matches-index
+----------------------
+Returns the index of the elements in a first list whose value cannot be matched in a second list.
+
+__first-elements__  
+The first list of elements.
+
+    (list 1 #t "3" 4)
+
+__first-element-value-procedure__  
+A procedure that returns the value of a first list element.
+
+    identity
+
+__second-elements__  
+The second list of elements.
+
+    (list 9 #f 7 "6" 5 4 "3")
+
+__second-element-value-procedure__  
+A procedure that returns the value of a second list element.
+
+    identity
+
+__result__  
+The index of the unmatched elements.
+
+    '(0 1)
+
+list-number-matches-index
+-------------------------
+Returns the index of the elements in a first list whose value can be matched in a second list.
+Used as an optimization when all the elements are known to be numbers.
 
 __first-elements__  
 The first list of elements.
@@ -47,9 +126,10 @@ The index of the matched elements.
 
     '(2 3)
 
-list-numeric-non-matches-index
-------------------------------
-Returns the index of the elements in a first list whose numeric value cannot be matched in a second list.
+list-number-non-matches-index
+-----------------------------
+Returns the index of the elements in a first list whose value cannot be matched in a second list.
+Use as an optimization when all the elements are known to be numbers.
 
 __first-elements__  
 The first list of elements.
@@ -78,7 +158,8 @@ The index of the unmatched elements.
 
 list-string-matches-index
 -------------------------
-Returns the index of the elements in a first list whose string value can be matched in a second list.
+Returns the index of the elements in a first list whose value can be matched in a second list.
+Use as an optimization when all the elements are known to be strings.
 
 __first-elements__  
 The first list of elements.
@@ -107,7 +188,8 @@ The index of the matched elements.
 
 list-string-non-matches-index
 -----------------------------
-Returns the index of the elements in a first list whose string value cannot be matched in a second list.
+Returns the index of the elements in a first list whose value cannot be matched in a second list.
+Use as an optimization when all the elements are known to be strings.
 
 __first-elements__  
 The first list of elements.
@@ -123,64 +205,6 @@ __second-elements__
 The second list of elements.
 
     (list "9" "8" "7" "6" "5" "4" "3")
-
-__second-element-value-procedure__  
-A procedure that returns the value of a second list element.
-
-    identity
-
-__result__  
-The index of the unmatched elements.
-
-    '(0 1)
-
-list-list-matches-index
------------------------
-Returns the index of the elements in a first list whose list value can be matched in a second list.
-
-__first-elements__  
-The first list of elements.
-
-    (list '(1) '(2) '(3) '(4))
-
-__first-element-value-procedure__  
-A procedure that returns the value of a first list element.
-
-    identity
-
-__second-elements__  
-The second list of elements.
-
-    (list '(9) '(8) '(7) '(6) '(5) '(4) '(3))
-
-__second-element-value-procedure__  
-A procedure that returns the value of a second list element.
-
-    identity
-
-__result__  
-The index of the matched elements.
-
-    '(2 3)
-
-list-list-non-matches-index
----------------------------
-Returns the index of the elements in a first list whose list value cannot be matched in a second list.
-
-__first-elements__  
-The first list of elements.
-
-    (list '(1) '(2) '(3) '(4))
-
-__first-element-value-procedure__  
-A procedure that returns the value of a first list element.
-
-    identity
-
-__second-elements__  
-The second list of elements.
-
-    (list '(9) '(8) '(7) '(6) '(5) '(4) '(3))
 
 __second-element-value-procedure__  
 A procedure that returns the value of a second list element.
@@ -463,7 +487,7 @@ The number of filtered elements.
 
 list-filtered-index
 -------------------
-Returns the index of the elements whose value evaluates to true.
+Returns the index of the elements whose value matches a filter.
 
 __elements__  
 The list of elements.
@@ -472,6 +496,11 @@ The list of elements.
 
 __element-value-procedure__  
 A procedure that returns the value of an element.
+
+    identity
+
+__filter-procedure__  
+A procedure that returns whether the value of an element is filtered.
 
     even?
 
