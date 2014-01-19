@@ -20,7 +20,7 @@ The index of the duplicates.
 
 list-number-duplicates-index
 ----------------------------
-Returns the index of the elements that appear more than once in a list.
+Returns the index of the elements that appear more than once in a list.  
 Used as an optimization when all the elements are known to be numbers.
 
 __elements__  
@@ -98,7 +98,7 @@ The index of the unmatched elements.
 
 list-number-matches-index
 -------------------------
-Returns the index of the elements in a first list whose value can be matched in a second list.
+Returns the index of the elements in a first list whose value can be matched in a second list.  
 Used as an optimization when all the elements are known to be numbers.
 
 __first-elements__  
@@ -128,8 +128,8 @@ The index of the matched elements.
 
 list-number-non-matches-index
 -----------------------------
-Returns the index of the elements in a first list whose value cannot be matched in a second list.
-Use as an optimization when all the elements are known to be numbers.
+Returns the index of the elements in a first list whose value cannot be matched in a second list.  
+Used as an optimization when all the elements are known to be numbers.
 
 __first-elements__  
 The first list of elements.
@@ -158,8 +158,8 @@ The index of the unmatched elements.
 
 list-string-matches-index
 -------------------------
-Returns the index of the elements in a first list whose value can be matched in a second list.
-Use as an optimization when all the elements are known to be strings.
+Returns the index of the elements in a first list whose value can be matched in a second list.  
+Used as an optimization when all the elements are known to be strings.
 
 __first-elements__  
 The first list of elements.
@@ -188,8 +188,8 @@ The index of the matched elements.
 
 list-string-non-matches-index
 -----------------------------
-Returns the index of the elements in a first list whose value cannot be matched in a second list.
-Use as an optimization when all the elements are known to be strings.
+Returns the index of the elements in a first list whose value cannot be matched in a second list.  
+Used as an optimization when all the elements are known to be strings.
 
 __first-elements__  
 The first list of elements.
