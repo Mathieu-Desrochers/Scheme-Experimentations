@@ -14,43 +14,69 @@
           elements
           element-value-procedure)
 
-  ;; get the elements value
-  (let ((elements-value (map element-value-procedure elements))
-        (elements-value-count-hash-table (make-hash-table = number-hash)))
+  (list-duplicates-index-intern
+    elements
+    element-value-procedure
+    equal?
+    equal?-hash))
 
-    ;; count the elements value
-    (for-each
-      (lambda (element-value)
-        (when element-value
-          (hash-table-update!
-            elements-value-count-hash-table
-            element-value
-            (lambda (element-value-count) (+ element-value-count 1))
-            (lambda () 0))))
-      elements-value)
+;; returns the index of the numeric elements
+;; that appear more than once in a list
+(define (list-number-duplicates-index
+          elements
+          element-value-procedure)
 
-    ;; return the index of the elements value
-    ;; that were counted more than once
-    (filter-map
-      (lambda (element-value-with-index)
-        (let ((element-value (car element-value-with-index))
-              (element-index (cadr element-value-with-index)))
-          (if element-value
-            (if (> (hash-table-ref elements-value-count-hash-table element-value) 1)
-              element-index
-              #f)
-            #f)))
-      (zip elements-value (iota (length elements-value))))))
+  (list-duplicates-index-intern
+    elements
+    element-value-procedure
+    =
+    number-hash))
 
 ;; returns the index of the elements in a first list
-;; whose numeric value can be matched in a second list
-(define (list-numeric-matches-index
+;; whose value can be matched in a second list
+(define (list-matches-index
           first-elements
           first-element-value-procedure
           second-elements
           second-element-value-procedure)
 
-  (list-matches-or-non-matches-index
+  (list-matches-or-non-matches-index-intern
+    first-elements
+    first-element-value-procedure
+    second-elements
+    second-element-value-procedure
+    equal?
+    equal?-hash
+    #t
+    #f))
+
+;; returns the index of the elements in a first list
+;; whose value cannot be matched in a second list
+(define (list-non-matches-index
+          first-elements
+          first-element-value-procedure
+          second-elements
+          second-element-value-procedure)
+
+  (list-matches-or-non-matches-index-intern
+    first-elements
+    first-element-value-procedure
+    second-elements
+    second-element-value-procedure
+    equal?
+    equal?-hash
+    #f
+    #t))
+
+;; returns the index of the elements in a first list
+;; whose numeric value can be matched in a second list
+(define (list-number-matches-index
+          first-elements
+          first-element-value-procedure
+          second-elements
+          second-element-value-procedure)
+
+  (list-matches-or-non-matches-index-intern
     first-elements
     first-element-value-procedure
     second-elements
@@ -62,13 +88,13 @@
 
 ;; returns the index of the elements in a first list
 ;; whose numeric value cannot be matched in a second list
-(define (list-numeric-non-matches-index
+(define (list-number-non-matches-index
           first-elements
           first-element-value-procedure
           second-elements
           second-element-value-procedure)
 
-  (list-matches-or-non-matches-index
+  (list-matches-or-non-matches-index-intern
     first-elements
     first-element-value-procedure
     second-elements
@@ -86,7 +112,7 @@
           second-elements
           second-element-value-procedure)
 
-  (list-matches-or-non-matches-index
+  (list-matches-or-non-matches-index-intern
     first-elements
     first-element-value-procedure
     second-elements
@@ -104,49 +130,13 @@
           second-elements
           second-element-value-procedure)
 
-  (list-matches-or-non-matches-index
+  (list-matches-or-non-matches-index-intern
     first-elements
     first-element-value-procedure
     second-elements
     second-element-value-procedure
     string=?
     string-hash
-    #f
-    #t))
-
-;; returns the index of the elements in a first list
-;; whose list value can be matched in a second list
-(define (list-list-matches-index
-          first-elements
-          first-element-value-procedure
-          second-elements
-          second-element-value-procedure)
-
-  (list-matches-or-non-matches-index
-    first-elements
-    first-element-value-procedure
-    second-elements
-    second-element-value-procedure
-    equal?
-    equal?-hash
-    #t
-    #f))
-
-;; returns the index of the elements in a first list
-;; whose list value cannot be matched in a second list
-(define (list-list-non-matches-index
-          first-elements
-          first-element-value-procedure
-          second-elements
-          second-element-value-procedure)
-
-  (list-matches-or-non-matches-index
-    first-elements
-    first-element-value-procedure
-    second-elements
-    second-element-value-procedure
-    equal?
-    equal?-hash
     #f
     #t))
 
@@ -158,7 +148,7 @@
           second-elements
           second-element-value-procedure)
 
-  (list-same-or-different-values-index
+  (list-same-or-different-values-index-intern
     first-elements
     first-element-value-procedure
     second-elements
@@ -174,7 +164,7 @@
           second-elements
           second-element-value-procedure)
 
-  (list-same-or-different-values-index
+  (list-same-or-different-values-index-intern
     first-elements
     first-element-value-procedure
     second-elements
@@ -250,20 +240,22 @@
     (sort (map element-value-procedure elements) <)
     (iota (length elements) 1)))
 
-;; returns the element having the minimum value
+;; returns the element in a list that has the minimum value
 (define (list-minimum-element
           elements
           element-value-procedure)
-  (list-limit-element
+
+  (list-minimum-or-maximum-element-intern
     elements
     element-value-procedure
     <))
 
-;; returns the element having the maximum value
+;; returns the element in a list that has the maximim value
 (define (list-maximum-element
           elements
           element-value-procedure)
-  (list-limit-element
+
+  (list-minimum-or-maximum-element-intern
     elements
     element-value-procedure
     >))
@@ -314,16 +306,17 @@
         elements))))
 
 ;; returns the index of the elements
-;; whose value evaluates to true
+;; whose value matches a filter
 (define (list-filtered-index
           elements
-          element-value-procedure)
+          element-value-procedure
+          filter-procedure)
 
   ;; inner procedure that accumulates the result
   (define (list-filtered-index-inner elements-inner index result)
     (if (null? elements-inner)
       result
-      (if (element-value-procedure (car elements-inner))
+      (if (filter-procedure (element-value-procedure (car elements-inner)))
         (list-filtered-index-inner
           (cdr elements-inner)
           (+ index 1)
