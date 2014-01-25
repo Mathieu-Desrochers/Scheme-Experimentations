@@ -10,6 +10,7 @@
 
 ;; returns the index of the elements
 ;; that appear more than once in a list
+;; ignores the false element values
 (define (list-duplicates-index
           elements
           element-value-procedure)
@@ -22,6 +23,7 @@
 
 ;; returns the index of the numeric elements
 ;; that appear more than once in a list
+;; ignores the false element values
 (define (list-number-duplicates-index
           elements
           element-value-procedure)
@@ -32,8 +34,22 @@
     =
     number-hash))
 
+;; returns the index of the string elements
+;; that appear more than once in a list
+;; ignores the false element values
+(define (list-string-duplicates-index
+          elements
+          element-value-procedure)
+
+  (list-duplicates-index-intern
+    elements
+    element-value-procedure
+    string=?
+    string-hash))
+
 ;; returns the index of the elements in a first list
 ;; whose value can be matched in a second list
+;; ignores the false element values
 (define (list-matches-index
           first-elements
           first-element-value-procedure
@@ -52,6 +68,7 @@
 
 ;; returns the index of the elements in a first list
 ;; whose value cannot be matched in a second list
+;; ignores the false element values
 (define (list-non-matches-index
           first-elements
           first-element-value-procedure
@@ -70,6 +87,7 @@
 
 ;; returns the index of the elements in a first list
 ;; whose numeric value can be matched in a second list
+;; ignores the false element values
 (define (list-number-matches-index
           first-elements
           first-element-value-procedure
@@ -88,6 +106,7 @@
 
 ;; returns the index of the elements in a first list
 ;; whose numeric value cannot be matched in a second list
+;; ignores the false element values
 (define (list-number-non-matches-index
           first-elements
           first-element-value-procedure
@@ -106,6 +125,7 @@
 
 ;; returns the index of the elements in a first list
 ;; whose string value can be matched in a second list
+;; ignores the false element values
 (define (list-string-matches-index
           first-elements
           first-element-value-procedure
@@ -124,6 +144,7 @@
 
 ;; returns the index of the elements in a first list
 ;; whose string value cannot be matched in a second list
+;; ignores the false element values
 (define (list-string-non-matches-index
           first-elements
           first-element-value-procedure

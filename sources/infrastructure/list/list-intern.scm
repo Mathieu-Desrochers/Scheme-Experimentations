@@ -7,6 +7,7 @@
 
 ;; returns the index of the elements
 ;; that appear more than once in a list
+;; ignores the false element values
 (define (list-duplicates-index-intern
           elements
           element-value-procedure
@@ -23,11 +24,12 @@
     ;; count the elements value
     (for-each
       (lambda (element-value)
-        (hash-table-update!
-          elements-value-count-hash-table
-          element-value
-          (lambda (element-value-count) (+ element-value-count 1))
-          (lambda () 0)))
+        (when element-value
+          (hash-table-update!
+            elements-value-count-hash-table
+            element-value
+            (lambda (element-value-count) (+ element-value-count 1))
+            (lambda () 0))))
       elements-value)
 
     ;; return the index of the elements value
@@ -36,13 +38,16 @@
       (lambda (element-value-with-index)
         (let ((element-value (car element-value-with-index))
               (element-index (cadr element-value-with-index)))
-          (if (> (hash-table-ref elements-value-count-hash-table element-value) 1)
-            element-index
+          (if element-value
+            (if (> (hash-table-ref elements-value-count-hash-table element-value) 1)
+              element-index
+              #f)
             #f)))
       (zip elements-value (iota (length elements-value))))))
 
 ;; returns the index of the elements in a first list
 ;; whose value can be matched in a second list or not
+;; ignores the false element values
 (define (list-matches-or-non-matches-index-intern
           first-elements
           first-element-value-procedure
@@ -64,10 +69,11 @@
               element-value-hash)))
       (map
         (lambda (second-element-value)
-          (hash-table-set!
-            second-elements-value-hash-table
-            second-element-value
-            #t))
+          (when second-element-value
+            (hash-table-set!
+              second-elements-value-hash-table
+              second-element-value
+              #t)))
         second-elements-value)
 
       ;; sort the returned indexes
@@ -79,9 +85,11 @@
           (lambda (first-element-value-with-index)
             (let ((first-element-value (car first-element-value-with-index))
                   (first-element-index (cadr first-element-value-with-index)))
-              (if (hash-table-ref/default second-elements-value-hash-table first-element-value #f)
-                (if keep-matches-index first-element-index #f)
-                (if keep-non-matches-index first-element-index #f))))
+              (if first-element-value
+                (if (hash-table-ref/default second-elements-value-hash-table first-element-value #f)
+                  (if keep-matches-index first-element-index #f)
+                  (if keep-non-matches-index first-element-index #f))
+                #f)))
 
           ;; zip the first elements value
           ;; with their index

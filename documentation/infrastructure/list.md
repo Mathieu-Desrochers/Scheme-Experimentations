@@ -1,7 +1,8 @@
 
 list-duplicates-index
 ---------------------
-Returns the index of the elements that appear more than once in a list.
+Returns the index of the elements that appear more than once in a list.  
+Ignores the elements having a false value.
 
 __elements__  
 The list of elements.
@@ -21,7 +22,8 @@ The index of the duplicates.
 list-number-duplicates-index
 ----------------------------
 Returns the index of the elements that appear more than once in a list.  
-Used as an optimization when all the elements are known to be numbers.
+Used as an optimization when the elements are known to be numbers.  
+Ignores the elements having a false value.
 
 __elements__  
 The list of elements.
@@ -38,9 +40,31 @@ The index of the duplicates.
 
     '(0 3)
 
+list-string-duplicates-index
+----------------------------
+Returns the index of the elements that appear more than once in a list.  
+Used as an optimization when the elements are known to be strings.  
+Ignores the elements having a false value.
+
+__elements__  
+The list of elements.
+
+    (list "2" "6" "7" "2")
+
+__element-value-procedure__  
+A procedure that returns the value of an element.
+
+    identity
+
+__result__  
+The index of the duplicates.
+
+    '(0 3)
+
 list-matches-index
 ------------------
-Returns the index of the elements in a first list whose value can be matched in a second list.
+Returns the index of the elements in a first list whose value can be matched in a second list.  
+Ignores the elements having a false value.
 
 __first-elements__  
 The first list of elements.
@@ -69,7 +93,8 @@ The index of the matched elements.
 
 list-non-matches-index
 ----------------------
-Returns the index of the elements in a first list whose value cannot be matched in a second list.
+Returns the index of the elements in a first list whose value cannot be matched in a second list.  
+Ignores the elements having a false value.
 
 __first-elements__  
 The first list of elements.
@@ -99,7 +124,8 @@ The index of the unmatched elements.
 list-number-matches-index
 -------------------------
 Returns the index of the elements in a first list whose value can be matched in a second list.  
-Used as an optimization when all the elements are known to be numbers.
+Used as an optimization when all the elements are known to be numbers.  
+Ignores the elements having a false value.
 
 __first-elements__  
 The first list of elements.
@@ -129,7 +155,8 @@ The index of the matched elements.
 list-number-non-matches-index
 -----------------------------
 Returns the index of the elements in a first list whose value cannot be matched in a second list.  
-Used as an optimization when all the elements are known to be numbers.
+Used as an optimization when all the elements are known to be numbers.  
+Ignores the elements having a false value.
 
 __first-elements__  
 The first list of elements.
@@ -159,7 +186,8 @@ The index of the unmatched elements.
 list-string-matches-index
 -------------------------
 Returns the index of the elements in a first list whose value can be matched in a second list.  
-Used as an optimization when all the elements are known to be strings.
+Used as an optimization when all the elements are known to be strings.  
+Ignores the elements having a false value.
 
 __first-elements__  
 The first list of elements.
@@ -189,7 +217,8 @@ The index of the matched elements.
 list-string-non-matches-index
 -----------------------------
 Returns the index of the elements in a first list whose value cannot be matched in a second list.  
-Used as an optimization when all the elements are known to be strings.
+Used as an optimization when all the elements are known to be strings.  
+Ignores the elements having a false value.
 
 __first-elements__  
 The first list of elements.
