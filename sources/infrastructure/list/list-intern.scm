@@ -143,3 +143,147 @@
       (car elements)
       (cdr elements))
     #f))
+
+;; finds the largest index i such that a[i] < a[i + 1]
+;; assumes the elements are sorted
+(define (list-find-last-consecutive-pair-index elements)
+
+  ;; avoid scanning the list multiple times
+  (let ((elements-length (length elements)))
+
+    ;; searches among the elements left
+    (letrec ((list-find-last-consecutive-pair-index-inner
+                (lambda (elements-left index current-candidate)
+
+                  ;; check if we have reached
+                  ;; the end of the list
+                  (if (eq? index (- elements-length 1))
+                    current-candidate
+
+                    ;; check if we have found
+                    ;; a new candidate
+                    (let* ((element-i (car elements-left))
+                           (element-i-next (cadr elements-left))
+                           (new-candidate
+                              (if (< element-i element-i-next)
+                                index
+                                current-candidate)))
+
+                      ;; continue searching among
+                      ;; the rest of the list
+                      (list-find-last-consecutive-pair-index-inner
+                        (cdr elements-left)
+                        (+ index 1)
+                        new-candidate))))))
+
+      ;; make sure the list contains
+      ;; at least two elements
+      (if (< elements-length 2)
+        #f
+
+        ;; start searching at
+        ;; the start of the list
+        (list-find-last-consecutive-pair-index-inner
+          elements
+          0
+          #f)))))
+
+;; finds the largest index j such that a[i] < a[j]
+;; assumes the elements are sorted
+(define (list-find-last-index-with-greater-value elements i)
+
+  ;; avoid scanning the list multiple times
+  (let* ((elements-length (length elements))
+         (element-i (list-ref elements i)))
+
+    ;; searches among the elements left
+    (letrec ((list-find-last-index-with-greater-value-inner
+                (lambda (elements-left index)
+
+                  ;; check if we have reached
+                  ;; the element i
+                  (if (eq? index i)
+                    #f
+
+                    ;; check if we have found
+                    ;; the element j
+                    (let ((element-j (car elements-left)))
+                      (if (< element-i element-j)
+                        index
+
+                        ;; continue searching among
+                        ;; the rest of the list
+                        (list-find-last-index-with-greater-value-inner
+                          (cdr elements-left)
+                          (- index 1))))))))
+
+      ;; make sure the list contains
+      ;; at least one candidate element
+      (if (eq? i (- elements-length 1))
+        #f
+
+        ;; start searching from the last element
+        (list-find-last-index-with-greater-value-inner
+          (reverse (drop elements (+ i 1)))
+          (- elements-length 1))))))
+
+;; swaps two elements in a list
+(define (list-swap elements i j)
+
+  ;; the swapped elements value
+  (let ((element-i #f)
+        (element-j #f))
+
+    ;; finds the swapped elements value
+    (letrec ((list-swap-find-elements-value
+                (lambda (elements-left index)
+                  (when (not (null? elements-left))
+                    (begin
+                      (when (eq? index i) (set! element-i (car elements-left)))
+                      (when (eq? index j) (set! element-j (car elements-left)))
+                      (list-swap-find-elements-value
+                        (cdr elements-left)
+                        (- index 1)))))))
+
+      ;; start searching from the last element
+      (list-swap-find-elements-value
+        (reverse elements)
+        (- (length elements) 1)))
+
+    ;; build the swapped list
+    (letrec ((list-swap-build
+                (lambda (elements-left index accumulator)
+
+                  ;; check if we have built
+                  ;; the complete list
+                  (if (< index 0)
+                    accumulator
+
+                    ;; get the current element
+                    (let ((current-element
+                            (cond
+                              ((eq? index i) element-j)
+                              ((eq? index j) element-i)
+                              (else (car elements-left)))))
+
+                      ;; continue building
+                      ;; the swapped list
+                      (list-swap-build
+                        (cdr elements-left)
+                        (- index 1)
+                        (cons
+                          current-element
+                          accumulator)))))))
+
+      ;; build the swapped list
+      (list-swap-build
+        (reverse elements)
+        (- (length elements) 1)
+        (list)))))
+
+;; reverses the end elements of a list
+(define (list-reverse-end elements from-index)
+  (append
+    (take elements from-index)
+    (reverse
+      (drop elements from-index))))

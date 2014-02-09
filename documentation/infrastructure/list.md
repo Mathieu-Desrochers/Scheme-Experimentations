@@ -17,7 +17,7 @@ A procedure that returns the value of an element.
 __result__  
 The index of the duplicates.
 
-    '(0 3)
+    (0 3)
 
 list-number-duplicates-index
 ----------------------------
@@ -38,7 +38,7 @@ A procedure that returns the value of an element.
 __result__  
 The index of the duplicates.
 
-    '(0 3)
+    (0 3)
 
 list-string-duplicates-index
 ----------------------------
@@ -59,7 +59,7 @@ A procedure that returns the value of an element.
 __result__  
 The index of the duplicates.
 
-    '(0 3)
+    (0 3)
 
 list-matches-index
 ------------------
@@ -89,7 +89,7 @@ A procedure that returns the value of a second list element.
 __result__  
 The index of the matched elements.
 
-    '(2 3)
+    (2 3)
 
 list-non-matches-index
 ----------------------
@@ -119,7 +119,7 @@ A procedure that returns the value of a second list element.
 __result__  
 The index of the unmatched elements.
 
-    '(0 1)
+    (0 1)
 
 list-number-matches-index
 -------------------------
@@ -150,7 +150,7 @@ A procedure that returns the value of a second list element.
 __result__  
 The index of the matched elements.
 
-    '(2 3)
+    (2 3)
 
 list-number-non-matches-index
 -----------------------------
@@ -181,7 +181,7 @@ A procedure that returns the value of a second list element.
 __result__  
 The index of the unmatched elements.
 
-    '(0 1)
+    (0 1)
 
 list-string-matches-index
 -------------------------
@@ -212,7 +212,7 @@ A procedure that returns the value of a second list element.
 __result__  
 The index of the matched elements.
 
-    '(2 3)
+    (2 3)
 
 list-string-non-matches-index
 -----------------------------
@@ -243,7 +243,7 @@ A procedure that returns the value of a second list element.
 __result__  
 The index of the unmatched elements.
 
-    '(0 1)
+    (0 1)
 
 list-same-values-index
 ----------------------
@@ -272,7 +272,7 @@ A procedure that returns the value of a second list element.
 __result__  
 The index of the elements that share the same value.
 
-    '(0 2)
+    (0 2)
 
 list-different-values-index
 ---------------------------
@@ -301,7 +301,7 @@ A procedure that returns the value of a second list element.
 __result__  
 The index of the elements that do not share the same value.
 
-    '(1 3)
+    (1 3)
 
 list-sort-by-number
 -------------------
@@ -434,7 +434,7 @@ A procedure that returns the value of an element.
     identity
 
 __result__  
-The element that has the minimum value
+The element that has the minimum value.
 
     1
 
@@ -453,13 +453,13 @@ A procedure that returns the value of an element.
     identity
 
 __result__  
-The element that has the maximum value
+The element that has the maximum value.
 
     3
 
-list-combinaisons
------------------
-Returns a list of all the possible element combinaisons.
+list-number-permutations
+------------------------
+Returns all the permutations for a list of numeric elements.
 
 __elements__  
 The list of elements.
@@ -467,9 +467,9 @@ The list of elements.
     (list 1 2 3)
 
 __result__  
-The possible element combinaisons.
+The possible element permutations.
 
-    (() (1) (2) (1 2) (3) (1 3) (2 3) (1 2 3))
+    ((1 2 3) (1 3 2) (2 1 3) (2 3 1) (3 1 2) (3 2 1))
 
 list-sum
 --------
@@ -537,3 +537,29 @@ __result__
 The index of the filtered elements.
 
     (1 3)
+
+list-without-highest-number-values
+----------------------------------
+Removes the elements of a list that have
+the highest numeric values, while ensuring it
+still contains a minimal number of elements.
+
+__elements__  
+The list of elements.
+
+    (list 1 2 2 3)
+
+__element-value-procedure__  
+A procedure that returns the value of an element.
+
+    identity
+
+__minimum-elements-count__  
+The minimum number of elements.
+
+    2
+
+__result__  
+The filtered list.
+
+    (1 2 2 #f)

@@ -6,6 +6,7 @@
 (declare (unit list))
 
 (declare (uses date-time))
+(declare (uses hash))
 (declare (uses list-intern))
 
 ;; returns the index of the elements
@@ -281,31 +282,52 @@
     element-value-procedure
     >))
 
-;; returns a list of all the possible element combinaisons
-(define (list-combinaisons elements)
-  (map
-    (lambda (bit-mask)
-      (fold
+;; returns all the permutations
+;; for a list of numeric elements
+(define (list-number-permutations elements)
 
-        ;; returns the elements
-        ;; flagged in the bit-mask
-        (lambda (bit-index flagged-elements)
-          (if (bit-set? bit-mask bit-index)
-            (append
-              flagged-elements
-              (list (list-ref elements bit-index)))
-            flagged-elements))
-        '()
+  (letrec ((list-number-permutations-inner
+              (lambda (accumulator)
+                (let* ((previous-permutation (car accumulator))
+                       (k (list-find-last-consecutive-pair-index previous-permutation)))
 
-        ;; check every bit in the bit-mask
-        ;; 000, 000, 000...
-        ;;   ^   ^   ^
-        (iota (length elements))))
+                  ;; check if we have found
+                  ;; the last permutation
+                  (if (not k)
+                    accumulator
 
-    ;; build the bit-masks representing
-    ;; all the element index combinaisons
-    ;; 000, 001, 010, 011...
-    (iota (expt 2 (length elements)))))
+                    ;; the next permutation is obtained by 
+                    ;; swapping the elements k and l and
+                    ;; reversing the rest of the list
+                    (let* ((l (list-find-last-index-with-greater-value previous-permutation k))
+                           (next-permutation
+                              (list-reverse-end
+                                (list-swap
+                                  previous-permutation
+                                  k
+                                  l)
+                                (+ k 1))))
+
+                      ;; continue building the permutations
+                      (list-number-permutations-inner
+                        (cons
+                          next-permutation
+                          accumulator))))))))
+
+    ;; make sure the list is not empty
+    (if (null? elements)
+      (list)
+
+      ;; sort the elements
+      (let ((ordered-elements
+              (list-sort-by-number
+                elements
+                identity)))
+
+        ;; build the permutations
+        (reverse
+          (list-number-permutations-inner
+            (list ordered-elements)))))))
 
 ;; returns the sum of the elements value
 (define (list-sum
@@ -353,3 +375,70 @@
       elements
       0
       (list))))
+
+;; removes the elements of a list that have
+;; the highest numeric values, while ensuring it
+;; still contains a minimal number of elements
+(define (list-without-highest-number-values
+          elements
+          element-value-procedure
+          minimum-elements-count)
+
+  ;; hash the elements value by index
+  (let ((elements-value-hash-table (make-hash-table = number-hash)))
+    (map
+      (lambda (element-with-index)
+        (let ((element (car element-with-index))
+              (index (cadr element-with-index)))
+          (let ((element-value (if element (element-value-procedure element) #f)))
+            (hash-table-set!
+              elements-value-hash-table
+              index
+              element-value))))
+      (zip elements (iota (length elements))))
+
+    ;; filter out the false elements value
+    (let ((filtered-elements-value
+            (filter
+              identity
+              (map
+                (lambda (index)
+                  (hash-table-ref
+                    elements-value-hash-table
+                    index))
+                (iota (length elements))))))
+
+      ;; only remove elements if there
+      ;; are not enough to begin with
+      (if (> (length filtered-elements-value) minimum-elements-count)
+
+        ;; sort the elements value
+        (let ((sorted-elements-value
+                (list-sort-by-number
+                  filtered-elements-value
+                  identity)))
+
+          ;; get the highest allowed element value
+          (let ((highest-allowed-element-value
+                  (car
+                    (drop
+                      sorted-elements-value
+                      (- minimum-elements-count 1)))))
+
+            ;; filter out the elements
+            ;; that have a too high value
+            (map
+              (lambda (element-with-index)
+                (let ((element (car element-with-index))
+                      (index (cadr element-with-index)))
+                  (let ((element-value
+                          (hash-table-ref
+                            elements-value-hash-table
+                            index)))
+                    (if (and element-value (<= element-value highest-allowed-element-value))
+                      element
+                      #f))))
+              (zip elements (iota (length elements))))))
+
+        ;; return the unfiltered elements
+        elements))))
