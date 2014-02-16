@@ -111,6 +111,7 @@ sources/core/tables/shipping-addresses-table.o : sources/core/tables/shipping-ad
 	sources/core/tables/shipping-addresses-table.o
 
 compile-foreign-interfaces : compile-foreign-interfaces-fastcgi \
+                             compile-foreign-interfaces-hungarian \
                              compile-foreign-interfaces-jansson \
                              compile-foreign-interfaces-pcre \
                              compile-foreign-interfaces-scdtl \
@@ -122,6 +123,13 @@ sources/foreign-interfaces/fastcgi.o : sources/foreign-interfaces/fastcgi.scm
 	csc -c -I/usr/local/include \
 	sources/foreign-interfaces/fastcgi.scm -o \
 	sources/foreign-interfaces/fastcgi.o
+
+compile-foreign-interfaces-hungarian : sources/foreign-interfaces/hungarian.o
+
+sources/foreign-interfaces/hungarian.o : sources/foreign-interfaces/hungarian.scm
+	csc -c -I/usr/local/include \
+	sources/foreign-interfaces/hungarian.scm -o \
+	sources/foreign-interfaces/hungarian.o
 
 compile-foreign-interfaces-jansson : sources/foreign-interfaces/jansson.o
 
@@ -159,6 +167,7 @@ compile-infrastructure : compile-infrastructure-compare \
                          compile-infrastructure-json \
                          compile-infrastructure-list \
                          compile-infrastructure-math \
+                         compile-infrastructure-matrix \
                          compile-infrastructure-records \
                          compile-infrastructure-regex \
                          compile-infrastructure-services \
@@ -282,6 +291,19 @@ sources/infrastructure/math/math.o : sources/infrastructure/math/math.scm
 	sources/infrastructure/math/math.scm -o \
 	sources/infrastructure/math/math.o
 
+compile-infrastructure-matrix : sources/infrastructure/matrix/matrix.o \
+                                sources/infrastructure/matrix/matrix-intern.o
+
+sources/infrastructure/matrix/matrix.o : sources/infrastructure/matrix/matrix.scm
+	csc -c \
+	sources/infrastructure/matrix/matrix.scm -o \
+	sources/infrastructure/matrix/matrix.o
+
+sources/infrastructure/matrix/matrix-intern.o : sources/infrastructure/matrix/matrix-intern.scm
+	csc -c \
+	sources/infrastructure/matrix/matrix-intern.scm -o \
+	sources/infrastructure/matrix/matrix-intern.o
+
 compile-infrastructure-records : sources/infrastructure/records/records.o
 
 sources/infrastructure/records/records.o : sources/infrastructure/records/records.scm
@@ -345,6 +367,7 @@ sources/infrastructure/validation/validation-service-request.o : sources/infrast
 link : compile
 	csc \
 	-lfcgi \
+	-lhungarian \
 	-ljansson \
 	-lpcre \
 	-lsqlite3 \
@@ -363,6 +386,7 @@ link : compile
 	sources/core/tables/customers-table.o \
 	sources/core/tables/shipping-addresses-table.o \
 	sources/foreign-interfaces/fastcgi.o \
+	sources/foreign-interfaces/hungarian.o \
 	sources/foreign-interfaces/jansson.o \
 	sources/foreign-interfaces/pcre.o \
 	sources/foreign-interfaces/scdtl.o \
@@ -385,6 +409,8 @@ link : compile
 	sources/infrastructure/list/list.o \
 	sources/infrastructure/list/list-intern.o \
 	sources/infrastructure/math/math.o \
+	sources/infrastructure/matrix/matrix.o \
+	sources/infrastructure/matrix/matrix-intern.o \
 	sources/infrastructure/records/records.o \
 	sources/infrastructure/regex/regex.o \
 	sources/infrastructure/regex/regex-intern.o \
@@ -402,6 +428,7 @@ install :
 tools : tools-chicken-scheme \
         tools-fastcgi \
         tools-httpd \
+        tools-hungarian \
         tools-jansson \
         tools-pcre \
         tools-sqlite \
@@ -463,6 +490,15 @@ tools-httpd-httpd :
 	$(MAKE) -C /tmp/httpd/httpd-2.4.3
 	$(MAKE) -C /tmp/httpd/httpd-2.4.3 install
 	rm -r /tmp/httpd
+
+tools-hungarian :
+	mkdir /tmp/hungarian
+	tar -x -z -f tools/hungarian/libhungarian-v0.1.2.tgz -C /tmp/hungarian
+	cd /tmp/hungarian/libhungarian && make clean
+	cd /tmp/hungarian/libhungarian && make
+	cd /tmp/hungarian/libhungarian && cp hungarian.h /usr/local/include
+	cd /tmp/hungarian/libhungarian && cp libhungarian.a /usr/local/lib
+	rm -r /tmp/hungarian
 
 tools-jansson :
 	mkdir /tmp/jansson

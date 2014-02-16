@@ -457,20 +457,6 @@ The element that has the maximum value.
 
     3
 
-list-number-permutations
-------------------------
-Returns all the permutations for a list of numeric elements.
-
-__elements__  
-The list of elements.
-
-    (list 1 2 3)
-
-__result__  
-The possible element permutations.
-
-    ((1 2 3) (1 3 2) (2 1 3) (2 3 1) (3 1 2) (3 2 1))
-
 list-sum
 --------
 Returns the sum of the elements value.

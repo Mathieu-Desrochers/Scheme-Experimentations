@@ -282,53 +282,6 @@
     element-value-procedure
     >))
 
-;; returns all the permutations
-;; for a list of numeric elements
-(define (list-number-permutations elements)
-
-  (letrec ((list-number-permutations-inner
-              (lambda (accumulator)
-                (let* ((previous-permutation (car accumulator))
-                       (k (list-find-last-consecutive-pair-index previous-permutation)))
-
-                  ;; check if we have found
-                  ;; the last permutation
-                  (if (not k)
-                    accumulator
-
-                    ;; the next permutation is obtained by 
-                    ;; swapping the elements k and l and
-                    ;; reversing the rest of the list
-                    (let* ((l (list-find-last-index-with-greater-value previous-permutation k))
-                           (next-permutation
-                              (list-reverse-end
-                                (list-swap
-                                  previous-permutation
-                                  k
-                                  l)
-                                (+ k 1))))
-
-                      ;; continue building the permutations
-                      (list-number-permutations-inner
-                        (cons
-                          next-permutation
-                          accumulator))))))))
-
-    ;; make sure the list is not empty
-    (if (null? elements)
-      (list)
-
-      ;; sort the elements
-      (let ((ordered-elements
-              (list-sort-by-number
-                elements
-                identity)))
-
-        ;; build the permutations
-        (reverse
-          (list-number-permutations-inner
-            (list ordered-elements)))))))
-
 ;; returns the sum of the elements value
 (define (list-sum
           elements

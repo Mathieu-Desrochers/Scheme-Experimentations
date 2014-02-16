@@ -3,7 +3,7 @@
 
 (declare (unit matrix))
 
-(declare (uses list))
+(declare (uses matrix-intern))
 
 ;; makes a matrix
 (define (make-matrix rows-count columns-count)
@@ -53,7 +53,7 @@
         column-index))
     matrix))
 
-;; sets a matrix row values
+;; sets a matrix row
 (define (matrix-row-set! matrix values row-index)
   (set-car!
     (drop
@@ -64,16 +64,18 @@
 
 ;; invokes a procedure for all the matrix elements
 (define (matrix-for-each matrix procedure)
-  (map
+  (for-each
     (lambda (row-index)
-      (map
+      (for-each
         (lambda (column-index)
           (procedure row-index column-index))
         (iota (matrix-columns-count matrix))))
     (iota (matrix-rows-count matrix))))
 
-;; keeps only one numeric element
-;; by row and column, while optimizing
-;; the overall sum of the matrix elements
-(define (matrix-optimize-numbers matrix)
-  1)
+;; solves the minimum assignment problem represented by a matrix
+(define (matrix-solve-minimum-assignment-problem matrix)
+  (matrix-solve-assignment-problem-intern matrix #f))
+
+;; solves the maximum assignment problem represented by a matrix
+(define (matrix-solve-maximum-assignment-problem matrix)
+  (matrix-solve-assignment-problem-intern matrix #t))
