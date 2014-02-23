@@ -18,7 +18,9 @@
 
 ;; returns the number of columns of a matrix
 (define (matrix-columns-count matrix)
-  (length (car matrix)))
+  (if (eq? (length matrix) 0)
+    0
+    (length (car matrix))))
 
 ;; gets a matrix value
 (define (matrix-value matrix row-index column-index)

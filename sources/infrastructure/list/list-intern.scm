@@ -143,3 +143,23 @@
       (car elements)
       (cdr elements))
     #f))
+
+;; returns the last index of a value in a list
+(define (list-find-last-index-inner
+          elements
+          element-value-procedure
+          value
+          current-index
+          value-last-index)
+  (if (null? elements)
+    value-last-index
+    (let ((value-last-index
+            (if (eq? (element-value-procedure (car elements)) value)
+              current-index
+              value-last-index)))
+      (list-find-last-index-inner
+        (cdr elements)
+        element-value-procedure
+        value
+        (+ current-index 1)
+        value-last-index))))

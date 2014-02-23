@@ -329,69 +329,38 @@
       0
       (list))))
 
-;; removes the elements of a list that have
-;; the highest numeric values, while ensuring it
-;; still contains a minimal number of elements
-(define (list-without-highest-number-values
+;; returns the last index of a value in a list
+(define (list-find-last-index
           elements
           element-value-procedure
+          value)
+
+  (list-find-last-index-inner
+    elements
+    element-value-procedure
+    value
+    0
+    #f))
+
+;; removes the highest numeric elements from a list
+;; ensures a minimum number of elements are kept
+(define (list-remove-highest-numbers
+          elements
           minimum-elements-count)
 
-  ;; hash the elements value by index
-  (let ((elements-value-hash-table (make-hash-table = number-hash)))
-    (map
-      (lambda (element-with-index)
-        (let ((element (car element-with-index))
-              (index (cadr element-with-index)))
-          (let ((element-value (if element (element-value-procedure element) #f)))
-            (hash-table-set!
-              elements-value-hash-table
-              index
-              element-value))))
-      (zip elements (iota (length elements))))
+  ;; sort the elements
+  (let ((sorted-elements (list-sort-by-number elements identity)))
 
-    ;; filter out the false elements value
-    (let ((filtered-elements-value
-            (filter
-              identity
-              (map
-                (lambda (index)
-                  (hash-table-ref
-                    elements-value-hash-table
-                    index))
-                (iota (length elements))))))
+    ;; get the highest allowed element value
+    (let ((maximum-element-value
+            (if (> (length elements) minimum-elements-count)
+              (list-ref sorted-elements (- minimum-elements-count 1))
+              (last sorted-elements))))
 
-      ;; only remove elements if there
-      ;; are not enough to begin with
-      (if (> (length filtered-elements-value) minimum-elements-count)
-
-        ;; sort the elements value
-        (let ((sorted-elements-value
-                (list-sort-by-number
-                  filtered-elements-value
-                  identity)))
-
-          ;; get the highest allowed element value
-          (let ((highest-allowed-element-value
-                  (car
-                    (drop
-                      sorted-elements-value
-                      (- minimum-elements-count 1)))))
-
-            ;; filter out the elements
-            ;; that have a too high value
-            (map
-              (lambda (element-with-index)
-                (let ((element (car element-with-index))
-                      (index (cadr element-with-index)))
-                  (let ((element-value
-                          (hash-table-ref
-                            elements-value-hash-table
-                            index)))
-                    (if (and element-value (<= element-value highest-allowed-element-value))
-                      element
-                      #f))))
-              (zip elements (iota (length elements))))))
-
-        ;; return the unfiltered elements
+      ;; filter the elements
+      (map
+        (lambda (element)
+          (if (<= element maximum-element-value)
+            element
+            #f))
         elements))))

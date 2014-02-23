@@ -524,21 +524,39 @@ The index of the filtered elements.
 
     (1 3)
 
-list-without-highest-number-values
-----------------------------------
-Removes the elements of a list that have
-the highest numeric values, while ensuring it
-still contains a minimal number of elements.
+list-find-last-index
+--------------------
+Returns the last index of a value in a list.
 
 __elements__  
 The list of elements.
 
-    (list 1 2 2 3)
+    (list 1 5 5 8)
 
 __element-value-procedure__  
 A procedure that returns the value of an element.
 
     identity
+
+__value__  
+The searched value.
+
+    5
+
+__result__  
+The last index of the value.
+
+    2
+
+list-remove-highest-numbers
+---------------------------
+Removes the highest numeric elements from a list.  
+Ensures a minimum number of elements are kept.
+
+__elements__  
+The list of elements.
+
+    (list 1 5 5 8)
 
 __minimum-elements-count__  
 The minimum number of elements.
@@ -548,4 +566,4 @@ The minimum number of elements.
 __result__  
 The filtered list.
 
-    (1 2 2 #f)
+    (1 5 5 #f)
