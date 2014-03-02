@@ -145,7 +145,7 @@
     #f))
 
 ;; returns the last index of a value in a list
-(define (list-find-last-index-inner
+(define (list-value-last-index-intern
           elements
           element-value-procedure
           value
@@ -157,9 +157,46 @@
             (if (eq? (element-value-procedure (car elements)) value)
               current-index
               value-last-index)))
-      (list-find-last-index-inner
+      (list-value-last-index-intern
         (cdr elements)
         element-value-procedure
         value
         (+ current-index 1)
         value-last-index))))
+
+;; keeps only the lowest numbers in a list
+(define (list-keep-lowest-numbers-intern
+          elements
+          element-value-procedure
+          count
+          maximum-element-value
+          accumulator
+          accumulator-length)
+
+  ;; check if all the elements have been filtered
+  (if (null? elements)
+    (reverse accumulator)
+
+    ;; check if the element value is kept
+    (let* ((element (car elements))
+           (element-value (element-value-procedure element)))
+      (if (and (<= element-value maximum-element-value)
+               (< accumulator-length count))
+
+        ;; keep the element value
+        (list-keep-lowest-numbers-intern
+            (cdr elements)
+            element-value-procedure
+            count
+            maximum-element-value
+            (cons element accumulator)
+            (+ accumulator-length 1))
+
+        ;; discard the element value
+        (list-keep-lowest-numbers-intern
+            (cdr elements)
+            element-value-procedure
+            count
+            maximum-element-value
+            (cons #f accumulator)
+            accumulator-length)))))

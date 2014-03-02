@@ -330,37 +330,48 @@
       (list))))
 
 ;; returns the last index of a value in a list
-(define (list-find-last-index
+(define (list-value-last-index
           elements
           element-value-procedure
           value)
 
-  (list-find-last-index-inner
+  (list-value-last-index-intern
     elements
     element-value-procedure
     value
     0
     #f))
 
-;; removes the highest numeric elements from a list
-;; ensures a minimum number of elements are kept
-(define (list-remove-highest-numbers
+;; keeps only the lowest numbers in a list
+(define (list-keep-lowest-numbers
           elements
-          minimum-elements-count)
+          element-value-procedure
+          count)
 
-  ;; sort the elements
-  (let ((sorted-elements (list-sort-by-number elements identity)))
+  ;; check if no elements must be kept
+  (if (eq? count 0)
+    (map
+      (lambda (element) #f)
+      elements)
 
-    ;; get the highest allowed element value
-    (let ((maximum-element-value
-            (if (> (length elements) minimum-elements-count)
-              (list-ref sorted-elements (- minimum-elements-count 1))
-              (last sorted-elements))))
+    ;; check if all the elements must be kept
+    (if (>= count (length elements))
+      elements
 
-      ;; filter the elements
-      (map
-        (lambda (element)
-          (if (<= element maximum-element-value)
-            element
-            #f))
-        elements))))
+      ;; sort the elements
+      (let ((sorted-elements (list-sort-by-number elements element-value-procedure)))
+
+        ;; get the highest allowed element value
+        (let ((maximum-element-value
+                (if (> (length sorted-elements) count)
+                  (list-ref sorted-elements (- count 1))
+                  (last sorted-elements))))
+
+          ;; filter the elements
+          (list-keep-lowest-numbers-intern
+            elements
+            element-value-procedure
+            count
+            maximum-element-value
+            (list)
+            0))))))
