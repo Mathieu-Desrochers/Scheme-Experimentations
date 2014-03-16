@@ -286,6 +286,7 @@
 (define (list-sum
           elements
           element-value-procedure)
+
   (fold + 0 (map element-value-procedure elements)))
 
 ;; returns the number of elements
@@ -308,21 +309,6 @@
           element-value-procedure
           filter-procedure)
 
-  ;; inner procedure that accumulates the result
-  (define (list-filtered-index-inner elements-inner index result)
-    (if (null? elements-inner)
-      result
-      (if (filter-procedure (element-value-procedure (car elements-inner)))
-        (list-filtered-index-inner
-          (cdr elements-inner)
-          (+ index 1)
-          (cons index result))
-        (list-filtered-index-inner
-          (cdr elements-inner)
-          (+ index 1)
-          result))))
-
-  ;; reverse the result
   (reverse
     (list-filtered-index-inner
       elements
@@ -440,6 +426,37 @@
             elements
             element-key-procedure
             element-matching-key-procedure)))
+
+    (list-remove-at-indexes
+      elements
+      indexes)))
+
+;; returns the index of the elements
+;; having a given value
+(define (list-value-indexes
+          elements
+          element-value-procedure
+          value)
+
+  (list-value-indexes-intern
+    elements
+    element-value-procedure
+    value
+    0
+    (list)))
+
+;; removes the elements having a given value
+(define (list-remove-value
+          elements
+          element-value-procedure
+          value)
+
+  ;; get the indexes of the value
+  (let ((indexes
+          (list-value-indexes
+            elements
+            element-value-procedure
+            value)))
 
     (list-remove-at-indexes
       elements

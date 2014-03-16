@@ -640,3 +640,51 @@ __result__
 The filtered elements.
 
     (3)
+
+list-value-indexes
+------------------
+Returns the index of the elements having a given value.
+
+__elements__  
+The list of elements.
+
+    (list 1 2 2 3)
+
+__element-value-procedure__  
+A procedure that returns the value of an element.
+
+    identity
+
+__value__  
+The searched value.
+
+    2
+
+__result__  
+The index of the matched elements.
+
+    (1 2)
+
+list-remove-value
+-----------------
+Removes the elements having a given value.
+
+__elements__  
+The list of elements.
+
+    (list 1 2 2 3)
+
+__element-value-procedure__  
+A procedure that returns the value of an element.
+
+    identity
+
+__value__  
+The searched value.
+
+    2
+
+__result__  
+The filtered elements.
+
+    (1 3)

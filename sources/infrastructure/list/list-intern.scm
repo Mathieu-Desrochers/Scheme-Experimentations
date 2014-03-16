@@ -144,6 +144,24 @@
       (cdr elements))
     #f))
 
+;; returns the index of the elements
+;; whose value matches a filter
+(define (list-filtered-index-inner
+          elements
+          index
+          result)
+  (if (null? elements)
+    result
+    (if (filter-procedure (element-value-procedure (car elements)))
+      (list-filtered-index-inner
+        (cdr elements)
+        (+ index 1)
+        (cons index result))
+      (list-filtered-index-inner
+        (cdr elements)
+        (+ index 1)
+        result))))
+
 ;; returns the last index of a value in a list
 (define (list-value-last-index-intern
           elements
@@ -329,3 +347,39 @@
               matching-keys-hash-table
               (+ index 1)
               matching-pairs-index)))))))
+
+;; returns the index of the elements
+;; having a given value
+(define (list-value-indexes-intern
+          elements
+          element-value-procedure
+          value
+          index
+          accumulator)
+
+  ;; check if all the elements have been filtered
+  (if (null? elements)
+    (reverse accumulator)
+
+    ;; get the element value
+    (let* ((element (car elements))
+           (element-value (element-value-procedure element)))
+
+      ;; check for the value
+      (if (eq? element-value value)
+
+        ;; keep the element index
+        (list-value-indexes-intern
+          (cdr elements)
+          element-value-procedure
+          value
+          (+ index 1)
+          (cons index accumulator))
+
+        ;; ignore the element index
+        (list-value-indexes-intern
+          (cdr elements)
+          element-value-procedure
+          value
+          (+ index 1)
+          accumulator)))))
