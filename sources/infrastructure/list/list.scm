@@ -367,11 +367,80 @@
                   (list-ref sorted-elements (- count 1))
                   (last sorted-elements))))
 
-          ;; filter the elements
-          (list-keep-lowest-numbers-intern
+          ;; get how many of the highest allowed element values
+          ;; can be kept among all the ones found
+          (let ((maximum-element-values-count
+                  (length
+                    (filter
+                      (lambda (element-value)
+                        (eq? element-value maximum-element-value))
+                      (take sorted-elements count)))))
+
+            ;; filter the elements
+            (list-keep-lowest-numbers-intern
+              elements
+              element-value-procedure
+              count
+              maximum-element-value
+              maximum-element-values-count
+              (list))))))))
+
+;; removes the elements at the given indexes
+(define (list-remove-at-indexes
+          elements
+          indexes)
+
+  ;; hash the indexes
+  (let ((indexes-hash-table
+          (hash-with-unique-numeric-keys
+            indexes
+            identity
+            identity)))
+
+    ;; remove the elements
+    (list-remove-at-indexes-intern
+      elements
+      indexes-hash-table
+      0
+      (list))))
+
+;; returns the index of elements that can be paired
+;; with another element having a matching key
+(define (list-matching-pairs-index
+          elements
+          element-key-procedure
+          element-matching-key-procedure)
+
+  ;; the hash key represents the matching key
+  ;; the hash value is the index of the element
+  (let ((matching-keys-hash-table
+          (make-hash-table
+            equal?
+            equal?-hash)))
+
+    ;; get the matching pairs index
+    (list-matching-pairs-index-intern
+      elements
+      element-key-procedure
+      element-matching-key-procedure
+      matching-keys-hash-table
+      0
+      (list))))
+
+;; removes the elements that can be paired
+;; with another element having a matching key
+(define (list-remove-matching-pairs
+          elements
+          element-key-procedure
+          element-matching-key-procedure)
+
+  ;; get the indexes of the matching pairs
+  (let ((indexes
+          (list-matching-pairs-index
             elements
-            element-value-procedure
-            count
-            maximum-element-value
-            (list)
-            0))))))
+            element-key-procedure
+            element-matching-key-procedure)))
+
+    (list-remove-at-indexes
+      elements
+      indexes)))

@@ -571,3 +571,72 @@ __result__
 The filtered list.
 
     (#f 1 5 #f)
+
+list-remove-at-indexes
+----------------------
+Removes the elements at the given indexes.
+
+__elements__  
+The list of elements.
+
+    (list 1 2 3)
+
+__indexes__  
+The indexes of the elements to remove.
+
+    (list 0 1)
+
+__result__  
+The filtered list.
+
+    (3)
+
+list-matching-pairs-index
+-------------------------
+Returns the index of elements that can be paired  
+with another element having a matching key.
+
+__elements__  
+The list of elements.
+
+    (list 1 2 3)
+
+__element-key-procedure__  
+A procedure that returns the key of an element.
+
+    even?
+
+__element-matching-key-procedure__  
+A procedure that returns the matching key of an element.
+
+    odd?
+
+__result__  
+The index of the matched elements.
+
+    (0 1)
+
+list-remove-matching-pairs
+--------------------------
+Removes the elements that can be paired  
+with another element having a matching key.
+
+__elements__  
+The list of elements.
+
+    (list 1 2 3)
+
+__element-key-procedure__  
+A procedure that returns the key of an element.
+
+    even?
+
+__element-matching-key-procedure__  
+A procedure that returns the matching key of an element.
+
+    odd?
+
+__result__  
+The filtered elements.
+
+    (3)

@@ -170,33 +170,162 @@
           element-value-procedure
           count
           maximum-element-value
-          accumulator
-          accumulator-length)
+          maximum-element-values-count
+          accumulator)
 
   ;; check if all the elements have been filtered
   (if (null? elements)
     (reverse accumulator)
 
-    ;; check if the element value is kept
+    ;; get the element value
     (let* ((element (car elements))
            (element-value (element-value-procedure element)))
-      (if (and (<= element-value maximum-element-value)
-               (< accumulator-length count))
 
-        ;; keep the element value
-        (list-keep-lowest-numbers-intern
-            (cdr elements)
-            element-value-procedure
-            count
-            maximum-element-value
-            (cons element accumulator)
-            (+ accumulator-length 1))
+      ;; check if we can still keep elements
+      (if (eq? count 0)
 
         ;; discard the element value
         (list-keep-lowest-numbers-intern
+          (cdr elements)
+          element-value-procedure
+          count
+          maximum-element-value
+          maximum-element-values-count
+          (cons #f accumulator))
+
+        ;; check if the element value
+        ;; is below the maximum allowed
+        (if (< element-value maximum-element-value)
+
+          ;; keep the element value
+          (list-keep-lowest-numbers-intern
             (cdr elements)
             element-value-procedure
-            count
+            (- count 1)
             maximum-element-value
-            (cons #f accumulator)
-            accumulator-length)))))
+            maximum-element-values-count
+            (cons element accumulator))
+
+          ;; check if the element value
+          ;; is equal to the maximum allowed
+          (if (eq? element-value maximum-element-value)
+
+            ;; check if we can still keep maximum elements
+            (if (eq? maximum-element-values-count 0)
+
+              ;; discard the maximum element value
+              (list-keep-lowest-numbers-intern
+                (cdr elements)
+                element-value-procedure
+                count
+                maximum-element-value
+                maximum-element-values-count
+                (cons #f accumulator))
+
+              ;; keep the maximum element value
+              (list-keep-lowest-numbers-intern
+                (cdr elements)
+                element-value-procedure
+                (- count 1)
+                maximum-element-value
+                (- maximum-element-values-count 1)
+                (cons element accumulator)))
+
+            ;; discard the element value
+            (list-keep-lowest-numbers-intern
+              (cdr elements)
+              element-value-procedure
+              count
+              maximum-element-value
+              maximum-element-values-count
+              (cons #f accumulator))))))))
+
+;; removes the elements at the given indexes
+(define (list-remove-at-indexes-intern
+          elements
+          indexes-hash-table
+          current-index
+          accumulator)
+
+  ;; check if all the elements have been filtered
+  (if (null? elements)
+    (reverse accumulator)
+
+    ;; check if the current index must be removed
+    (if (hash-table-exists? indexes-hash-table current-index)
+
+      ;; remove the element
+      (list-remove-at-indexes-intern
+        (cdr elements)
+        indexes-hash-table
+        (+ current-index 1)
+        accumulator)
+
+      ;; keep the element
+      (list-remove-at-indexes-intern
+        (cdr elements)
+        indexes-hash-table
+        (+ current-index 1)
+        (cons (car elements) accumulator)))))
+
+;; returns the index of elements that can be paired
+;; with another element having a matching key
+(define (list-matching-pairs-index-intern
+          elements
+          element-key-procedure
+          element-matching-key-procedure
+          matching-keys-hash-table
+          index
+          matching-pairs-index)
+
+  ;; check if all the elements have been paired
+  (if (null? elements)
+    (reverse matching-pairs-index)
+
+    ;; get the element keys
+    (let* ((element (car elements))
+           (element-key (element-key-procedure element))
+           (element-matching-key (element-matching-key-procedure element)))
+
+      ;; check if a matching element was previously found
+      (let ((matching-index
+              (hash-table-ref/default
+                matching-keys-hash-table
+                element-matching-key
+                #f)))
+
+        ;; a match was found
+        (if matching-index
+          (begin
+
+            ;; remove the matching key
+            (hash-table-delete!
+              matching-keys-hash-table
+              element-matching-key)
+
+            ;; keep track of the matching indexes
+            (list-matching-pairs-index-intern
+              (cdr elements)
+              element-key-procedure
+              element-matching-key-procedure
+              matching-keys-hash-table
+              (+ index 1)
+              (cons index (cons matching-index matching-pairs-index))))
+
+          ;; no match was found
+          (begin
+
+            ;; add the matching key
+            (hash-table-set!
+              matching-keys-hash-table
+              element-key
+              index)
+
+            ;; keep looking for matching indexes
+            (list-matching-pairs-index-intern
+              (cdr elements)
+              element-key-procedure
+              element-matching-key-procedure
+              matching-keys-hash-table
+              (+ index 1)
+              matching-pairs-index)))))))
