@@ -6,4 +6,4 @@ Prints a message to the error port.
 __message__  
 The message.
 
-    message
+    "Something went wrong"
