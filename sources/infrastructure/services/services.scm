@@ -18,21 +18,31 @@
       (sql-disable-synchronous-writes sql-connection)
 
       ;; start a transaction
-      (within-sql-transaction sql-connection
-        (lambda ()
-          (let ((original-exception-handler (current-exception-handler)))
-            (handle-exceptions exception
+      (sql-begin-transaction sql-connection)
 
-              ;; report validation errors
-              ;; through the error procedure
-              (if (validation-exception? exception)
-                (let ((validation-errors (validation-errors exception)))
-                  (validation-errors-procedure validation-errors))
-                (original-exception-handler exception))
+      ;; check for exceptions
+      (handle-exceptions exception
+        (begin
 
-              ;; invoke the service
-              (let ((response (service sql-connection request)))
+          ;; rollback the transaction
+          (sql-rollback-transaction sql-connection)
 
-                ;; report the response through
-                ;; the success procedure
-                (success-procedure response)))))))))
+          ;; check if a validation exception was raised
+          (if (validation-exception? exception)
+
+            ;; report the validation errors
+            ;; through the error procedure
+            (validation-errors-procedure (validation-errors exception))
+
+            ;; re-raise any other exception
+            (abort exception)))
+
+        ;; invoke the service
+        (let ((response (service sql-connection request)))
+
+          ;; commit the transaction
+          (sql-commit-transaction sql-connection)
+
+          ;; report the response through
+          ;; the success procedure
+          (success-procedure response))))))

@@ -40,15 +40,27 @@
   (sql-execute sql-connection "PRAGMA synchronous = OFF;"))
 
 ;; executes a procedure within a transaction
+;; the transaction is automatically rollbacked if an exception occurs
 (define (within-sql-transaction sql-connection procedure)
   (sql-execute sql-connection "BEGIN TRANSACTION;")
-  (let ((original-exception-handler (current-exception-handler)))
-    (handle-exceptions exception
-      (begin
-        (sql-execute sql-connection "ROLLBACK TRANSACTION;")
-        (original-exception-handler exception))
-      (procedure)
-      (sql-execute sql-connection "COMMIT TRANSACTION;"))))
+  (handle-exceptions exception
+    (begin
+      (sql-execute sql-connection "ROLLBACK TRANSACTION;")
+      (abort exception))
+    (procedure)
+    (sql-execute sql-connection "COMMIT TRANSACTION;")))
+
+;; explicitly begins a transaction
+(define (sql-begin-transaction sql-connection)
+  (sql-execute sql-connection "BEGIN TRANSACTION;"))
+
+;; explicitly commits a transaction
+(define (sql-commit-transaction sql-connection)
+  (sql-execute sql-connection "COMMIT TRANSACTION;"))
+
+;; explicitly rollbacks a transaction
+(define (sql-rollback-transaction sql-connection)
+  (sql-execute sql-connection "ROLLBACK TRANSACTION;"))
 
 ;; executes a sql statement
 (define (sql-execute sql-connection statement . parameter-values)

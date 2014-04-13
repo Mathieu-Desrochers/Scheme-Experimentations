@@ -41,6 +41,27 @@ __procedure__
 
     (lambda () ...)
 
+sql-begin-transaction
+---------------------
+Explicitly begins a transaction.
+
+__sql-connection__  
+The sql connection.
+
+sql-commit-transaction
+----------------------
+Explicitly commits a transaction.
+
+__sql-connection__  
+The sql connection.
+
+sql-rollback-transaction
+------------------------
+Explicitly rollbacks a transaction.
+
+__sql-connection__  
+The sql connection.
+
 sql-execute
 -----------
 Executes a sql statement.
