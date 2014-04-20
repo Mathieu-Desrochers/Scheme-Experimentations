@@ -383,3 +383,40 @@
           value
           (+ index 1)
           accumulator)))))
+
+;; returns the distinct element values
+;; ignores the false element values
+(define (list-distinct-values-intern
+          elements
+          element-value-procedure
+          element-value-equal?
+          element-value-hash)
+
+  ;; get the elements value
+  (let ((elements-value (map element-value-procedure elements))
+        (elements-value-count-hash-table
+          (make-hash-table
+            element-value-equal?
+            element-value-hash)))
+
+    ;; count the elements value
+    (for-each
+      (lambda (element-value)
+        (when element-value
+          (hash-table-update!
+            elements-value-count-hash-table
+            element-value
+            (lambda (element-value-count) (+ element-value-count 1))
+            (lambda () 0))))
+      elements-value)
+
+    ;; return the elements value
+    ;; that were counted only once
+    (filter-map
+      (lambda (element-value)
+        (if element-value
+          (if (eq? (hash-table-ref elements-value-count-hash-table element-value) 1)
+            element-value
+            #f)
+          #f))
+      elements-value)))

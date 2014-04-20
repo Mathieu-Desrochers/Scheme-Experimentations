@@ -1,4 +1,42 @@
 
+math-sum
+--------
+Returns the sum of the elements value.
+
+__elements__  
+The list of elements.
+
+    (list 1 2 3)
+
+__element-value-procedure__  
+A procedure that returns the value of an element.
+
+    identity
+
+__result__  
+The sum of the elements value.
+
+    6
+
+math-average
+------------
+Returns the average of the elements value.
+
+__elements__  
+The list of elements.
+
+    (list 1 2 3)
+
+__element-value-procedure__  
+A procedure that returns the value of an element.
+
+    identity
+
+__result__  
+The average of the elements value.
+
+    2
+
 math-average-add-value
 ----------------------
 Adds a value to an previously computed average.  

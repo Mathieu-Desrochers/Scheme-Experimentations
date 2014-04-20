@@ -457,25 +457,6 @@ The element that has the maximum value.
 
     3
 
-list-sum
---------
-Returns the sum of the elements value.
-
-__elements__  
-The list of elements.
-
-    (list 1 2 3)
-
-__element-value-procedure__  
-A procedure that returns the value of an element.
-
-    identity
-
-__result__  
-The sum of the elements value.
-
-    6
-
 list-filtered-count
 -------------------
 Returns the number of elements whose value matches a filter.
@@ -688,3 +669,44 @@ __result__
 The filtered elements.
 
     (1 3)
+
+list-distinct-values
+--------------------
+Returns the element values that appear only once in a list.  
+Ignores the elements having a false value.
+
+__elements__  
+The list of elements.
+
+    (list 2 #t "7" 2)
+
+__element-value-procedure__  
+A procedure that returns the value of an element.
+
+    identity
+
+__result__  
+The distinct values.
+
+    (#t "7")
+
+list-number-distinct-values
+---------------------------
+Returns the element values that appear only once in a list.  
+Used as an optimization when the elements are known to be numbers.  
+Ignores the elements having a false value.
+
+__elements__  
+The list of elements.
+
+    (list 2 6 7 2)
+
+__element-value-procedure__  
+A procedure that returns the value of an element.
+
+    identity
+
+__result__  
+The distinct values.
+
+    (6 7)

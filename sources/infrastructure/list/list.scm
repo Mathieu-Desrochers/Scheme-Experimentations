@@ -227,7 +227,7 @@
   (define (sortable-string element)
     (let ((date (element-sort-value-procedure element)))
       (date->string date)))
-  
+
   ;; sort the elements according to their sortable strings
   (list-sort-by-string
     elements
@@ -247,7 +247,7 @@
       (string-append
         (number->string (day-of-week->integer day-of-week))
         (time->string time))))
-  
+
   ;; sort the elements according to their sortable strings
   (list-sort-by-string
     elements
@@ -272,7 +272,7 @@
     element-value-procedure
     <))
 
-;; returns the element in a list that has the maximim value
+;; returns the element in a list that has the maximum value
 (define (list-maximum-element
           elements
           element-value-procedure)
@@ -281,13 +281,6 @@
     elements
     element-value-procedure
     >))
-
-;; returns the sum of the elements value
-(define (list-sum
-          elements
-          element-value-procedure)
-
-  (fold + 0 (map element-value-procedure elements)))
 
 ;; returns the number of elements
 ;; whose value matches a filter
@@ -461,3 +454,27 @@
     (list-remove-at-indexes
       elements
       indexes)))
+
+;; returns the distinct element values
+;; ignores the false element values
+(define (list-distinct-values
+          elements
+          element-value-procedure)
+
+  (list-distinct-values-intern
+    elements
+    element-value-procedure
+    equal?
+    equal?-hash))
+
+;; returns the distinct numeric element values
+;; ignores the false element values
+(define (list-number-distinct-values
+          elements
+          element-value-procedure)
+
+  (list-distinct-values-intern
+    elements
+    element-value-procedure
+    =
+    number-hash))
