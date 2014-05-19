@@ -574,8 +574,7 @@ The filtered list.
 
 list-matching-pairs-index
 -------------------------
-Returns the index of elements that can be paired  
-with another element having a matching key.
+Returns the index of elements that can be paired with another element having a matching key.
 
 __elements__  
 The list of elements.
@@ -599,8 +598,7 @@ The index of the matched elements.
 
 list-remove-matching-pairs
 --------------------------
-Removes the elements that can be paired  
-with another element having a matching key.
+Removes the elements that can be paired with another element having a matching key.
 
 __elements__  
 The list of elements.
@@ -670,9 +668,29 @@ The filtered elements.
 
     (1 3)
 
+list-filter-map-in-order
+------------------------
+A variant of the map procedure that returns only true values.  
+Guarantees to apply the procedure in the left-to-right order of the elements.
+
+__elements__  
+The list of elements.
+
+    (list 1 2 #f)
+
+__procedure__  
+A procedure that is applied to the elements.
+
+    identity
+
+__result__  
+The true values returned by the procedure.
+
+    (1 2)
+
 list-distinct-values
 --------------------
-Returns the element values that appear only once in a list.  
+Returns the distinct element values that appear in a list.  
 Ignores the elements having a false value.
 
 __elements__  
@@ -688,11 +706,11 @@ A procedure that returns the value of an element.
 __result__  
 The distinct values.
 
-    (#t "7")
+    (2 #t "7")
 
 list-number-distinct-values
 ---------------------------
-Returns the element values that appear only once in a list.  
+Returns the distinct element values that appear in a list.  
 Used as an optimization when the elements are known to be numbers.  
 Ignores the elements having a false value.
 
@@ -709,4 +727,4 @@ A procedure that returns the value of an element.
 __result__  
 The distinct values.
 
-    (6 7)
+    (2 6 7)

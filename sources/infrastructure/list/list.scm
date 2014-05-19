@@ -455,6 +455,18 @@
       elements
       indexes)))
 
+;; a variant of the map procedure that returns only true values
+;; guarantees to apply the procedure in the left-to-right order of the elements
+(define (list-filter-map-in-order
+          elements
+          procedure)
+
+  (filter
+    identity
+    (map-in-order
+      procedure
+      elements)))
+
 ;; returns the distinct element values
 ;; ignores the false element values
 (define (list-distinct-values
