@@ -204,6 +204,16 @@
       (< (element-sort-value-procedure x)
          (element-sort-value-procedure y)))))
 
+;; sorts a list of elements by their numeric value
+(define (list-sort-by-number-desc
+          elements
+          element-sort-value-procedure)
+  (sort
+    elements
+    (lambda (x y)
+      (> (element-sort-value-procedure x)
+         (element-sort-value-procedure y)))))
+
 ;; sorts a list of elements by their string value
 (define (list-sort-by-string
           elements

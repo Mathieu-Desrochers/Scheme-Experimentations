@@ -322,6 +322,25 @@ The list of sorted elements.
 
     (list 2 3 5 8)
 
+list-sort-by-number-desc
+------------------------
+Sorts a list of elements by their numeric value in descending order.
+
+__elements__  
+The list of elements.
+
+    (list 5 3 2 8)
+
+__element-sort-value-procedure__  
+A procedure that returns the numeric value of an element.
+
+    identity
+
+__result__  
+The list of sorted elements.
+
+    (list 8 5 3 2)
+
 list-sort-by-string
 -------------------
 Sorts a list of elements by their string value.

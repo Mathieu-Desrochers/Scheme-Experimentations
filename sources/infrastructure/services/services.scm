@@ -7,7 +7,7 @@
 (define (invoke-service service request success-procedure validation-errors-procedure)
 
   ;; open a database connection
-  (with-sql-connection "/databases/customers.db"
+  (with-sql-connection "/var/databases/customers.db"
     (lambda (sql-connection)
 
       ;; enable the foreign keys enforcement

@@ -5,8 +5,15 @@ Installing the compilers
 - Execute the following commands:
  - sudo apt-get update
  - sudo apt-get install make
+ - sudo apt-get install exuberant-ctags
  - sudo apt-get install gcc
  - sudo apt-get install g++
+
+Installing LaTeX
+----------------
+
+- Execute the following commands:
+ - sudo apt-get install texlive-latex-base
 
 Cloning the repository
 ----------------------

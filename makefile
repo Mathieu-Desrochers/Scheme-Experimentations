@@ -1,5 +1,5 @@
 
-make : compile link
+make : compile ctags link
 
 compile : compile-bindings \
           compile-core \
@@ -161,10 +161,12 @@ sources/foreign-interfaces/sqlite.o : sources/foreign-interfaces/sqlite.scm
 
 compile-infrastructure : compile-infrastructure-compare \
                          compile-infrastructure-date-time \
+                         compile-infrastructure-debug \
                          compile-infrastructure-exceptions \
                          compile-infrastructure-hash \
                          compile-infrastructure-http \
                          compile-infrastructure-json \
+                         compile-infrastructure-latex \
                          compile-infrastructure-list \
                          compile-infrastructure-math \
                          compile-infrastructure-matrix \
@@ -194,6 +196,13 @@ sources/infrastructure/date-time/date-time-intern.o : sources/infrastructure/dat
 	csc -c \
 	sources/infrastructure/date-time/date-time-intern.scm -o \
 	sources/infrastructure/date-time/date-time-intern.o
+
+compile-infrastructure-debug : sources/infrastructure/debug/debug.o
+
+sources/infrastructure/debug/debug.o : sources/infrastructure/debug/debug.scm
+	csc -c \
+	sources/infrastructure/debug/debug.scm -o \
+	sources/infrastructure/debug/debug.o
 
 compile-infrastructure-exceptions : sources/infrastructure/exceptions/exceptions.o
 
@@ -270,6 +279,13 @@ sources/infrastructure/json/json-parse.o : sources/infrastructure/json/json-pars
 	csc -c \
 	sources/infrastructure/json/json-parse.scm -o \
 	sources/infrastructure/json/json-parse.o
+
+compile-infrastructure-latex : sources/infrastructure/latex/latex.o
+
+sources/infrastructure/latex/latex.o : sources/infrastructure/latex/latex.scm
+	csc -c \
+	sources/infrastructure/latex/latex.scm -o \
+	sources/infrastructure/latex/latex.o
 
 compile-infrastructure-list : sources/infrastructure/list/list.o \
                               sources/infrastructure/list/list-intern.o
@@ -364,6 +380,9 @@ sources/infrastructure/validation/validation-service-request.o : sources/infrast
 	sources/infrastructure/validation/validation-service-request.scm -o \
 	sources/infrastructure/validation/validation-service-request.o
 
+ctags : compile
+	ctags -R
+
 link : compile
 	csc \
 	-lfcgi \
@@ -394,6 +413,7 @@ link : compile
 	sources/infrastructure/compare/compare.o \
 	sources/infrastructure/date-time/date-time.o \
 	sources/infrastructure/date-time/date-time-intern.o \
+	sources/infrastructure/debug/debug.o \
 	sources/infrastructure/exceptions/exceptions.o \
 	sources/infrastructure/hash/hash.o \
 	sources/infrastructure/hash/hash-intern.o \
@@ -406,6 +426,7 @@ link : compile
 	sources/infrastructure/json/json-format.o \
 	sources/infrastructure/json/json-intern.o \
 	sources/infrastructure/json/json-parse.o \
+	sources/infrastructure/latex/latex.o \
 	sources/infrastructure/list/list.o \
 	sources/infrastructure/list/list-intern.o \
 	sources/infrastructure/math/math.o \
@@ -540,8 +561,8 @@ apache-configuration :
 	echo "" >> /usr/local/apache2/conf/httpd.conf
 
 database :
-	mkdir /databases
-	sqlite3 /databases/customers.db < sources/database/create-database.sql
-	sqlite3 /databases/customers.db "PRAGMA journal_mode=WAL;"
-	chmod 777 /databases
-	chmod 777 /databases/customers.db
+	mkdir /var/databases
+	sqlite3 /var/databases/customers.db < sources/database/create-database.sql
+	sqlite3 /var/databases/customers.db "PRAGMA journal_mode=WAL;"
+	chmod 777 /var/databases
+	chmod 777 /var/databases/customers.db
