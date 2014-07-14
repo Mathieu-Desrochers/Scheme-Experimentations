@@ -43,9 +43,12 @@
 ;; the transaction is automatically rollbacked if an exception occurs
 (define (within-sql-transaction sql-connection procedure)
   (sql-execute sql-connection "BEGIN TRANSACTION;")
-  (handle-exceptions exception
+  (handle-exceptions
+    exception
     (begin
-      (sql-execute sql-connection "ROLLBACK TRANSACTION;")
+      (with-exception-hiding
+        (lambda ()
+          (sql-execute sql-connection "ROLLBACK TRANSACTION;")))
       (abort exception))
     (procedure)
     (sql-execute sql-connection "COMMIT TRANSACTION;")))

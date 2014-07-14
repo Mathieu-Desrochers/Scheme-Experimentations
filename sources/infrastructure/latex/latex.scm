@@ -52,7 +52,9 @@
                 temporary-pdf-file-path)))
 
           ;; read the pdf file
-          (read-all temporary-pdf-file-path))
+          (string->blob
+            (read-all
+              temporary-pdf-file-path)))
 
         (lambda (temporary-file-descriptor)
 

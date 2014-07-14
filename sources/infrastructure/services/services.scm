@@ -21,11 +21,14 @@
       (sql-begin-transaction sql-connection)
 
       ;; check for exceptions
-      (handle-exceptions exception
+      (handle-exceptions
+        exception
         (begin
 
           ;; rollback the transaction
-          (sql-rollback-transaction sql-connection)
+          (with-exception-hiding
+            (lambda ()
+              (sql-rollback-transaction sql-connection)))
 
           ;; check if a validation exception was raised
           (if (validation-exception? exception)

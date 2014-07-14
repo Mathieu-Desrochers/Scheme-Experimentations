@@ -18,26 +18,33 @@
     (string-drop request-uri (string-length context-prefix))))
 
 ;; encapsulates a http binding match
-(define-record http-binding-match method route route-captures service parse-request-procedure format-response-procedure)
+(define-record
+  http-binding-match
+  method
+  route
+  route-captures
+  content-type
+  service
+  parse-request-procedure
+  format-response-procedure)
 
 ;; returns whether a http binding
 ;; matches a method and a route
 (define (http-binding-match? http-binding method route)
-  (let ((http-binding-method (http-binding-method http-binding))
-        (http-binding-route (http-binding-route http-binding)))
-    (if (equal? http-binding-method method)
-      (let ((http-binding-route-regex-match (regex-match http-binding-route route)))
-        (if (not (null? http-binding-route-regex-match))
-          (let ((route-captures (cdr http-binding-route-regex-match)))
-            (make-http-binding-match
-              method
-              route
-              route-captures
-              (http-binding-service http-binding)
-              (http-binding-parse-request-procedure http-binding)
-              (http-binding-format-response-procedure http-binding)))
-          #f))
-      #f)))
+  (if (equal? (http-binding-method http-binding) method)
+    (let ((http-binding-route-regex-match (regex-match (http-binding-route http-binding) route)))
+      (if (not (null? http-binding-route-regex-match))
+        (let ((route-captures (cdr http-binding-route-regex-match)))
+          (make-http-binding-match
+            (http-binding-method http-binding)
+            (http-binding-route http-binding)
+            route-captures
+            (http-binding-content-type http-binding)
+            (http-binding-service http-binding)
+            (http-binding-parse-request-procedure http-binding)
+            (http-binding-format-response-procedure http-binding)))
+        #f))
+    #f))
 
 ;; iterates through the http bindings,
 ;; searching for one that matches a method and a route
@@ -91,13 +98,14 @@
 
 ;; writes the http body
 (define (http-write-body body fastcgi-output-stream*)
-  (fastcgi-puts body fastcgi-output-stream*)
-  (fastcgi-puts "\r\n" fastcgi-output-stream*))
+  (cond ((string? body) (fastcgi-puts (string-append body "\r\n") fastcgi-output-stream*))
+        ((blob? body) (fastcgi-putstr body (blob-size body) fastcgi-output-stream*))
+        (else (abort "unsupported body type"))))
 
 ;; sends a 200 ok
-(define (http-send-200-ok response-body fastcgi-output-stream*)
+(define (http-send-200-ok content-type response-body fastcgi-output-stream*)
   (http-write-header "Status: 200 OK" fastcgi-output-stream*)
-  (http-write-header "Content-Type: application/json; charset=utf-8" fastcgi-output-stream*)
+  (http-write-header (string-append "Content-Type: " content-type) fastcgi-output-stream*)
   (http-close-headers fastcgi-output-stream*)
   (http-write-body response-body fastcgi-output-stream*))
 

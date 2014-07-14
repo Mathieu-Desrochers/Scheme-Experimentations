@@ -1,11 +1,11 @@
 
-with-exception-hidding
-----------------------
+with-exception-hiding
+---------------------
 Invokes a procedure and hides any exception it raises.
 
 __invocation__
 
-    (with-exception-hidding
+    (with-exception-hiding
       (lambda ()
         (display "being nasty\n")
         (/ 1 0)))

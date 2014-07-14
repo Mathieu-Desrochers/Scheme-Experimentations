@@ -11,6 +11,7 @@
 (define-http-binding
   "GET"
   "^customers/(\\d{1,6})$"
+  "application/json; charset=utf-8"
   get-customer-service
   http-parse-get-customer-request
   http-format-get-customer-response)

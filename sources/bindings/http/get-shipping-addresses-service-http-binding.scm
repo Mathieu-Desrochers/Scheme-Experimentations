@@ -11,6 +11,7 @@
 (define-http-binding
   "GET"
   "^customers/(\\d{1,6})/shipping-addresses$"
+  "application/json; charset=utf-8"
   get-shipping-addresses-service
   http-parse-get-shipping-addresses-request
   http-format-get-shipping-addresses-response)

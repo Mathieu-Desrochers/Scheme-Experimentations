@@ -11,6 +11,7 @@
 (define-http-binding
   "POST"
   "^customers$"
+  "application/json; charset=utf-8"
   new-customer-service
   http-parse-new-customer-request
   http-format-new-customer-response)

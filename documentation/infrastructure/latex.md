@@ -12,8 +12,4 @@ The latex source.
      \\end{document}"
 
 __result__  
-The content of the pdf file as a string.
-
-    "%PDF-1.4
-     ...
-     %%EOF"
+The content of the pdf file as a blob.

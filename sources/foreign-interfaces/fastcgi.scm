@@ -89,5 +89,8 @@ void* FCGX_GetLineEx(void* str, int n, FCGX_Stream* stream)
 ;; reads up to n-1 consecutive bytes from the input stream
 (define fastcgi-getline (foreign-lambda c-pointer "FCGX_GetLineEx" c-pointer int fastcgi-stream*))
 
+;; writes consecutive bytes to the output stream
+(define fastcgi-putstr (foreign-lambda int "FCGX_PutStr" (const blob) int fastcgi-stream*))
+
 ;; writes a null-terminated character string to the output stream
 (define fastcgi-puts (foreign-lambda int "FCGX_PutS" (const c-string) fastcgi-stream*))

@@ -11,6 +11,7 @@
 (define-http-binding
   "DELETE"
   "^customers/(\\d{1,6})$"
+  "application/json; charset=utf-8"
   delete-customer-service
   http-parse-delete-customer-request
   http-format-delete-customer-response)

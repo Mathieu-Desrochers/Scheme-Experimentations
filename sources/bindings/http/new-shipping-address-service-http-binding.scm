@@ -11,6 +11,7 @@
 (define-http-binding
   "POST"
   "^customers/(\\d{1,6})/shipping-addresses$"
+  "application/json; charset=utf-8"
   new-shipping-address-service
   http-parse-new-shipping-address-request
   http-format-new-shipping-address-response)

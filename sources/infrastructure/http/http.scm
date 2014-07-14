@@ -7,7 +7,14 @@
 (declare (uses services))
 
 ;; encapsulates a http binding
-(define-record http-binding method route service parse-request-procedure format-response-procedure)
+(define-record
+  http-binding
+  method
+  route
+  content-type
+  service
+  parse-request-procedure
+  format-response-procedure)
 
 ;; use the application's http bindings
 (declare (uses delete-customer-service-http-binding))
@@ -57,11 +64,12 @@
 
                 ;; send the response
                 (lambda (response)
-                  (let* ((format-response-procedure (http-binding-match-format-response-procedure http-binding-match))
+                  (let* ((content-type (http-binding-match-content-type http-binding-match))
+                         (format-response-procedure (http-binding-match-format-response-procedure http-binding-match))
                          (response-body (format-response-procedure response)))
                     (if (is-empty-json-object-string? response-body)
                       (http-send-204-no-content fastcgi-output-stream*)
-                      (http-send-200-ok response-body fastcgi-output-stream*))))
+                      (http-send-200-ok content-type response-body fastcgi-output-stream*))))
 
                 ;; send the validation errors
                 (lambda (validation-errors)

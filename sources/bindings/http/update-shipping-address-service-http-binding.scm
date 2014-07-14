@@ -11,6 +11,7 @@
 (define-http-binding
   "PUT"
   "^customers/(\\d{1,6})/shipping-addresses/(\\d{1,6})$"
+  "application/json; charset=utf-8"
   update-shipping-address-service
   http-parse-update-shipping-address-request
   http-format-update-shipping-address-response)

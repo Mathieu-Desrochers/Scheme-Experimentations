@@ -23,6 +23,7 @@ __Definition__
  - number
  - string
  - time
+ - blob
 
 __Contructor and selectors__
 

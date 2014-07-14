@@ -2,8 +2,9 @@
 (declare (unit exceptions))
 
 ;; hides any exception raised by a procedure
-(define (with-exception-hidding procedure)
-  (handle-exceptions exception
+(define (with-exception-hiding procedure)
+  (handle-exceptions
+    exception
     #f
     (procedure)))
 
@@ -11,7 +12,8 @@
 ;; the allocated resource will be released
 (define (with-guaranteed-release allocation-procedure procedure release-procedure)
   (let ((allocated-resource (allocation-procedure)))
-    (handle-exceptions exception
+    (handle-exceptions
+      exception
       (begin
         (release-procedure allocated-resource)
         (abort exception))

@@ -5,38 +5,15 @@ A stub procedure in which to make the http bindings.
 
     (define (make-http-bindings)
       (list
-      	(make-http-binding ...)
-      	(make-http-binding ...)
-      	(make-http-binding ...)))
+        (make-http-binding ...)
+        (make-http-binding ...)
+        (make-http-binding ...)))
 
 http-binding
 ------------
 A record that binds http requests to a service.  
-See also the define-http-binding macro, which automatically  
+See the define-http-binding macro, which automatically  
 generates the required make-http-binding procedure for a service.
-
-__method__  
-The http method to match.
-
-    "GET"
-
-__route__  
-A regular expression pattern representing the urls to match.
-
-    "^customers/(\\d{1,6})$"
-
-__service__  
-The service procedure to match.
-
-    get-customer-service
-
-__parse-request-procedure__  
-A procedure responsible for parsing matched http requests.  
-See the define-http-binding macro for details.
-
-__format-response-procedure__  
-A procedure responsible for formatting service responses.  
-See the define-http-binding macro for details.
 
 http-handle-request
 -------------------

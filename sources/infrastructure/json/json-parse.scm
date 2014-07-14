@@ -55,7 +55,7 @@
 
 ;; parses a request
 (define (json-parse-request string json-parse-request-procedure)
-  (with-exception-hidding
+  (with-exception-hiding
     (lambda ()
       (with-parsed-json-object string
         (lambda (json-object)
