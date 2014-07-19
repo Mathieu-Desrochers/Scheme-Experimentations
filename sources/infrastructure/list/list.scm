@@ -256,7 +256,7 @@
           (time (element-time-sort-value-procedure element)))
       (string-append
         (number->string (day-of-week->integer day-of-week))
-        (time->string time))))
+        (time->string* time))))
 
   ;; sort the elements according to their sortable strings
   (list-sort-by-string

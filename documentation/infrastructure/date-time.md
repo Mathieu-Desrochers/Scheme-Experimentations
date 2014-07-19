@@ -27,11 +27,13 @@ __result__
 
     (make-date-time 1972 4 28 13 54 27)
 
-string->time
-------------
+string->time*
+-------------
 Parses a time expressed under the format HH:MM:SS.  
 The result still needs to be validated using time-valid?.  
 Returns #f if the format is not matched.
+
+The name of the procedure is starred to avoid clashing with unit posix.
 
 __string__
 
@@ -91,9 +93,11 @@ __result__
 
     "1972-04-28T13:54:27Z"
 
-time->string
-------------
+time->string*
+-------------
 Formats a time under the format HH:MM:SS.
+
+The name of the procedure is starred to avoid clashing with unit posix.
 
 __date__
 

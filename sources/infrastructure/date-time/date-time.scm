@@ -38,7 +38,7 @@
         (scdtl-tm-sec scdtl-tm*)))))
 
 ;; parses a string representing a time
-(define (string->time string)
+(define (string->time* string)
   (date-time-with-parsed-scdtl-tm* string "%H:%M:%S"
     (lambda (scdtl-tm*)
       (make-time
@@ -84,7 +84,7 @@
     "%Y-%m-%dT%H:%M:%SZ"))
 
 ;; serializes a time to string
-(define (time->string time)
+(define (time->string* time)
   (format-date-time
     0
     0

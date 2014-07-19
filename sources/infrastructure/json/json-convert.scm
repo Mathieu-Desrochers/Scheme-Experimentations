@@ -13,7 +13,7 @@
   (cond ((eq? field-type 'date) (json-upgrade-from-string string->date))
         ((eq? field-type 'date-time) (json-upgrade-from-string string->date-time))
         ((eq? field-type 'day-of-week) (json-upgrade-from-string string->day-of-week))
-        ((eq? field-type 'time) (json-upgrade-from-string string->time))
+        ((eq? field-type 'time) (json-upgrade-from-string string->time*))
         (else value)))
 
 ;; downgrades a value to a field type
@@ -22,5 +22,5 @@
   (cond ((date? value) (date->string value))
         ((date-time? value) (date-time->string value))
         ((day-of-week? value) (day-of-week->string value))
-        ((time? value) (time->string value))
+        ((time? value) (time->string* value))
         (else value)))

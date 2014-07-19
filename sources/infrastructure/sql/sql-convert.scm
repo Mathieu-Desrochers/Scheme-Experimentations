@@ -10,7 +10,7 @@
         ((eq? column-type 'date) (string->date value))
         ((eq? column-type 'date-time) (string->date-time value))
         ((eq? column-type 'day-of-week) (integer->day-of-week value))
-        ((eq? column-type 'time) (string->time value))
+        ((eq? column-type 'time) (string->time* value))
         (else value)))
 
 ;; downgrades a value to a column type
@@ -20,5 +20,5 @@
         ((date? value) (date->string value))
         ((date-time? value) (date-time->string value))
         ((day-of-week? value) (day-of-week->integer value))
-        ((time? value) (time->string value))
+        ((time? value) (time->string* value))
         (else value)))
