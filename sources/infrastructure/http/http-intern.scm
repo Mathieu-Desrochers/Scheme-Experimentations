@@ -96,43 +96,51 @@
 (define (http-close-headers fastcgi-output-stream*)
     (fastcgi-puts "\r\n" fastcgi-output-stream*))
 
+;; returns the content length of the http body
+(define (http-body-content-length response-body)
+  (cond ((string? response-body) (blob-size (string->blob (string-append response-body "\r\n"))))
+        ((blob? response-body) (blob-size response-body))
+        (else (abort "unsupported response body type"))))
+
 ;; writes the http body
-(define (http-write-body body fastcgi-output-stream*)
-  (cond ((string? body) (fastcgi-puts (string-append body "\r\n") fastcgi-output-stream*))
-        ((blob? body) (fastcgi-putstr body (blob-size body) fastcgi-output-stream*))
-        (else (abort "unsupported body type"))))
+(define (http-write-body response-body fastcgi-output-stream*)
+  (cond ((string? response-body) (fastcgi-puts (string-append response-body "\r\n") fastcgi-output-stream*))
+        ((blob? response-body) (fastcgi-putstr response-body (blob-size response-body) fastcgi-output-stream*))
+        (else (abort "unsupported response body type"))))
 
 ;; sends a 200 ok
 (define (http-send-200-ok content-type response-body fastcgi-output-stream*)
-  (http-write-header "Status: 200 OK" fastcgi-output-stream*)
-  (http-write-header (string-append "Content-Type: " content-type) fastcgi-output-stream*)
-  (http-close-headers fastcgi-output-stream*)
-  (http-write-body response-body fastcgi-output-stream*))
+  (let* ((content-length (http-body-content-length response-body))
+         (content-type-header (string-append "Content-Type: " content-type))
+         (content-length-header (string-append "Content-Length: " (number->string content-length))))
+    (http-write-header "Status: 200 OK" fastcgi-output-stream*)
+    (http-write-header content-type-header fastcgi-output-stream*)
+    (http-write-header content-length-header fastcgi-output-stream*)
+    (http-close-headers fastcgi-output-stream*)
+    (http-write-body response-body fastcgi-output-stream*)))
 
 ;; sends a 204 no content
 (define (http-send-204-no-content fastcgi-output-stream*)
   (http-write-header "Status: 204 No Content" fastcgi-output-stream*)
+  (http-write-header "Content-Length: 0" fastcgi-output-stream*)
   (http-close-headers fastcgi-output-stream*))
 
 ;; sends a 400 bad request error
 (define (http-send-400-bad-request fastcgi-output-stream*)
   (http-write-header "Status: 400 Bad Request" fastcgi-output-stream*)
+  (http-write-header "Content-Length: 0" fastcgi-output-stream*)
   (http-close-headers fastcgi-output-stream*))
 
 ;; sends a 404 not found error
 (define (http-send-404-not-found fastcgi-output-stream*)
   (http-write-header "Status: 404 Not Found" fastcgi-output-stream*)
+  (http-write-header "Content-Length: 0" fastcgi-output-stream*)
   (http-close-headers fastcgi-output-stream*))
 
 ;; sends a 422 unprocessable entity error
 (define (http-send-422-unprocessable-entity validation-errors fastcgi-output-stream*)
 
-  ;; write the response headers
-  (http-write-header "Status: 422 Unprocessable Entity" fastcgi-output-stream*)
-  (http-write-header "Content-Type: application/json; charset=utf-8" fastcgi-output-stream*)
-  (http-close-headers fastcgi-output-stream*)
-
-  ;; formats the validation errors into a json array
+  ;; formats the validation errors into a json string
   (define (format-validation-errors)
     (with-new-json-object
       (lambda (json-object)
@@ -147,6 +155,16 @@
             (json-object-property-set! json-object "errors" json-object-array)
             (json-object->string json-object))))))
 
-  ;; write the response body
+  ;; format the response body
   (let ((response-body (format-validation-errors)))
+
+    ;; write the response headers
+    (let* ((content-length (http-body-content-length response-body))
+           (content-length-header (string-append "Content-Length: " (number->string content-length))))
+      (http-write-header "Status: 422 Unprocessable Entity" fastcgi-output-stream*)
+      (http-write-header "Content-Type: application/json; charset=utf-8" fastcgi-output-stream*)
+      (http-write-header content-length-header fastcgi-output-stream*)
+      (http-close-headers fastcgi-output-stream*))
+
+    ;; write the response body
     (http-write-body response-body fastcgi-output-stream*)))
