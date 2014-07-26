@@ -8,6 +8,17 @@
 
 (declare (uses exceptions))
 
+;; formats a number to a latex string that uses vulgar fraction instructions
+(define (latex-number->string-with-vulgar-fraction number)
+  (let* ((full-units (inexact->exact (floor number)))
+         (partial-units (- number full-units)))
+    (string-append
+      (number->string full-units)
+      (cond ((>= partial-units 0.75) "\\nicefrac{3}{4}")
+            ((>= partial-units 0.5) "\\nicefrac{1}{2}")
+            ((>= partial-units 0.25) "\\nicefrac{1}{4}")
+            (else "")))))
+
 ;; returns the pdf compiled from a latex source
 (define (latex-print-pdf latex-source)
 

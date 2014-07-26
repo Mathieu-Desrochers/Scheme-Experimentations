@@ -1,4 +1,19 @@
 
+latex-number->string-with-vulgar-fraction
+-----------------------------------------
+Formats a number to a latex string that uses vulgar fraction instructions.  
+Make sure your latex document includes the nicefrac package.
+
+__number__  
+The number to format.
+
+    12.34
+
+__result__  
+The formatted number.
+
+    "12\\nicefrac{1}{4}"
+
 latex-print-pdf
 ---------------
 Compiles the specified latex source to pdf.
