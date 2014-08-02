@@ -165,6 +165,7 @@ compile-infrastructure : compile-infrastructure-compare \
                          compile-infrastructure-exceptions \
                          compile-infrastructure-hash \
                          compile-infrastructure-http \
+                         compile-infrastructure-i18n \
                          compile-infrastructure-json \
                          compile-infrastructure-latex \
                          compile-infrastructure-list \
@@ -248,6 +249,13 @@ sources/infrastructure/http/main.o : sources/infrastructure/http/main.c
 	csc -c \
 	sources/infrastructure/http/main.c -o \
 	sources/infrastructure/http/main.o
+
+compile-infrastructure-i18n : sources/infrastructure/i18n/i18n.o
+
+sources/infrastructure/i18n/i18n.o : sources/infrastructure/i18n/i18n.scm
+	csc -c \
+	sources/infrastructure/i18n/i18n.scm -o \
+	sources/infrastructure/i18n/i18n.o
 
 compile-infrastructure-json : sources/infrastructure/json/json.o \
                               sources/infrastructure/json/json-convert.o \
@@ -421,6 +429,7 @@ link : compile
 	sources/infrastructure/http/http-intern.o \
 	sources/infrastructure/http/http-toplevel.o \
 	sources/infrastructure/http/main.o \
+	sources/infrastructure/i18n/i18n.o \
 	sources/infrastructure/json/json.o \
 	sources/infrastructure/json/json-convert.o \
 	sources/infrastructure/json/json-format.o \
