@@ -39,3 +39,37 @@
     element-value-procedure
     =
     number-hash))
+
+;; hashes elements according to their string key
+;; elements are required to have unique keys
+;; returns a hash table such as:
+;;  ["a"]: alice
+;;  ["b"]: bob
+(define (hash-with-unique-string-keys
+          elements
+          element-key-procedure
+          element-value-procedure)
+
+  (hash-with-unique-keys
+    elements
+    element-key-procedure
+    element-value-procedure
+    string=?
+    string-hash))
+
+;; hashes elements according to their string key
+;; elements are permitted to share keys
+;; returns a hash table such as:
+;;  ["a"]: '(alice bob)
+;;  ["b"]: '(carl)
+(define (hash-with-shared-string-keys
+          elements
+          element-key-procedure
+          element-value-procedure)
+
+  (hash-with-shared-keys
+    elements
+    element-key-procedure
+    element-value-procedure
+    string=?
+    string-hash))

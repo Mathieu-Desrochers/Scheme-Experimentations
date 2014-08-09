@@ -107,6 +107,18 @@ __result__
 
     "13:54:27"
 
+time->string-without-seconds
+----------------------------
+Formats a time under the format HH:MM.
+
+__date__
+
+    (make-time 13 54 27)
+
+__result__
+
+    "13:54"
+
 day-of-week->string
 -------------------
 Formats a day of week to string.

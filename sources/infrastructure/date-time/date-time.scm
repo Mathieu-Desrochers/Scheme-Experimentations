@@ -94,6 +94,17 @@
     (time-second time)
     "%H:%M:%S"))
 
+;; serializes a time to string without seconds
+(define (time->string-without-seconds time)
+  (format-date-time
+    0
+    0
+    0
+    (time-hour time)
+    (time-minute time)
+    0
+    "%H:%M"))
+
 ;; serializes a day of week to string
 (define (day-of-week->string day-of-week)
   (day-of-week-name day-of-week))

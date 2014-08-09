@@ -1,7 +1,7 @@
 
 hash-with-unique-numeric-keys
 -----------------------------
-Hashes a set of elements that are required to have unique numeric keys.
+Hashes a set of elements that have unique numeric keys.
 
 __elements__  
 The list of elements.
@@ -30,7 +30,7 @@ A hash table.
 
 hash-with-unique-string-keys
 ----------------------------
-Hashes a set of elements that are required to have unique string keys.
+Hashes a set of elements that have unique string keys.
 
 __elements__  
 The list of elements.
@@ -59,7 +59,7 @@ A hash table.
 
 hash-with-shared-numeric-keys
 -----------------------------
-Hashes a set of elements that are permitted to share numeric keys.
+Hashes a set of elements that share numeric keys.
 
 __elements__  
 The list of elements.
@@ -90,7 +90,7 @@ sharing a common key are grouped into lists.
 
 hash-with-shared-string-keys
 ----------------------------
-Hashes a set of elements that are permitted to share string keys.
+Hashes a set of elements that share string keys.
 
 __elements__  
 The list of elements.

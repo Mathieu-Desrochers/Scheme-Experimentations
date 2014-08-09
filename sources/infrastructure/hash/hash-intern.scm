@@ -17,7 +17,7 @@
           (make-hash-table
             element-equal?
             element-hash)))
-    
+
     ;; hash the elements
     (map
       (lambda (element)
