@@ -1,4 +1,6 @@
 
+(use srfi-13)
+
 (declare (unit i18n))
 
 (declare (uses date-time))
@@ -15,6 +17,57 @@
           string-fr)
   (cond ((equal? culture "en") string-en)
         ((equal? culture "fr") string-fr)))
+
+;; localizes an amount of money
+(define (i18n-localize-money culture number-of-cents)
+
+  ;; localize the separators
+  (let ((thousand-separator
+          (cond ((equal? culture "en") ",")
+                ((equal? culture "fr") " ")))
+        (decimal-separator
+          (cond ((equal? culture "en") ".")
+                ((equal? culture "fr") ","))))
+
+    ;; converts a number to a padded string
+    (let ((number->padded-string
+            (lambda (number padding-length)
+              (string-append
+                (make-string (- padding-length (string-length (number->string number))) #\0)
+                (number->string number)))))
+
+      ;; localizes a number of dollars
+      (letrec ((i18n-localize-dollars-inner
+                  (lambda (number-of-dollars accumulator)
+
+                    ;; check if there are dollars left
+                    (if (>= number-of-dollars 1)
+
+                      ;; concatenate a new block of a thousand dollars
+                      (i18n-localize-dollars-inner
+                        (quotient number-of-dollars 1000)
+                        (if (>= (quotient number-of-dollars 1000) 1)
+                          (string-append
+                            thousand-separator
+                            (number->padded-string (remainder number-of-dollars 1000) 3)
+                            accumulator)
+                          (string-append
+                            (number->string (remainder number-of-dollars 1000))
+                            accumulator)))
+
+                      ;; return the accumulated dollars
+                      accumulator))))
+
+        ;; localize the money amount
+        (let ((localized-dollars (i18n-localize-dollars-inner (quotient number-of-cents 100) ""))
+              (localized-cents (number->padded-string (remainder number-of-cents 100) 2)))
+
+          ;; assemble the results
+          (string-append
+            (if (> (string-length localized-dollars) 0) localized-dollars "0")
+            decimal-separator
+            localized-cents
+            " $"))))))
 
 ;; localizes a day-of-week
 (define (i18n-day-of-week->string culture day-of-week)

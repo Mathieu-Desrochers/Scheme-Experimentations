@@ -19,6 +19,28 @@
             ((>= partial-units 0.25) "\\nicefrac{1}{4}")
             (else "")))))
 
+;; escapes the latex characters in a string
+(define (latex-escape string)
+  (letrec ((latex-escape-inner
+              (lambda (string accumulator)
+                (if (> (string-length string) 0)
+                  (latex-escape-inner
+                    (string-drop string 1)
+                    (string-append
+                      accumulator
+                      (cond ((equal? (string-take string 1) "#") "\\#")
+                            ((equal? (string-take string 1) "$") "\\$")
+                            ((equal? (string-take string 1) "%") "\\%")
+                            ((equal? (string-take string 1) "\\") "\\textbackslash{}")
+                            ((equal? (string-take string 1) "^") "\\textasciicircum{}")
+                            ((equal? (string-take string 1) "_") "\\_")
+                            ((equal? (string-take string 1) "{") "\\{")
+                            ((equal? (string-take string 1) "}") "\\}")
+                            ((equal? (string-take string 1) "~") "\\textasciitilde{}")
+                            (else (string-take string 1)))))
+                  accumulator))))
+    (latex-escape-inner string "")))
+
 ;; returns the pdf compiled from a latex source
 (define (latex-print-pdf latex-source)
 
