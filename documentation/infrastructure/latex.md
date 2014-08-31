@@ -28,6 +28,25 @@ The escaped string.
 
     "100.00\\$"
 
+latex-single-sentence-source
+----------------------------
+Returns a latex source containing a single sentence.
+
+__sentence__  
+The sentence.
+
+    "The report contains no data."
+
+__result__  
+The escaped string.
+
+    "\\documentclass{article}
+     \\begin{document}
+     ...
+     The report contains no data.
+     ...
+     \\end{document}"
+
 latex-print-pdf
 ---------------
 Compiles the specified latex source to pdf.

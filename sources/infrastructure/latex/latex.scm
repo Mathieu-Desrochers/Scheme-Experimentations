@@ -41,6 +41,16 @@
                   accumulator))))
     (latex-escape-inner string "")))
 
+;; returns a latex source containing a single sentence
+(define (latex-single-sentence-source sentence)
+  (string-append
+    "\\documentclass{article}\n"
+    "\\usepackage[utf8]{inputenc}\n"
+    "\\begin{document}\n"
+    (latex-escape
+      sentence)
+    "\\end{document}"))
+
 ;; returns the pdf compiled from a latex source
 (define (latex-print-pdf latex-source)
 
