@@ -38,7 +38,7 @@ The sentence.
     "The report contains no data."
 
 __result__  
-The escaped string.
+The latex source.
 
     "\\documentclass{article}
      \\begin{document}
