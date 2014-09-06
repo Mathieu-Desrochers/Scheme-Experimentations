@@ -70,7 +70,7 @@
         (map
           (lambda (column)
             (let ((downgrade-false-to-zero (eq? (column-type column) 'boolean)))
-              `(sql-downgrade-value 
+              `(sql-downgrade-value
                 (,(symbol-append row-symbol '- (column-symbol column)) ,row-symbol)
                 ,downgrade-false-to-zero)))
           columns))
@@ -94,50 +94,62 @@
 
           ;; inserts a row
           (define (,(symbol-append table-symbol '-insert) sql-connection ,row-symbol)
-            (sql-execute sql-connection
+            (sql-execute
+              sql-connection
               ,(string-append
                 "INSERT INTO \"" table-name "\" (" (join-columns-name value-columns) ") "
                 "VALUES (" (join-columns-variable value-columns) ");")
-              ,@(sql-downgrade-row-values row-symbol value-columns))
+              (list
+                ,@(sql-downgrade-row-values row-symbol value-columns)))
             (caar
-              (sql-read sql-connection
-                "SELECT last_insert_rowid();")))
+              (sql-read
+                sql-connection
+                "SELECT last_insert_rowid();"
+                (list))))
 
           ;; selects a row by id
           (define (,(symbol-append table-symbol '-select-by- (column-symbol id-column)) sql-connection ,(column-symbol id-column))
             (map ,(make-row-from-sql-read-result row-symbol columns)
-              (sql-read sql-connection
+              (sql-read
+                sql-connection
                 ,(string-append
                   "SELECT * "
                   "FROM \"" table-name "\" "
                   "WHERE \"" (column-name id-column) "\" = ?1;")
-                ,(column-symbol id-column))))
+                (list
+                  ,(column-symbol id-column)))))
 
           ;; selects all rows
           (define (,(symbol-append table-symbol '-select-all) sql-connection)
             (map ,(make-row-from-sql-read-result row-symbol columns)
-              (sql-read sql-connection
+              (sql-read
+                sql-connection
                 ,(string-append
                   "SELECT * "
-                  "FROM \"" table-name "\";"))))
+                  "FROM \"" table-name "\";")
+                (list))))
 
           ;; updates a row
           (define (,(symbol-append table-symbol '-update) sql-connection ,row-symbol)
-            (sql-execute sql-connection
+            (sql-execute
+              sql-connection
               ,(string-append
                 "UPDATE \"" table-name "\" "
                 "SET " (join-columns-variable-assignation value-columns 2)
                 "WHERE \"" (column-name id-column) "\" = ?1;")
-              ,@(sql-downgrade-row-values row-symbol columns)))
+              (list
+                ,@(sql-downgrade-row-values row-symbol columns))))
 
           ;; deletes a row
           (define (,(symbol-append table-symbol '-delete) sql-connection ,row-symbol)
-            (sql-execute sql-connection
+            (sql-execute
+              sql-connection
               ,(string-append
                 "DELETE "
                 "FROM \"" table-name "\" "
                 "WHERE \"" (column-name id-column) "\" = ?1;")
-              (,(symbol-append row-symbol '- (column-symbol id-column)) ,row-symbol)))
+              (list
+                (,(symbol-append row-symbol '- (column-symbol id-column)) ,row-symbol))))
 
           ;; selects based on custom statements
           ;; always downgrade false to zero, considering
@@ -151,14 +163,16 @@
                     (downgrade-false-to-zero #t))
                 `(define (,custom-select-symbol sql-connection ,@custom-select-parameters)
                   (map ,(make-row-from-sql-read-result row-symbol columns)
-                    (sql-read sql-connection
+                    (sql-read
+                      sql-connection
                       ,custom-select-sql
-                      ,@(map
-                        (lambda (custom-select-parameter)
-                          `(sql-downgrade-value
-                            ,custom-select-parameter
-                            ,downgrade-false-to-zero))
-                        custom-select-parameters))))))
+                      (list
+                        ,@(map
+                          (lambda (custom-select-parameter)
+                            `(sql-downgrade-value
+                              ,custom-select-parameter
+                              ,downgrade-false-to-zero))
+                          custom-select-parameters)))))))
             custom-selects)
 
           ;; executes based on custom statements
@@ -168,7 +182,9 @@
                     (custom-execute-sql (cadr custom-execute))
                     (custom-execute-parameters (cddr custom-execute)))
                 `(define (,custom-execute-symbol sql-connection ,@custom-execute-parameters)
-                  (sql-execute sql-connection
+                  (sql-execute
+                    sql-connection
                     ,custom-execute-sql
-                    ,@custom-execute-parameters))))
+                    (list
+                      ,@custom-execute-parameters)))))
             custom-executes))))))

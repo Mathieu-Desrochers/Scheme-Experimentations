@@ -33,40 +33,40 @@
 
 ;; enables foreign keys enforcement
 (define (sql-enable-foreign-keys sql-connection)
-  (sql-execute sql-connection "PRAGMA foreign_keys = ON;"))
+  (sql-execute sql-connection "PRAGMA foreign_keys = ON;" (list)))
 
 ;; disables all synchronous disk writes
 (define (sql-disable-synchronous-writes sql-connection)
-  (sql-execute sql-connection "PRAGMA synchronous = OFF;"))
+  (sql-execute sql-connection "PRAGMA synchronous = OFF;" (list)))
 
 ;; executes a procedure within a transaction
 ;; the transaction is automatically rollbacked if an exception occurs
 (define (within-sql-transaction sql-connection procedure)
-  (sql-execute sql-connection "BEGIN TRANSACTION;")
+  (sql-execute sql-connection "BEGIN TRANSACTION;" (list))
   (handle-exceptions
     exception
     (begin
       (with-exception-hiding
         (lambda ()
-          (sql-execute sql-connection "ROLLBACK TRANSACTION;")))
+          (sql-execute sql-connection "ROLLBACK TRANSACTION;" (list))))
       (abort exception))
     (procedure)
-    (sql-execute sql-connection "COMMIT TRANSACTION;")))
+    (sql-execute sql-connection "COMMIT TRANSACTION;" (list))))
 
 ;; explicitly begins a transaction
 (define (sql-begin-transaction sql-connection)
-  (sql-execute sql-connection "BEGIN TRANSACTION;"))
+  (sql-execute sql-connection "BEGIN TRANSACTION;" (list)))
 
 ;; explicitly commits a transaction
 (define (sql-commit-transaction sql-connection)
-  (sql-execute sql-connection "COMMIT TRANSACTION;"))
+  (sql-execute sql-connection "COMMIT TRANSACTION;" (list)))
 
 ;; explicitly rollbacks a transaction
 (define (sql-rollback-transaction sql-connection)
-  (sql-execute sql-connection "ROLLBACK TRANSACTION;"))
+  (sql-execute sql-connection "ROLLBACK TRANSACTION;" (list)))
 
 ;; executes a sql statement
-(define (sql-execute sql-connection statement . parameter-values)
+(define (sql-execute sql-connection statement parameter-values)
   (let ((sqlite3* (sql-connection-sqlite3* sql-connection)))
     (with-sqlite3-stmt* sqlite3* statement parameter-values
       (lambda (sqlite3-stmt*)
@@ -75,7 +75,7 @@
             (abort (string-append "failed to step statement " statement))))))))
 
 ;; executes a sql statement that returns rows
-(define (sql-read sql-connection statement . parameter-values)
+(define (sql-read sql-connection statement parameter-values)
   (let ((sqlite3* (sql-connection-sqlite3* sql-connection)))
     (with-sqlite3-stmt* sqlite3* statement parameter-values
       (lambda (sqlite3-stmt*)
