@@ -59,6 +59,7 @@ sources/core/services/delete-customer-service.o : sources/core/services/delete-c
 	csc -c \
 	-extend sources/macros/core/services/define-request.scm \
 	-extend sources/macros/core/services/define-response.scm \
+	-extend sources/macros/core/services/structure.scm \
 	sources/core/services/delete-customer-service.scm -o \
 	sources/core/services/delete-customer-service.o
 
@@ -66,6 +67,7 @@ sources/core/services/get-customer-service.o : sources/core/services/get-custome
 	csc -c \
 	-extend sources/macros/core/services/define-request.scm \
 	-extend sources/macros/core/services/define-response.scm \
+	-extend sources/macros/core/services/structure.scm \
 	sources/core/services/get-customer-service.scm -o \
 	sources/core/services/get-customer-service.o
 
@@ -73,6 +75,7 @@ sources/core/services/get-shipping-addresses-service.o : sources/core/services/g
 	csc -c \
 	-extend sources/macros/core/services/define-request.scm \
 	-extend sources/macros/core/services/define-response.scm \
+	-extend sources/macros/core/services/structure.scm \
 	sources/core/services/get-shipping-addresses-service.scm -o \
 	sources/core/services/get-shipping-addresses-service.o
 
@@ -80,6 +83,7 @@ sources/core/services/new-customer-service.o : sources/core/services/new-custome
 	csc -c \
 	-extend sources/macros/core/services/define-request.scm \
 	-extend sources/macros/core/services/define-response.scm \
+	-extend sources/macros/core/services/structure.scm \
 	sources/core/services/new-customer-service.scm -o \
 	sources/core/services/new-customer-service.o
 
@@ -87,6 +91,7 @@ sources/core/services/new-shipping-address-service.o : sources/core/services/new
 	csc -c \
 	-extend sources/macros/core/services/define-request.scm \
 	-extend sources/macros/core/services/define-response.scm \
+	-extend sources/macros/core/services/structure.scm \
 	sources/core/services/new-shipping-address-service.scm -o \
 	sources/core/services/new-shipping-address-service.o
 
@@ -94,6 +99,7 @@ sources/core/services/update-shipping-address-service.o : sources/core/services/
 	csc -c \
 	-extend sources/macros/core/services/define-request.scm \
 	-extend sources/macros/core/services/define-response.scm \
+	-extend sources/macros/core/services/structure.scm \
 	sources/core/services/update-shipping-address-service.scm -o \
 	sources/core/services/update-shipping-address-service.o
 
