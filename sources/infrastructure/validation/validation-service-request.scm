@@ -17,7 +17,7 @@
       (iota (length value)))))
 
 ;; validates a list and its elements
-(define 
+(define
   (validate-list-and-elements
     field-prefix
     field-symbol

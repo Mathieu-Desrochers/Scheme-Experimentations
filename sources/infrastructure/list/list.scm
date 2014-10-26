@@ -315,6 +315,8 @@
   (reverse
     (list-filtered-index-inner
       elements
+      element-value-procedure
+      filter-procedure
       0
       (list))))
 

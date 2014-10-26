@@ -148,6 +148,8 @@
 ;; whose value matches a filter
 (define (list-filtered-index-inner
           elements
+          element-value-procedure
+          filter-procedure
           index
           result)
   (if (null? elements)
@@ -155,10 +157,14 @@
     (if (filter-procedure (element-value-procedure (car elements)))
       (list-filtered-index-inner
         (cdr elements)
+        element-value-procedure
+        filter-procedure
         (+ index 1)
         (cons index result))
       (list-filtered-index-inner
         (cdr elements)
+        element-value-procedure
+        filter-procedure
         (+ index 1)
         result))))
 
