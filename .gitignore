@@ -7,4 +7,5 @@
 *.o
 *.slo
 *.so
-scheme
+scheme-experimentations-bindings-http
+scheme-experimentations-tests

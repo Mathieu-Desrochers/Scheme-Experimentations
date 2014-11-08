@@ -4,7 +4,8 @@ make : compile ctags link
 compile : compile-bindings \
           compile-core \
           compile-foreign-interfaces \
-          compile-infrastructure
+          compile-infrastructure \
+          compile-tests
 
 compile-bindings : compile-bindings-http
 
@@ -16,32 +17,32 @@ compile-bindings-http : sources/bindings/http/delete-customer-service-http-bindi
                         sources/bindings/http/update-shipping-address-service-http-binding.o
 
 sources/bindings/http/delete-customer-service-http-binding.o : sources/bindings/http/delete-customer-service-http-binding.scm
-	csc -c -extend sources/macros/bindings/http/define-http-binding.scm \
+	csc -c -extend macros/bindings/http/define-http-binding.scm \
 	sources/bindings/http/delete-customer-service-http-binding.scm -o \
 	sources/bindings/http/delete-customer-service-http-binding.o
 
 sources/bindings/http/get-customer-service-http-binding.o : sources/bindings/http/get-customer-service-http-binding.scm
-	csc -c -extend sources/macros/bindings/http/define-http-binding.scm \
+	csc -c -extend macros/bindings/http/define-http-binding.scm \
 	sources/bindings/http/get-customer-service-http-binding.scm -o \
 	sources/bindings/http/get-customer-service-http-binding.o
 
 sources/bindings/http/get-shipping-addresses-service-http-binding.o : sources/bindings/http/get-shipping-addresses-service-http-binding.scm
-	csc -c -extend sources/macros/bindings/http/define-http-binding.scm \
+	csc -c -extend macros/bindings/http/define-http-binding.scm \
 	sources/bindings/http/get-shipping-addresses-service-http-binding.scm -o \
 	sources/bindings/http/get-shipping-addresses-service-http-binding.o
 
 sources/bindings/http/new-customer-service-http-binding.o : sources/bindings/http/new-customer-service-http-binding.scm
-	csc -c -extend sources/macros/bindings/http/define-http-binding.scm \
+	csc -c -extend macros/bindings/http/define-http-binding.scm \
 	sources/bindings/http/new-customer-service-http-binding.scm -o \
 	sources/bindings/http/new-customer-service-http-binding.o
 
 sources/bindings/http/new-shipping-address-service-http-binding.o : sources/bindings/http/new-shipping-address-service-http-binding.scm
-	csc -c -extend sources/macros/bindings/http/define-http-binding.scm \
+	csc -c -extend macros/bindings/http/define-http-binding.scm \
 	sources/bindings/http/new-shipping-address-service-http-binding.scm -o \
 	sources/bindings/http/new-shipping-address-service-http-binding.o
 
 sources/bindings/http/update-shipping-address-service-http-binding.o : sources/bindings/http/update-shipping-address-service-http-binding.scm
-	csc -c -extend sources/macros/bindings/http/define-http-binding.scm \
+	csc -c -extend macros/bindings/http/define-http-binding.scm \
 	sources/bindings/http/update-shipping-address-service-http-binding.scm -o \
 	sources/bindings/http/update-shipping-address-service-http-binding.o
 
@@ -57,49 +58,49 @@ compile-core-services : sources/core/services/delete-customer-service.o \
 
 sources/core/services/delete-customer-service.o : sources/core/services/delete-customer-service.scm
 	csc -c \
-	-extend sources/macros/core/services/define-request.scm \
-	-extend sources/macros/core/services/define-response.scm \
-	-extend sources/macros/core/services/structure.scm \
+	-extend macros/core/services/define-request.scm \
+	-extend macros/core/services/define-response.scm \
+	-extend macros/core/services/structure.scm \
 	sources/core/services/delete-customer-service.scm -o \
 	sources/core/services/delete-customer-service.o
 
 sources/core/services/get-customer-service.o : sources/core/services/get-customer-service.scm
 	csc -c \
-	-extend sources/macros/core/services/define-request.scm \
-	-extend sources/macros/core/services/define-response.scm \
-	-extend sources/macros/core/services/structure.scm \
+	-extend macros/core/services/define-request.scm \
+	-extend macros/core/services/define-response.scm \
+	-extend macros/core/services/structure.scm \
 	sources/core/services/get-customer-service.scm -o \
 	sources/core/services/get-customer-service.o
 
 sources/core/services/get-shipping-addresses-service.o : sources/core/services/get-shipping-addresses-service.scm
 	csc -c \
-	-extend sources/macros/core/services/define-request.scm \
-	-extend sources/macros/core/services/define-response.scm \
-	-extend sources/macros/core/services/structure.scm \
+	-extend macros/core/services/define-request.scm \
+	-extend macros/core/services/define-response.scm \
+	-extend macros/core/services/structure.scm \
 	sources/core/services/get-shipping-addresses-service.scm -o \
 	sources/core/services/get-shipping-addresses-service.o
 
 sources/core/services/new-customer-service.o : sources/core/services/new-customer-service.scm
 	csc -c \
-	-extend sources/macros/core/services/define-request.scm \
-	-extend sources/macros/core/services/define-response.scm \
-	-extend sources/macros/core/services/structure.scm \
+	-extend macros/core/services/define-request.scm \
+	-extend macros/core/services/define-response.scm \
+	-extend macros/core/services/structure.scm \
 	sources/core/services/new-customer-service.scm -o \
 	sources/core/services/new-customer-service.o
 
 sources/core/services/new-shipping-address-service.o : sources/core/services/new-shipping-address-service.scm
 	csc -c \
-	-extend sources/macros/core/services/define-request.scm \
-	-extend sources/macros/core/services/define-response.scm \
-	-extend sources/macros/core/services/structure.scm \
+	-extend macros/core/services/define-request.scm \
+	-extend macros/core/services/define-response.scm \
+	-extend macros/core/services/structure.scm \
 	sources/core/services/new-shipping-address-service.scm -o \
 	sources/core/services/new-shipping-address-service.o
 
 sources/core/services/update-shipping-address-service.o : sources/core/services/update-shipping-address-service.scm
 	csc -c \
-	-extend sources/macros/core/services/define-request.scm \
-	-extend sources/macros/core/services/define-response.scm \
-	-extend sources/macros/core/services/structure.scm \
+	-extend macros/core/services/define-request.scm \
+	-extend macros/core/services/define-response.scm \
+	-extend macros/core/services/structure.scm \
 	sources/core/services/update-shipping-address-service.scm -o \
 	sources/core/services/update-shipping-address-service.o
 
@@ -107,12 +108,12 @@ compile-core-tables : sources/core/tables/customers-table.o \
                       sources/core/tables/shipping-addresses-table.o
 
 sources/core/tables/customers-table.o : sources/core/tables/customers-table.scm
-	csc -c -extend sources/macros/core/tables/define-table.scm \
+	csc -c -extend macros/core/tables/define-table.scm \
 	sources/core/tables/customers-table.scm -o \
 	sources/core/tables/customers-table.o
 
 sources/core/tables/shipping-addresses-table.o : sources/core/tables/shipping-addresses-table.scm
-	csc -c -extend sources/macros/core/tables/define-table.scm \
+	csc -c -extend macros/core/tables/define-table.scm \
 	sources/core/tables/shipping-addresses-table.scm -o \
 	sources/core/tables/shipping-addresses-table.o
 
@@ -181,6 +182,7 @@ compile-infrastructure : compile-infrastructure-compare \
                          compile-infrastructure-regex \
                          compile-infrastructure-services \
                          compile-infrastructure-sql \
+                         compile-infrastructure-test \
                          compile-infrastructure-validation \
                          compile-infrastructure-validation-service-request
 
@@ -380,6 +382,19 @@ sources/infrastructure/sql/sql-intern.o : sources/infrastructure/sql/sql-intern.
 	sources/infrastructure/sql/sql-intern.scm -o \
 	sources/infrastructure/sql/sql-intern.o
 
+compile-infrastructure-test : sources/infrastructure/test/test.o \
+                              sources/infrastructure/test/test-runner.o
+
+sources/infrastructure/test/test.o : sources/infrastructure/test/test.scm
+	csc -c \
+	sources/infrastructure/test/test.scm -o \
+	sources/infrastructure/test/test.o
+
+sources/infrastructure/test/test-runner.o : sources/infrastructure/test/test-runner.scm
+	csc -c \
+	sources/infrastructure/test/test-runner.scm -o \
+	sources/infrastructure/test/test-runner.o
+
 compile-infrastructure-validation : sources/infrastructure/validation/validation.o
 
 sources/infrastructure/validation/validation.o : sources/infrastructure/validation/validation.scm
@@ -394,22 +409,71 @@ sources/infrastructure/validation/validation-service-request.o : sources/infrast
 	sources/infrastructure/validation/validation-service-request.scm -o \
 	sources/infrastructure/validation/validation-service-request.o
 
-ctags : compile
-	ctags -R
+compile-tests : compile-tests-services
 
-link : compile
+compile-tests-services : tests/core/services/delete-customer-service-test.o
+
+tests/core/services/delete-customer-service-test.o : tests/core/services/delete-customer-service-test.scm \
+                                                     macros/infrastructure/define-test.scm
+	csc -c -extend macros/infrastructure/define-test.scm \
+	tests/core/services/delete-customer-service-test.scm -o \
+	tests/core/services/delete-customer-service-test.o
+
+ctags : compile
+
+link : link-bindings \
+       link-core \
+       link-foreign-interfaces \
+       link-infrastructure \
+       link-tests
+
+link-bindings : build/scheme-experimentations-bindings-http
+
+build/scheme-experimentations-bindings-http : build/scheme-experimentations-core.o \
+                                              build/scheme-experimentations-foreign-interfaces.o \
+                                              build/scheme-experimentations-infrastructure.o \
+                                              sources/bindings/http/delete-customer-service-http-binding.o \
+                                              sources/bindings/http/get-customer-service-http-binding.o \
+                                              sources/bindings/http/get-shipping-addresses-service-http-binding.o \
+                                              sources/bindings/http/new-customer-service-http-binding.o \
+                                              sources/bindings/http/new-shipping-address-service-http-binding.o \
+                                              sources/bindings/http/update-shipping-address-service-http-binding.o \
+                                              sources/infrastructure/http/http.o \
+                                              sources/infrastructure/http/http-intern.o \
+                                              sources/infrastructure/http/http-toplevel.o \
+                                              sources/infrastructure/http/main.o
 	csc \
 	-lfcgi \
 	-lhungarian \
 	-ljansson \
 	-lpcre \
 	-lsqlite3 \
+	build/scheme-experimentations-core.o \
+	build/scheme-experimentations-foreign-interfaces.o \
+	build/scheme-experimentations-infrastructure.o \
 	sources/bindings/http/delete-customer-service-http-binding.o \
 	sources/bindings/http/get-customer-service-http-binding.o \
 	sources/bindings/http/get-shipping-addresses-service-http-binding.o \
 	sources/bindings/http/new-customer-service-http-binding.o \
 	sources/bindings/http/new-shipping-address-service-http-binding.o \
 	sources/bindings/http/update-shipping-address-service-http-binding.o \
+	sources/infrastructure/http/http.o \
+	sources/infrastructure/http/http-intern.o \
+	sources/infrastructure/http/http-toplevel.o \
+	sources/infrastructure/http/main.o \
+	-o build/scheme-experimentations-bindings-http
+
+link-core : build/scheme-experimentations-core.o
+
+build/scheme-experimentations-core.o : sources/core/services/delete-customer-service.o \
+                                       sources/core/services/get-customer-service.o \
+                                       sources/core/services/get-shipping-addresses-service.o \
+                                       sources/core/services/new-customer-service.o \
+                                       sources/core/services/new-shipping-address-service.o \
+                                       sources/core/services/update-shipping-address-service.o \
+                                       sources/core/tables/customers-table.o \
+                                       sources/core/tables/shipping-addresses-table.o
+	ld --relocatable \
 	sources/core/services/delete-customer-service.o \
 	sources/core/services/get-customer-service.o \
 	sources/core/services/get-shipping-addresses-service.o \
@@ -418,12 +482,57 @@ link : compile
 	sources/core/services/update-shipping-address-service.o \
 	sources/core/tables/customers-table.o \
 	sources/core/tables/shipping-addresses-table.o \
+	-o build/scheme-experimentations-core.o
+
+link-foreign-interfaces : build/scheme-experimentations-foreign-interfaces.o
+
+build/scheme-experimentations-foreign-interfaces.o : sources/foreign-interfaces/fastcgi.o \
+                                                     sources/foreign-interfaces/hungarian.o \
+                                                     sources/foreign-interfaces/jansson.o \
+                                                     sources/foreign-interfaces/pcre.o \
+                                                     sources/foreign-interfaces/scdtl.o \
+                                                     sources/foreign-interfaces/sqlite.o
+	ld --relocatable \
 	sources/foreign-interfaces/fastcgi.o \
 	sources/foreign-interfaces/hungarian.o \
 	sources/foreign-interfaces/jansson.o \
 	sources/foreign-interfaces/pcre.o \
 	sources/foreign-interfaces/scdtl.o \
 	sources/foreign-interfaces/sqlite.o \
+	-o build/scheme-experimentations-foreign-interfaces.o
+
+link-infrastructure : build/scheme-experimentations-infrastructure.o
+
+build/scheme-experimentations-infrastructure.o : sources/infrastructure/compare/compare.o \
+                                                 sources/infrastructure/date-time/date-time.o \
+                                                 sources/infrastructure/date-time/date-time-intern.o \
+                                                 sources/infrastructure/debug/debug.o \
+                                                 sources/infrastructure/exceptions/exceptions.o \
+                                                 sources/infrastructure/hash/hash.o \
+                                                 sources/infrastructure/hash/hash-intern.o \
+                                                 sources/infrastructure/i18n/i18n.o \
+                                                 sources/infrastructure/json/json.o \
+                                                 sources/infrastructure/json/json-convert.o \
+                                                 sources/infrastructure/json/json-format.o \
+                                                 sources/infrastructure/json/json-intern.o \
+                                                 sources/infrastructure/json/json-parse.o \
+                                                 sources/infrastructure/latex/latex.o \
+                                                 sources/infrastructure/list/list.o \
+                                                 sources/infrastructure/list/list-intern.o \
+                                                 sources/infrastructure/math/math.o \
+                                                 sources/infrastructure/matrix/matrix.o \
+                                                 sources/infrastructure/matrix/matrix-intern.o \
+                                                 sources/infrastructure/records/records.o \
+                                                 sources/infrastructure/regex/regex.o \
+                                                 sources/infrastructure/regex/regex-intern.o \
+                                                 sources/infrastructure/services/services.o \
+                                                 sources/infrastructure/sql/sql.o \
+                                                 sources/infrastructure/sql/sql-convert.o \
+                                                 sources/infrastructure/sql/sql-intern.o \
+                                                 sources/infrastructure/test/test.o \
+                                                 sources/infrastructure/validation/validation.o \
+                                                 sources/infrastructure/validation/validation-service-request.o
+	ld --relocatable \
 	sources/infrastructure/compare/compare.o \
 	sources/infrastructure/date-time/date-time.o \
 	sources/infrastructure/date-time/date-time-intern.o \
@@ -431,10 +540,6 @@ link : compile
 	sources/infrastructure/exceptions/exceptions.o \
 	sources/infrastructure/hash/hash.o \
 	sources/infrastructure/hash/hash-intern.o \
-	sources/infrastructure/http/http.o \
-	sources/infrastructure/http/http-intern.o \
-	sources/infrastructure/http/http-toplevel.o \
-	sources/infrastructure/http/main.o \
 	sources/infrastructure/i18n/i18n.o \
 	sources/infrastructure/json/json.o \
 	sources/infrastructure/json/json-convert.o \
@@ -454,9 +559,30 @@ link : compile
 	sources/infrastructure/sql/sql.o \
 	sources/infrastructure/sql/sql-convert.o \
 	sources/infrastructure/sql/sql-intern.o \
+	sources/infrastructure/test/test.o \
 	sources/infrastructure/validation/validation.o \
 	sources/infrastructure/validation/validation-service-request.o \
-	-o scheme
+	-o build/scheme-experimentations-infrastructure.o
+
+link-tests : build/scheme-experimentations-tests
+
+build/scheme-experimentations-tests : build/scheme-experimentations-core.o \
+                                      build/scheme-experimentations-foreign-interfaces.o \
+                                      build/scheme-experimentations-infrastructure.o \
+                                      sources/infrastructure/test/test-runner.o \
+                                      tests/core/services/delete-customer-service-test.o
+	csc \
+	-lfcgi \
+	-lhungarian \
+	-ljansson \
+	-lpcre \
+	-lsqlite3 \
+	build/scheme-experimentations-core.o \
+	build/scheme-experimentations-foreign-interfaces.o \
+	build/scheme-experimentations-infrastructure.o \
+	sources/infrastructure/test/test-runner.o \
+	tests/core/services/delete-customer-service-test.o \
+	-o build/scheme-experimentations-tests
 
 install :
 	cp scheme /usr/local/apache2/api/
