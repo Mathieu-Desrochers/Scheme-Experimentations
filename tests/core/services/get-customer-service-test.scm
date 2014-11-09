@@ -1,14 +1,14 @@
 
-(declare (unit delete-customer-service-test))
+(declare (unit get-customer-service-test))
 
-(declare (uses delete-customer-service))
+(declare (uses get-customer-service))
 (declare (uses new-customer-service))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; test definition
 
 (define-test
-  delete-customer-service-test
+  get-customer-service-test
 
   (new-customer-service
     (make-new-customer-request
@@ -22,7 +22,16 @@
     (make-new-customer-response
       1))
 
-  (delete-customer-service
-    (make-delete-customer-request
+  (get-customer-service
+    (make-get-customer-request
       1)
-    (make-delete-customer-response)))
+    (make-get-customer-response
+      1
+      "Alice"
+      "Allisson"
+      #t
+      (make-get-customer-shipping-address-subresponse
+        1
+        "123 Sunny Street"
+        "Miami"
+        "Florida"))))

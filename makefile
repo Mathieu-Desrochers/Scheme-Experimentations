@@ -411,13 +411,48 @@ sources/infrastructure/validation/validation-service-request.o : sources/infrast
 
 compile-tests : compile-tests-services
 
-compile-tests-services : tests/core/services/delete-customer-service-test.o
+compile-tests-services : tests/core/services/delete-customer-service-test.o \
+                         tests/core/services/get-customer-service-test.o \
+                         tests/core/services/get-shipping-addresses-service-test.o \
+                         tests/core/services/new-customer-service-test.o \
+                         tests/core/services/new-shipping-address-service-test.o \
+                         tests/core/services/update-shipping-address-service-test.o
 
 tests/core/services/delete-customer-service-test.o : tests/core/services/delete-customer-service-test.scm \
                                                      macros/infrastructure/define-test.scm
 	csc -c -extend macros/infrastructure/define-test.scm \
 	tests/core/services/delete-customer-service-test.scm -o \
 	tests/core/services/delete-customer-service-test.o
+
+tests/core/services/get-customer-service-test.o : tests/core/services/get-customer-service-test.scm \
+                                                  macros/infrastructure/define-test.scm
+	csc -c -extend macros/infrastructure/define-test.scm \
+	tests/core/services/get-customer-service-test.scm -o \
+	tests/core/services/get-customer-service-test.o
+
+tests/core/services/get-shipping-addresses-service-test.o : tests/core/services/get-shipping-addresses-service-test.scm \
+                                                            macros/infrastructure/define-test.scm
+	csc -c -extend macros/infrastructure/define-test.scm \
+	tests/core/services/get-shipping-addresses-service-test.scm -o \
+	tests/core/services/get-shipping-addresses-service-test.o
+
+tests/core/services/new-customer-service-test.o : tests/core/services/new-customer-service-test.scm \
+                                                  macros/infrastructure/define-test.scm
+	csc -c -extend macros/infrastructure/define-test.scm \
+	tests/core/services/new-customer-service-test.scm -o \
+	tests/core/services/new-customer-service-test.o
+
+tests/core/services/new-shipping-address-service-test.o : tests/core/services/new-shipping-address-service-test.scm \
+                                                          macros/infrastructure/define-test.scm
+	csc -c -extend macros/infrastructure/define-test.scm \
+	tests/core/services/new-shipping-address-service-test.scm -o \
+	tests/core/services/new-shipping-address-service-test.o
+
+tests/core/services/update-shipping-address-service-test.o : tests/core/services/update-shipping-address-service-test.scm \
+                                                             macros/infrastructure/define-test.scm
+	csc -c -extend macros/infrastructure/define-test.scm \
+	tests/core/services/update-shipping-address-service-test.scm -o \
+	tests/core/services/update-shipping-address-service-test.o
 
 ctags : compile
 
@@ -427,30 +462,30 @@ link : link-bindings \
        link-infrastructure \
        link-tests
 
-link-bindings : build/scheme-experimentations-bindings-http
+link-bindings : scheme-experimentations-bindings-http
 
-build/scheme-experimentations-bindings-http : build/scheme-experimentations-core.o \
-                                              build/scheme-experimentations-foreign-interfaces.o \
-                                              build/scheme-experimentations-infrastructure.o \
-                                              sources/bindings/http/delete-customer-service-http-binding.o \
-                                              sources/bindings/http/get-customer-service-http-binding.o \
-                                              sources/bindings/http/get-shipping-addresses-service-http-binding.o \
-                                              sources/bindings/http/new-customer-service-http-binding.o \
-                                              sources/bindings/http/new-shipping-address-service-http-binding.o \
-                                              sources/bindings/http/update-shipping-address-service-http-binding.o \
-                                              sources/infrastructure/http/http.o \
-                                              sources/infrastructure/http/http-intern.o \
-                                              sources/infrastructure/http/http-toplevel.o \
-                                              sources/infrastructure/http/main.o
+scheme-experimentations-bindings-http : sources/core/core.o \
+                                        sources/foreign-interfaces/foreign-interfaces.o \
+                                        sources/infrastructure/infrastructure.o \
+                                        sources/bindings/http/delete-customer-service-http-binding.o \
+                                        sources/bindings/http/get-customer-service-http-binding.o \
+                                        sources/bindings/http/get-shipping-addresses-service-http-binding.o \
+                                        sources/bindings/http/new-customer-service-http-binding.o \
+                                        sources/bindings/http/new-shipping-address-service-http-binding.o \
+                                        sources/bindings/http/update-shipping-address-service-http-binding.o \
+                                        sources/infrastructure/http/http.o \
+                                        sources/infrastructure/http/http-intern.o \
+                                        sources/infrastructure/http/http-toplevel.o \
+                                        sources/infrastructure/http/main.o
 	csc \
 	-lfcgi \
 	-lhungarian \
 	-ljansson \
 	-lpcre \
 	-lsqlite3 \
-	build/scheme-experimentations-core.o \
-	build/scheme-experimentations-foreign-interfaces.o \
-	build/scheme-experimentations-infrastructure.o \
+	sources/core/core.o \
+	sources/foreign-interfaces/foreign-interfaces.o \
+	sources/infrastructure/infrastructure.o \
 	sources/bindings/http/delete-customer-service-http-binding.o \
 	sources/bindings/http/get-customer-service-http-binding.o \
 	sources/bindings/http/get-shipping-addresses-service-http-binding.o \
@@ -461,18 +496,18 @@ build/scheme-experimentations-bindings-http : build/scheme-experimentations-core
 	sources/infrastructure/http/http-intern.o \
 	sources/infrastructure/http/http-toplevel.o \
 	sources/infrastructure/http/main.o \
-	-o build/scheme-experimentations-bindings-http
+	-o scheme-experimentations-bindings-http
 
-link-core : build/scheme-experimentations-core.o
+link-core : sources/core/core.o
 
-build/scheme-experimentations-core.o : sources/core/services/delete-customer-service.o \
-                                       sources/core/services/get-customer-service.o \
-                                       sources/core/services/get-shipping-addresses-service.o \
-                                       sources/core/services/new-customer-service.o \
-                                       sources/core/services/new-shipping-address-service.o \
-                                       sources/core/services/update-shipping-address-service.o \
-                                       sources/core/tables/customers-table.o \
-                                       sources/core/tables/shipping-addresses-table.o
+sources/core/core.o : sources/core/services/delete-customer-service.o \
+                      sources/core/services/get-customer-service.o \
+                      sources/core/services/get-shipping-addresses-service.o \
+                      sources/core/services/new-customer-service.o \
+                      sources/core/services/new-shipping-address-service.o \
+                      sources/core/services/update-shipping-address-service.o \
+                      sources/core/tables/customers-table.o \
+                      sources/core/tables/shipping-addresses-table.o
 	ld --relocatable \
 	sources/core/services/delete-customer-service.o \
 	sources/core/services/get-customer-service.o \
@@ -482,16 +517,16 @@ build/scheme-experimentations-core.o : sources/core/services/delete-customer-ser
 	sources/core/services/update-shipping-address-service.o \
 	sources/core/tables/customers-table.o \
 	sources/core/tables/shipping-addresses-table.o \
-	-o build/scheme-experimentations-core.o
+	-o sources/core/core.o
 
-link-foreign-interfaces : build/scheme-experimentations-foreign-interfaces.o
+link-foreign-interfaces : sources/foreign-interfaces/foreign-interfaces.o
 
-build/scheme-experimentations-foreign-interfaces.o : sources/foreign-interfaces/fastcgi.o \
-                                                     sources/foreign-interfaces/hungarian.o \
-                                                     sources/foreign-interfaces/jansson.o \
-                                                     sources/foreign-interfaces/pcre.o \
-                                                     sources/foreign-interfaces/scdtl.o \
-                                                     sources/foreign-interfaces/sqlite.o
+sources/foreign-interfaces/foreign-interfaces.o : sources/foreign-interfaces/fastcgi.o \
+                                                  sources/foreign-interfaces/hungarian.o \
+                                                  sources/foreign-interfaces/jansson.o \
+                                                  sources/foreign-interfaces/pcre.o \
+                                                  sources/foreign-interfaces/scdtl.o \
+                                                  sources/foreign-interfaces/sqlite.o
 	ld --relocatable \
 	sources/foreign-interfaces/fastcgi.o \
 	sources/foreign-interfaces/hungarian.o \
@@ -499,39 +534,39 @@ build/scheme-experimentations-foreign-interfaces.o : sources/foreign-interfaces/
 	sources/foreign-interfaces/pcre.o \
 	sources/foreign-interfaces/scdtl.o \
 	sources/foreign-interfaces/sqlite.o \
-	-o build/scheme-experimentations-foreign-interfaces.o
+	-o sources/foreign-interfaces/foreign-interfaces.o
 
-link-infrastructure : build/scheme-experimentations-infrastructure.o
+link-infrastructure : sources/infrastructure/infrastructure.o
 
-build/scheme-experimentations-infrastructure.o : sources/infrastructure/compare/compare.o \
-                                                 sources/infrastructure/date-time/date-time.o \
-                                                 sources/infrastructure/date-time/date-time-intern.o \
-                                                 sources/infrastructure/debug/debug.o \
-                                                 sources/infrastructure/exceptions/exceptions.o \
-                                                 sources/infrastructure/hash/hash.o \
-                                                 sources/infrastructure/hash/hash-intern.o \
-                                                 sources/infrastructure/i18n/i18n.o \
-                                                 sources/infrastructure/json/json.o \
-                                                 sources/infrastructure/json/json-convert.o \
-                                                 sources/infrastructure/json/json-format.o \
-                                                 sources/infrastructure/json/json-intern.o \
-                                                 sources/infrastructure/json/json-parse.o \
-                                                 sources/infrastructure/latex/latex.o \
-                                                 sources/infrastructure/list/list.o \
-                                                 sources/infrastructure/list/list-intern.o \
-                                                 sources/infrastructure/math/math.o \
-                                                 sources/infrastructure/matrix/matrix.o \
-                                                 sources/infrastructure/matrix/matrix-intern.o \
-                                                 sources/infrastructure/records/records.o \
-                                                 sources/infrastructure/regex/regex.o \
-                                                 sources/infrastructure/regex/regex-intern.o \
-                                                 sources/infrastructure/services/services.o \
-                                                 sources/infrastructure/sql/sql.o \
-                                                 sources/infrastructure/sql/sql-convert.o \
-                                                 sources/infrastructure/sql/sql-intern.o \
-                                                 sources/infrastructure/test/test.o \
-                                                 sources/infrastructure/validation/validation.o \
-                                                 sources/infrastructure/validation/validation-service-request.o
+sources/infrastructure/infrastructure.o : sources/infrastructure/compare/compare.o \
+                                          sources/infrastructure/date-time/date-time.o \
+                                          sources/infrastructure/date-time/date-time-intern.o \
+                                          sources/infrastructure/debug/debug.o \
+                                          sources/infrastructure/exceptions/exceptions.o \
+                                          sources/infrastructure/hash/hash.o \
+                                          sources/infrastructure/hash/hash-intern.o \
+                                          sources/infrastructure/i18n/i18n.o \
+                                          sources/infrastructure/json/json.o \
+                                          sources/infrastructure/json/json-convert.o \
+                                          sources/infrastructure/json/json-format.o \
+                                          sources/infrastructure/json/json-intern.o \
+                                          sources/infrastructure/json/json-parse.o \
+                                          sources/infrastructure/latex/latex.o \
+                                          sources/infrastructure/list/list.o \
+                                          sources/infrastructure/list/list-intern.o \
+                                          sources/infrastructure/math/math.o \
+                                          sources/infrastructure/matrix/matrix.o \
+                                          sources/infrastructure/matrix/matrix-intern.o \
+                                          sources/infrastructure/records/records.o \
+                                          sources/infrastructure/regex/regex.o \
+                                          sources/infrastructure/regex/regex-intern.o \
+                                          sources/infrastructure/services/services.o \
+                                          sources/infrastructure/sql/sql.o \
+                                          sources/infrastructure/sql/sql-convert.o \
+                                          sources/infrastructure/sql/sql-intern.o \
+                                          sources/infrastructure/test/test.o \
+                                          sources/infrastructure/validation/validation.o \
+                                          sources/infrastructure/validation/validation-service-request.o
 	ld --relocatable \
 	sources/infrastructure/compare/compare.o \
 	sources/infrastructure/date-time/date-time.o \
@@ -562,30 +597,40 @@ build/scheme-experimentations-infrastructure.o : sources/infrastructure/compare/
 	sources/infrastructure/test/test.o \
 	sources/infrastructure/validation/validation.o \
 	sources/infrastructure/validation/validation-service-request.o \
-	-o build/scheme-experimentations-infrastructure.o
+	-o sources/infrastructure/infrastructure.o
 
-link-tests : build/scheme-experimentations-tests
+link-tests : scheme-experimentations-tests
 
-build/scheme-experimentations-tests : build/scheme-experimentations-core.o \
-                                      build/scheme-experimentations-foreign-interfaces.o \
-                                      build/scheme-experimentations-infrastructure.o \
-                                      sources/infrastructure/test/test-runner.o \
-                                      tests/core/services/delete-customer-service-test.o
+scheme-experimentations-tests : sources/core/core.o \
+                                sources/foreign-interfaces/foreign-interfaces.o \
+                                sources/infrastructure/infrastructure.o \
+                                sources/infrastructure/test/test-runner.o \
+                                tests/core/services/delete-customer-service-test.o \
+                                tests/core/services/get-customer-service-test.o \
+                                tests/core/services/get-shipping-addresses-service-test.o \
+                                tests/core/services/new-customer-service-test.o \
+                                tests/core/services/new-shipping-address-service-test.o \
+                                tests/core/services/update-shipping-address-service-test.o
 	csc \
 	-lfcgi \
 	-lhungarian \
 	-ljansson \
 	-lpcre \
 	-lsqlite3 \
-	build/scheme-experimentations-core.o \
-	build/scheme-experimentations-foreign-interfaces.o \
-	build/scheme-experimentations-infrastructure.o \
+	sources/core/core.o \
+	sources/foreign-interfaces/foreign-interfaces.o \
+	sources/infrastructure/infrastructure.o \
 	sources/infrastructure/test/test-runner.o \
 	tests/core/services/delete-customer-service-test.o \
-	-o build/scheme-experimentations-tests
+	tests/core/services/get-customer-service-test.o \
+	tests/core/services/get-shipping-addresses-service-test.o \
+	tests/core/services/new-customer-service-test.o \
+	tests/core/services/new-shipping-address-service-test.o \
+	tests/core/services/update-shipping-address-service-test.o \
+	-o scheme-experimentations-tests
 
 install :
-	cp scheme /usr/local/apache2/api/
+	cp scheme-experimentations-bindings-http /usr/local/apache2/api/
 
 tools : tools-chicken-scheme \
         tools-fastcgi \
@@ -697,7 +742,7 @@ apache-configuration :
 	echo "    Require all granted" >> /usr/local/apache2/conf/httpd.conf
 	echo "    SetHandler fcgid-script" >> /usr/local/apache2/conf/httpd.conf
 	echo "    Options +ExecCGI" >> /usr/local/apache2/conf/httpd.conf
-	echo "    FcgidWrapper /usr/local/apache2/api/scheme virtual" >> /usr/local/apache2/conf/httpd.conf
+	echo "    FcgidWrapper /usr/local/apache2/api/scheme-experimentations-bindings-http virtual" >> /usr/local/apache2/conf/httpd.conf
 	echo "</Directory>" >> /usr/local/apache2/conf/httpd.conf
 	echo "" >> /usr/local/apache2/conf/httpd.conf
 

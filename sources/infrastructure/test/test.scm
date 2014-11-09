@@ -1,4 +1,5 @@
 
+(use extras)
 (use srfi-1)
 (use srfi-13)
 
@@ -26,6 +27,9 @@
       ;; start a transaction
       (sql-begin-transaction sql-connection)
 
+      ;; provide feedback
+      (printf (string-append name "... "))
+
       ;; check if all the services
       ;; return their expected response
       (if (every
@@ -45,8 +49,8 @@
             test-steps)
 
         ;; provide feedback
-        (print (string-append name "... passed\n"))
-        (print (string-append name "... failed\n")))
+        (printf "passed\n")
+        (printf "failed\n"))
 
       ;; rollback the transaction
       (sql-rollback-transaction sql-connection))))

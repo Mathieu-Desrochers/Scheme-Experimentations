@@ -15,9 +15,9 @@
 ;; response definition
 
 (define-response get-shipping-addresses-response
-  (shipping-addresses list (shipping-address get-shipping-addresses-subresponse)))
+  (shipping-addresses list (shipping-address get-shipping-addresses-shipping-address-subresponse)))
 
-(define-response get-shipping-addresses-subresponse
+(define-response get-shipping-addresses-shipping-address-subresponse
   (shipping-address-id integer)
   (effective-date date)
   (street string)
@@ -45,7 +45,7 @@
       (make-get-shipping-addresses-response
         (map
           (lambda (shipping-address-row)
-            (make-get-shipping-addresses-subresponse
+            (make-get-shipping-addresses-shipping-address-subresponse
               (shipping-address-row-shipping-address-id shipping-address-row)
               (shipping-address-row-effective-date shipping-address-row)
               (shipping-address-row-street shipping-address-row)

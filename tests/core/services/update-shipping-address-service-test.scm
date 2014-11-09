@@ -1,14 +1,15 @@
 
-(declare (unit delete-customer-service-test))
+(declare (unit update-shipping-address-service-test))
 
-(declare (uses delete-customer-service))
+(declare (uses date-time))
 (declare (uses new-customer-service))
+(declare (uses update-shipping-address-service))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; test definition
 
 (define-test
-  delete-customer-service-test
+  update-shipping-address-service-test
 
   (new-customer-service
     (make-new-customer-request
@@ -22,7 +23,12 @@
     (make-new-customer-response
       1))
 
-  (delete-customer-service
-    (make-delete-customer-request
-      1)
-    (make-delete-customer-response)))
+  (update-shipping-address-service
+    (make-update-shipping-address-request
+      1
+      1
+      (date-now)
+      "456 Cloudy Boulevard"
+      "Seattle"
+      "Washington")
+    (make-update-shipping-address-response)))
