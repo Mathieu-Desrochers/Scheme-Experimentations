@@ -1,9 +1,16 @@
 
+(use srfi-1)
+(use srfi-69)
+
 (declare (unit new-shipping-address-service))
 
+(declare (uses compare))
 (declare (uses customers-table))
 (declare (uses date-time))
+(declare (uses hash))
+(declare (uses list))
 (declare (uses shipping-addresses-table))
+(declare (uses validation))
 (declare (uses validation-service-request))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -30,22 +37,25 @@
   ;; validate the request
   (validate-request new-shipping-address-request validate-new-shipping-address-request)
 
-  ;; validate the customer-id
-  (let* ((customer-id (new-shipping-address-request-customer-id new-shipping-address-request))
-         (customer-rows (customers-table-select-by-customer-id sql-connection customer-id)))
-    (when (null? customer-rows)
-      (abort-validation-error 'customer-id-unknown))
+  ;; select and validate the customer-row
+  (select-one-and-validate
+    (customer-row
+      customers-table-select-by-customer-id
+      (new-shipping-address-request-customer-id new-shipping-address-request))
+    (unknown-customer-id)
 
     ;; insert a shipping-address-row
     (let ((shipping-address-id
             (shipping-addresses-table-insert
               sql-connection
-              (make-shipping-address-row 0
-                customer-id
+              (make-shipping-address-row
+                0
+                (new-shipping-address-request-customer-id new-shipping-address-request)
                 (new-shipping-address-request-effective-date new-shipping-address-request)
                 (new-shipping-address-request-street new-shipping-address-request)
                 (new-shipping-address-request-city new-shipping-address-request)
                 (new-shipping-address-request-state new-shipping-address-request)))))
 
-      ;; make the response
-      (make-new-shipping-address-response shipping-address-id))))
+      ;; make the new-shipping-address-response
+      (make-new-shipping-address-response
+        shipping-address-id))))

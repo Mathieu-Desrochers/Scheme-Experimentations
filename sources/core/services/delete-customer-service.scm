@@ -1,8 +1,15 @@
 
+(use srfi-1)
+(use srfi-69)
+
 (declare (unit delete-customer-service))
 
+(declare (uses compare))
 (declare (uses customers-table))
+(declare (uses hash))
+(declare (uses list))
 (declare (uses shipping-addresses-table))
+(declare (uses validation))
 (declare (uses validation-service-request))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -24,17 +31,20 @@
   ;; validate the request
   (validate-request delete-customer-request validate-delete-customer-request)
 
-  ;; validate the customer-id
-  (let* ((customer-id (delete-customer-request-customer-id delete-customer-request))
-         (customer-rows (customers-table-select-by-customer-id sql-connection customer-id)))
-    (when (null? customer-rows)
-      (abort-validation-error 'customer-id-unknown))
+  ;; select and validate the customer-row
+  (select-one-and-validate
+    (customer-row
+      customers-table-select-by-customer-id
+      (delete-customer-request-customer-id delete-customer-request))
+    (unknown-customer-id)
 
     ;; delete the shipping-address-rows
-    (shipping-addresses-table-delete-by-customer-id sql-connection customer-id)
+    (shipping-addresses-table-delete-by-customer-id
+      sql-connection
+      (delete-customer-request-customer-id delete-customer-request))
 
     ;; delete the customer-row
-    (customers-table-delete sql-connection (car customer-rows))
+    (customers-table-delete sql-connection customer-row)
 
-    ;; make the response
+    ;; make the delete-customer-response
     (make-delete-customer-response)))

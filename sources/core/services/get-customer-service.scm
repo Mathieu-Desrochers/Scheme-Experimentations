@@ -1,9 +1,16 @@
 
+(use srfi-1)
+(use srfi-69)
+
 (declare (unit get-customer-service))
 
+(declare (uses compare))
 (declare (uses customers-table))
 (declare (uses date-time))
+(declare (uses hash))
+(declare (uses list))
 (declare (uses shipping-addresses-table))
+(declare (uses validation))
 (declare (uses validation-service-request))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -36,23 +43,29 @@
   ;; validate the request
   (validate-request get-customer-request validate-get-customer-request)
 
-  ;; select the customer-row
-  (let* ((customer-id (get-customer-request-customer-id get-customer-request))
-         (customer-rows (customers-table-select-by-customer-id sql-connection customer-id)))
-    (when (null? customer-rows)
-      (abort-validation-error 'customer-id-unknown))
+  ;; select and validate the customer-row
+  (select-one-and-validate
+    (customer-row
+      customers-table-select-by-customer-id
+      (get-customer-request-customer-id get-customer-request))
+    (unknown-customer-id)
 
     ;; select the effective shipping-address-row
-    (let* ((customer-row (car customer-rows))
-           (shipping-address-rows (shipping-addresses-table-select-effective-by-customer-id sql-connection customer-id (date-now)))
-           (effective-shipping-address-row (car shipping-address-rows)))
+    (select-one
+      (effective-shipping-address-row
+        shipping-addresses-table-select-effective-by-customer-id
+        (get-customer-request-customer-id get-customer-request)
+        (date-now))
 
-      ;; make the response
+      ;; make the get-customer-response
       (make-get-customer-response
         (customer-row-customer-id customer-row)
         (customer-row-first-name customer-row)
         (customer-row-last-name customer-row)
         (customer-row-is-vip customer-row)
+
+        ;; make the get-customer
+        ;; shipping-address-subresponse
         (make-get-customer-shipping-address-subresponse
           (shipping-address-row-shipping-address-id effective-shipping-address-row)
           (shipping-address-row-street effective-shipping-address-row)

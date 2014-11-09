@@ -1,8 +1,15 @@
 
+(use srfi-1)
+(use srfi-69)
+
 (declare (unit update-shipping-address-service))
 
+(declare (uses compare))
 (declare (uses customers-table))
+(declare (uses hash))
+(declare (uses list))
 (declare (uses shipping-addresses-table))
+(declare (uses validation))
 (declare (uses validation-service-request))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -29,34 +36,35 @@
   ;; validate the request
   (validate-request update-shipping-address-request validate-update-shipping-address-request)
 
-  ;; validate the customer-id
-  (let* ((customer-id (update-shipping-address-request-customer-id update-shipping-address-request))
-         (customer-rows (customers-table-select-by-customer-id sql-connection customer-id)))
-    (when (null? customer-rows)
-      (abort-validation-error 'customer-id-unknown))
+  ;; select and validate the customer-row
+  (select-one-and-validate
+    (customer-row
+      customers-table-select-by-customer-id
+      (update-shipping-address-request-customer-id update-shipping-address-request))
+    (unknown-customer-id)
 
-    ;; validate the shipping-address-id
-    (let* ((shipping-address-id (update-shipping-address-request-shipping-address-id update-shipping-address-request))
-           (shipping-address-rows (shipping-addresses-table-select-by-shipping-address-id sql-connection shipping-address-id)))
-      (when (null? shipping-address-rows)
+    ;; select and validate the shipping-address-row
+    (select-one-and-validate
+      (shipping-address-row
+        shipping-addresses-table-select-by-shipping-address-id
+        (update-shipping-address-request-shipping-address-id update-shipping-address-request))
+      (unknown-shipping-address-id)
+
+      ;; validate the shipping-address-row
+      ;; belongs to the customer
+      (unless (equal? (customer-row-customer-id customer-row) (shipping-address-row-customer-id shipping-address-row))
         (abort-validation-error 'shipping-address-id-unknown))
-
-      ;; validate the customer-id / shipping-address-id relation
-      (let* ((shipping-address-row (car shipping-address-rows))
-             (shipping-address-row-customer-id (shipping-address-row-customer-id shipping-address-row)))
-        (when (not (equal? customer-id shipping-address-row-customer-id))
-          (abort-validation-error 'shipping-address-id-unknown))
 
         ;; update the shipping-address-row
         (shipping-addresses-table-update
           sql-connection
           (make-shipping-address-row
-            shipping-address-id
-            customer-id
+            (update-shipping-address-request-shipping-address-id update-shipping-address-request)
+            (update-shipping-address-request-customer-id update-shipping-address-request)
             (update-shipping-address-request-effective-date update-shipping-address-request)
             (update-shipping-address-request-street update-shipping-address-request)
             (update-shipping-address-request-city update-shipping-address-request)
             (update-shipping-address-request-state update-shipping-address-request)))
 
-        ;; make the response
-        (make-update-shipping-address-response)))))
+        ;; make the update-shipping-address-response
+        (make-update-shipping-address-response))))
