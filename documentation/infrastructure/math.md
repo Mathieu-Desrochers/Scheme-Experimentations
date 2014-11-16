@@ -45,12 +45,12 @@ Suppose it was computed from the values 10, 42 and 26.
 __previous-average__  
 The previously computed average.
 
-	26
+    26
 
 __previous-count__  
 The number of values in the previously computed average.
 
-	3
+    3
 
 __value__  
 The value added to the average.
@@ -70,12 +70,12 @@ Suppose it was computed from the values 10, 42, 26 and 56.
 __previous-average__  
 The previously computed average.
 
-	33.5
+    33.5
 
 __previous-count__  
 The number of values in the previously computed average.
 
-	4
+    4
 
 __value__  
 The value removed from the average.
@@ -86,3 +86,22 @@ __result__
 The new average.
 
     26
+
+math-round
+----------
+Rounds a value to a number of decimals.
+
+__value__  
+The value.
+
+    1.2345
+
+__decimals-count__  
+The number of decimals.
+
+    2
+
+__result__  
+The rounded value.
+
+    1.23

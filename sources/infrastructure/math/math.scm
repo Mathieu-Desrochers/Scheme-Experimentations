@@ -44,3 +44,15 @@
          (safe-new-average (if (= new-count 0) #f (/ new-sum new-count))))
 
     safe-new-average))
+
+;; rounds a value to a number of decimals
+(define (math-round
+          value
+          decimals-count)
+
+  (let* ((multiplicator (expt 10 decimals-count))
+         (multiplied-value (* value multiplicator))
+         (rounded-multiplied-value (round multiplied-value))
+         (rounded-value (/ rounded-multiplied-value multiplicator)))
+
+    rounded-value))

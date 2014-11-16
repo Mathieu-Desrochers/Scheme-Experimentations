@@ -243,6 +243,8 @@
               negative-birthdate)))
 
     ;; calculate the age
-    (+ (date-year date-difference)
-       (/ (date-month date-difference) 12)
-       (/ (date-day date-difference) 365))))
+    (math-round
+      (+ (date-year date-difference)
+         (/ (date-month date-difference) 12)
+         (/ (date-day date-difference) 365))
+      2)))
