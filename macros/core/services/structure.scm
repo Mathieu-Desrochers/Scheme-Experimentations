@@ -20,10 +20,12 @@
                     ,@table-select-by-parameter-symbols)))
 
           ;; bring the selected row into scope
-          ;; and execute the body
           (let ((,row-symbol (if (null? ,(rename 'rows)) #f (car ,(rename 'rows)))))
 
-           ,@body))))))
+            ;; execute the body
+            ,(if (not (null? body))
+              `(begin ,@body)
+              #f)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; select one and validate
@@ -52,10 +54,12 @@
             (abort-validation-error (quote ,validation-error-symbol)))
 
           ;; bring the selected row into scope
-          ;; and execute the body
           (let ((,row-symbol (car ,(rename 'rows))))
 
-           ,@body))))))
+            ;; execute the body
+            ,(if (not (null? body))
+              `(begin ,@body)
+              #f)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; select many
@@ -79,7 +83,9 @@
                   ,@table-select-by-parameter-symbols)))
 
           ;; execute the body
-          ,@body)))))
+          ,(if (not (null? body))
+            `(begin ,@body)
+            #f))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; select many and hash
@@ -128,7 +134,9 @@
                           ,get-row-default)))))
 
               ;; execute the body
-              ,@body)))))))
+              ,(if (not (null? body))
+                `(begin ,@body)
+                #f))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; make subresponses
