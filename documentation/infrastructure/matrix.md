@@ -1,7 +1,7 @@
 
-make-matrix
------------
-Makes a matrix.
+new-matrix
+----------
+Makes a new matrix.
 
 __rows-count__  
 The number of rows.
@@ -66,7 +66,7 @@ The column index.
 __result__  
 The value.
 
-    #f
+    0
 
 matrix-value-set!
 -----------------
@@ -144,6 +144,25 @@ The row values.
 
     (list 1 2 3)
 
+__row-index__  
+The row index.
+
+    0
+
+matrix-column-set!
+------------------
+Sets a matrix column.
+
+__matrix__  
+The matrix.
+
+    (make-matrix 2 3)
+
+__values__  
+The column values.
+
+    (list 1 2)
+
 __column-index__  
 The column index.
 
@@ -182,7 +201,7 @@ __matrix__
 The matrix.
 
     (make-matrix 2 3)
-    
+
     (matrix-value-set! matrix 0 0 1)
     (matrix-value-set! matrix 0 1 8)
     (matrix-value-set! matrix 0 2 5)
@@ -205,7 +224,7 @@ __matrix__
 The matrix.
 
     (make-matrix 2 3)
-    
+
     (matrix-value-set! matrix 0 0 1)
     (matrix-value-set! matrix 0 1 8)
     (matrix-value-set! matrix 0 2 5)

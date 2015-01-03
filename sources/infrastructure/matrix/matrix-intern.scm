@@ -6,6 +6,42 @@
 (declare (uses exceptions))
 (declare (uses hungarian))
 
+;; convert matrix coordinates to a vector index
+(define (matrix-vector-index matrix row-index column-index)
+  (+ (* row-index (matrix-columns-count matrix)) column-index))
+
+;; sets a matrix row
+(define (matrix-row-set!-intern matrix values row-index column-index)
+  (when (< column-index (matrix-columns-count matrix))
+
+    (matrix-value-set!
+      matrix
+      row-index
+      column-index
+      (car values))
+
+    (matrix-row-set!-intern
+      matrix
+      (cdr values)
+      row-index
+      (+ column-index 1))))
+
+;; sets a matrix column
+(define (matrix-column-set!-intern matrix values row-index column-index)
+  (when (< row-index (matrix-rows-count matrix))
+
+    (matrix-value-set!
+      matrix
+      row-index
+      column-index
+      (car values))
+
+    (matrix-column-set!-intern
+      matrix
+      (cdr values)
+      (+ row-index 1)
+      column-index)))
+
 ;; invokes a procedure with a hungarian-problem*
 (define (with-hungarian-problem* procedure)
   (define (checked-malloc-hungarian-problem)

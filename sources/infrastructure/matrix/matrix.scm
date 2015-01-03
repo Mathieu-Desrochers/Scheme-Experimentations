@@ -1,68 +1,71 @@
 
 (use srfi-1)
+(use srfi-4)
 
 (declare (unit matrix))
 
 (declare (uses matrix-intern))
 
-;; makes a matrix
-(define (make-matrix rows-count columns-count)
-  (list-tabulate
+;; encapsulates a matrix
+(define-record matrix rows-count columns-count vector)
+
+;; makes a new matrix
+(define (new-matrix rows-count columns-count)
+  (make-matrix
     rows-count
-    (lambda (row-index)
-      (make-list columns-count #f))))
-
-;; returns the number of rows of a matrix
-(define (matrix-rows-count matrix)
-  (length matrix))
-
-;; returns the number of columns of a matrix
-(define (matrix-columns-count matrix)
-  (if (eq? (length matrix) 0)
-    0
-    (length (car matrix))))
+    columns-count
+    (make-s32vector
+      (* rows-count columns-count)
+      0)))
 
 ;; gets a matrix value
 (define (matrix-value matrix row-index column-index)
-  (list-ref
-    (list-ref
-      matrix
-      row-index)
-    column-index))
+  (s32vector-ref
+    (matrix-vector matrix)
+    (matrix-vector-index matrix row-index column-index)))
 
 ;; sets a matrix value
 (define (matrix-value-set! matrix row-index column-index value)
-  (set-car!
-    (drop
-      (list-ref
-        matrix
-        row-index)
-      column-index)
+  (s32vector-set!
+    (matrix-vector matrix)
+    (matrix-vector-index matrix row-index column-index)
     value))
 
 ;; returns a matrix row
 (define (matrix-row matrix row-index)
-  (list-ref
-    matrix
-    row-index))
+  (map
+    (lambda (column-index)
+      (matrix-value
+        matrix
+        row-index
+        column-index))
+    (iota (matrix-columns-count matrix))))
 
 ;; returns a matrix column
 (define (matrix-column matrix column-index)
   (map
-    (lambda (row)
-      (list-ref
-        row
+    (lambda (row-index)
+      (matrix-value
+        matrix
+        row-index
         column-index))
-    matrix))
+    (iota (matrix-rows-count matrix))))
 
 ;; sets a matrix row
 (define (matrix-row-set! matrix values row-index)
-  (set-car!
-    (drop
-      matrix
-      row-index)
-    values)
-  matrix)
+  (matrix-row-set!-intern
+    matrix
+    values
+    row-index
+    0))
+
+;; sets a matrix column
+(define (matrix-column-set! matrix values column-index)
+  (matrix-column-set!-intern
+    matrix
+    values
+    0
+    column-index))
 
 ;; invokes a procedure for all the matrix elements
 (define (matrix-for-each matrix procedure)
