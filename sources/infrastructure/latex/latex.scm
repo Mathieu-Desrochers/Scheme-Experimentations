@@ -39,7 +39,9 @@
                             ((equal? (string-take string 1) "~") "\\textasciitilde{}")
                             (else (string-take string 1)))))
                   accumulator))))
-    (latex-escape-inner string "")))
+    (if string
+      (latex-escape-inner string "")
+      "")))
 
 ;; returns a latex source containing a single sentence
 (define (latex-single-sentence-source sentence)

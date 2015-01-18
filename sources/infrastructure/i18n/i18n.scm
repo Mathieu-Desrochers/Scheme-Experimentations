@@ -89,3 +89,52 @@
               ((equal? day-of-week-name "Thursday") "Jeudi")
               ((equal? day-of-week-name "Friday") "Vendredi")
               ((equal? day-of-week-name "Saturday") "Samedi"))))))
+
+;; localizes a date month
+(define (i18n-date->string-month culture date)
+  (let ((date-month (date-month date)))
+    (cond
+      ((equal? culture "en")
+        (cond ((equal? date-month 1) "January")
+              ((equal? date-month 2) "February")
+              ((equal? date-month 3) "March")
+              ((equal? date-month 4) "April")
+              ((equal? date-month 5) "May")
+              ((equal? date-month 6) "June")
+              ((equal? date-month 7) "July")
+              ((equal? date-month 8) "August")
+              ((equal? date-month 9) "September")
+              ((equal? date-month 10) "October")
+              ((equal? date-month 11) "November")
+              ((equal? date-month 12) "December")))
+      ((equal? culture "fr")
+        (cond ((equal? date-month 1) "janvier")
+              ((equal? date-month 2) "février")
+              ((equal? date-month 3) "mars")
+              ((equal? date-month 4) "avril")
+              ((equal? date-month 5) "mai")
+              ((equal? date-month 6) "juin")
+              ((equal? date-month 7) "juillet")
+              ((equal? date-month 8) "août")
+              ((equal? date-month 9) "septembre")
+              ((equal? date-month 10) "octobre")
+              ((equal? date-month 11) "novembre")
+              ((equal? date-month 12) "décembre"))))))
+
+;; localizes a date using the long format
+(define (i18n-date->string-long-format culture date)
+  (cond
+    ((equal? culture "en")
+      (string-append
+        (i18n-date->string-month culture date)
+        " "
+        (number->string (date-day date))
+        ", "
+        (number->string (date-year date))))
+    ((equal? culture "fr")
+      (string-append
+        (number->string (date-day date))
+        " "
+        (i18n-date->string-month culture date)
+        " "
+        (number->string (date-year date))))))
