@@ -26,7 +26,7 @@
   (customer-id integer)
   (first-name string)
   (last-name string)
-  (is-vip boolean)
+  (birthdate date)
   (shipping-address get-customer-shipping-address-subresponse))
 
 (define-response get-customer-shipping-address-subresponse
@@ -62,7 +62,7 @@
         (customer-row-customer-id customer-row)
         (customer-row-first-name customer-row)
         (customer-row-last-name customer-row)
-        (customer-row-is-vip customer-row)
+        (customer-row-birthdate customer-row)
 
         ;; make the get-customer
         ;; shipping-address-subresponse
