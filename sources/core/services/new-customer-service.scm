@@ -19,7 +19,7 @@
 (define-request new-customer-request
   (first-name string #t 1 50)
   (last-name string #t 1 50)
-  (is-vip boolean)
+  (birthdate date #t)
   (shipping-address new-customer-shipping-address-subrequest #t))
 
 (define-request new-customer-shipping-address-subrequest
@@ -49,7 +49,7 @@
               0
               (new-customer-request-first-name new-customer-request)
               (new-customer-request-last-name new-customer-request)
-              (new-customer-request-is-vip new-customer-request)))))
+              (new-customer-request-birthdate new-customer-request)))))
 
     ;; insert a shipping-address-row
     (let ((shipping-address-subrequest (new-customer-request-shipping-address new-customer-request)))

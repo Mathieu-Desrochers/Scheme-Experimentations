@@ -8,7 +8,7 @@ Sample request
     {
       "first-name": "Alice",
       "last-name": "Allison",
-      "is-vip": true,
+      "birthdate": "2001-12-31",
       "shipping-address":
       {
         "street": "123 Sunny Street",

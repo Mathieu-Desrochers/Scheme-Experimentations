@@ -11,6 +11,6 @@
     ("customer-id" integer)
     ("first-name" string)
     ("last-name" string)
-    ("is-vip" boolean))
+    ("birthdate" date))
   (custom-selects)
   (custom-executes))

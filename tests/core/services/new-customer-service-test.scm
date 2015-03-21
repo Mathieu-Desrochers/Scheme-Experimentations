@@ -13,7 +13,7 @@
     (make-new-customer-request
       "Alice"
       "Allisson"
-      #t
+      "2001-12-31"
       (make-new-customer-shipping-address-subrequest
         "123 Sunny Street"
         "Miami"
