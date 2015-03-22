@@ -4,18 +4,14 @@ make : compile ctags link
 compile : compile-bindings \
           compile-core \
           compile-foreign-interfaces \
-          compile-infrastructure \
-          compile-tests
+          compile-infrastructure
 
 compile-bindings : compile-bindings-http
 
 compile-bindings-http : sources/bindings/http/delete-customer-service-http-binding.o \
                         sources/bindings/http/get-customer-service-http-binding.o \
-                        sources/bindings/http/get-shipping-addresses-service-http-binding.o \
                         sources/bindings/http/new-customer-service-http-binding.o \
-                        sources/bindings/http/new-shipping-address-service-http-binding.o \
-                        sources/bindings/http/update-customer-service-http-binding.o \
-                        sources/bindings/http/update-shipping-address-service-http-binding.o
+                        sources/bindings/http/update-customer-service-http-binding.o
 
 sources/bindings/http/delete-customer-service-http-binding.o : sources/bindings/http/delete-customer-service-http-binding.scm
 	csc -c -extend macros/bindings/http/define-http-binding.scm \
@@ -27,41 +23,23 @@ sources/bindings/http/get-customer-service-http-binding.o : sources/bindings/htt
 	sources/bindings/http/get-customer-service-http-binding.scm -o \
 	sources/bindings/http/get-customer-service-http-binding.o
 
-sources/bindings/http/get-shipping-addresses-service-http-binding.o : sources/bindings/http/get-shipping-addresses-service-http-binding.scm
-	csc -c -extend macros/bindings/http/define-http-binding.scm \
-	sources/bindings/http/get-shipping-addresses-service-http-binding.scm -o \
-	sources/bindings/http/get-shipping-addresses-service-http-binding.o
-
 sources/bindings/http/new-customer-service-http-binding.o : sources/bindings/http/new-customer-service-http-binding.scm
 	csc -c -extend macros/bindings/http/define-http-binding.scm \
 	sources/bindings/http/new-customer-service-http-binding.scm -o \
 	sources/bindings/http/new-customer-service-http-binding.o
-
-sources/bindings/http/new-shipping-address-service-http-binding.o : sources/bindings/http/new-shipping-address-service-http-binding.scm
-	csc -c -extend macros/bindings/http/define-http-binding.scm \
-	sources/bindings/http/new-shipping-address-service-http-binding.scm -o \
-	sources/bindings/http/new-shipping-address-service-http-binding.o
 
 sources/bindings/http/update-customer-service-http-binding.o : sources/bindings/http/update-customer-service-http-binding.scm
 	csc -c -extend macros/bindings/http/define-http-binding.scm \
 	sources/bindings/http/update-customer-service-http-binding.scm -o \
 	sources/bindings/http/update-customer-service-http-binding.o
 
-sources/bindings/http/update-shipping-address-service-http-binding.o : sources/bindings/http/update-shipping-address-service-http-binding.scm
-	csc -c -extend macros/bindings/http/define-http-binding.scm \
-	sources/bindings/http/update-shipping-address-service-http-binding.scm -o \
-	sources/bindings/http/update-shipping-address-service-http-binding.o
-
 compile-core : compile-core-services \
                compile-core-tables
 
 compile-core-services : sources/core/services/delete-customer-service.o \
                         sources/core/services/get-customer-service.o \
-                        sources/core/services/get-shipping-addresses-service.o \
                         sources/core/services/new-customer-service.o \
-                        sources/core/services/new-shipping-address-service.o \
-                        sources/core/services/update-customer-service.o \
-                        sources/core/services/update-shipping-address-service.o
+                        sources/core/services/update-customer-service.o
 
 sources/core/services/delete-customer-service.o : sources/core/services/delete-customer-service.scm
 	csc -c \
@@ -79,14 +57,6 @@ sources/core/services/get-customer-service.o : sources/core/services/get-custome
 	sources/core/services/get-customer-service.scm -o \
 	sources/core/services/get-customer-service.o
 
-sources/core/services/get-shipping-addresses-service.o : sources/core/services/get-shipping-addresses-service.scm
-	csc -c \
-	-extend macros/core/services/define-request.scm \
-	-extend macros/core/services/define-response.scm \
-	-extend macros/core/services/structure.scm \
-	sources/core/services/get-shipping-addresses-service.scm -o \
-	sources/core/services/get-shipping-addresses-service.o
-
 sources/core/services/new-customer-service.o : sources/core/services/new-customer-service.scm
 	csc -c \
 	-extend macros/core/services/define-request.scm \
@@ -95,14 +65,6 @@ sources/core/services/new-customer-service.o : sources/core/services/new-custome
 	sources/core/services/new-customer-service.scm -o \
 	sources/core/services/new-customer-service.o
 
-sources/core/services/new-shipping-address-service.o : sources/core/services/new-shipping-address-service.scm
-	csc -c \
-	-extend macros/core/services/define-request.scm \
-	-extend macros/core/services/define-response.scm \
-	-extend macros/core/services/structure.scm \
-	sources/core/services/new-shipping-address-service.scm -o \
-	sources/core/services/new-shipping-address-service.o
-
 sources/core/services/update-customer-service.o : sources/core/services/update-customer-service.scm
 	csc -c \
 	-extend macros/core/services/define-request.scm \
@@ -110,14 +72,6 @@ sources/core/services/update-customer-service.o : sources/core/services/update-c
 	-extend macros/core/services/structure.scm \
 	sources/core/services/update-customer-service.scm -o \
 	sources/core/services/update-customer-service.o
-
-sources/core/services/update-shipping-address-service.o : sources/core/services/update-shipping-address-service.scm
-	csc -c \
-	-extend macros/core/services/define-request.scm \
-	-extend macros/core/services/define-response.scm \
-	-extend macros/core/services/structure.scm \
-	sources/core/services/update-shipping-address-service.scm -o \
-	sources/core/services/update-shipping-address-service.o
 
 compile-core-tables : sources/core/tables/customers-table.o \
                       sources/core/tables/shipping-addresses-table.o
@@ -197,7 +151,6 @@ compile-infrastructure : compile-infrastructure-compare \
                          compile-infrastructure-regex \
                          compile-infrastructure-services \
                          compile-infrastructure-sql \
-                         compile-infrastructure-test \
                          compile-infrastructure-validation \
                          compile-infrastructure-validation-service-request
 
@@ -397,19 +350,6 @@ sources/infrastructure/sql/sql-intern.o : sources/infrastructure/sql/sql-intern.
 	sources/infrastructure/sql/sql-intern.scm -o \
 	sources/infrastructure/sql/sql-intern.o
 
-compile-infrastructure-test : sources/infrastructure/test/test.o \
-                              sources/infrastructure/test/test-runner.o
-
-sources/infrastructure/test/test.o : sources/infrastructure/test/test.scm
-	csc -c \
-	sources/infrastructure/test/test.scm -o \
-	sources/infrastructure/test/test.o
-
-sources/infrastructure/test/test-runner.o : sources/infrastructure/test/test-runner.scm
-	csc -c \
-	sources/infrastructure/test/test-runner.scm -o \
-	sources/infrastructure/test/test-runner.o
-
 compile-infrastructure-validation : sources/infrastructure/validation/validation.o
 
 sources/infrastructure/validation/validation.o : sources/infrastructure/validation/validation.scm
@@ -424,65 +364,12 @@ sources/infrastructure/validation/validation-service-request.o : sources/infrast
 	sources/infrastructure/validation/validation-service-request.scm -o \
 	sources/infrastructure/validation/validation-service-request.o
 
-compile-tests : compile-tests-services
-
-compile-tests-services : tests/core/services/delete-customer-service-test.o \
-                         tests/core/services/get-customer-service-test.o \
-                         tests/core/services/get-shipping-addresses-service-test.o \
-                         tests/core/services/new-customer-service-test.o \
-                         tests/core/services/new-shipping-address-service-test.o \
-                         tests/core/services/update-customer-service-test.o \
-                         tests/core/services/update-shipping-address-service-test.o
-
-tests/core/services/delete-customer-service-test.o : tests/core/services/delete-customer-service-test.scm \
-                                                     macros/infrastructure/define-test.scm
-	csc -c -extend macros/infrastructure/define-test.scm \
-	tests/core/services/delete-customer-service-test.scm -o \
-	tests/core/services/delete-customer-service-test.o
-
-tests/core/services/get-customer-service-test.o : tests/core/services/get-customer-service-test.scm \
-                                                  macros/infrastructure/define-test.scm
-	csc -c -extend macros/infrastructure/define-test.scm \
-	tests/core/services/get-customer-service-test.scm -o \
-	tests/core/services/get-customer-service-test.o
-
-tests/core/services/get-shipping-addresses-service-test.o : tests/core/services/get-shipping-addresses-service-test.scm \
-                                                            macros/infrastructure/define-test.scm
-	csc -c -extend macros/infrastructure/define-test.scm \
-	tests/core/services/get-shipping-addresses-service-test.scm -o \
-	tests/core/services/get-shipping-addresses-service-test.o
-
-tests/core/services/new-customer-service-test.o : tests/core/services/new-customer-service-test.scm \
-                                                  macros/infrastructure/define-test.scm
-	csc -c -extend macros/infrastructure/define-test.scm \
-	tests/core/services/new-customer-service-test.scm -o \
-	tests/core/services/new-customer-service-test.o
-
-tests/core/services/new-shipping-address-service-test.o : tests/core/services/new-shipping-address-service-test.scm \
-                                                          macros/infrastructure/define-test.scm
-	csc -c -extend macros/infrastructure/define-test.scm \
-	tests/core/services/new-shipping-address-service-test.scm -o \
-	tests/core/services/new-shipping-address-service-test.o
-
-tests/core/services/update-customer-service-test.o : tests/core/services/update-customer-service-test.scm \
-                                                     macros/infrastructure/define-test.scm
-	csc -c -extend macros/infrastructure/define-test.scm \
-	tests/core/services/update-customer-service-test.scm -o \
-	tests/core/services/update-customer-service-test.o
-
-tests/core/services/update-shipping-address-service-test.o : tests/core/services/update-shipping-address-service-test.scm \
-                                                             macros/infrastructure/define-test.scm
-	csc -c -extend macros/infrastructure/define-test.scm \
-	tests/core/services/update-shipping-address-service-test.scm -o \
-	tests/core/services/update-shipping-address-service-test.o
-
 ctags : compile
 
 link : link-bindings \
        link-core \
        link-foreign-interfaces \
-       link-infrastructure \
-       link-tests
+       link-infrastructure
 
 link-bindings : scheme-experimentations-bindings-http
 
@@ -491,11 +378,8 @@ scheme-experimentations-bindings-http : sources/core/core.o \
                                         sources/infrastructure/infrastructure.o \
                                         sources/bindings/http/delete-customer-service-http-binding.o \
                                         sources/bindings/http/get-customer-service-http-binding.o \
-                                        sources/bindings/http/get-shipping-addresses-service-http-binding.o \
                                         sources/bindings/http/new-customer-service-http-binding.o \
-                                        sources/bindings/http/new-shipping-address-service-http-binding.o \
                                         sources/bindings/http/update-customer-service-http-binding.o \
-                                        sources/bindings/http/update-shipping-address-service-http-binding.o \
                                         sources/infrastructure/http/http.o \
                                         sources/infrastructure/http/http-intern.o \
                                         sources/infrastructure/http/http-toplevel.o \
@@ -511,11 +395,8 @@ scheme-experimentations-bindings-http : sources/core/core.o \
 	sources/infrastructure/infrastructure.o \
 	sources/bindings/http/delete-customer-service-http-binding.o \
 	sources/bindings/http/get-customer-service-http-binding.o \
-	sources/bindings/http/get-shipping-addresses-service-http-binding.o \
 	sources/bindings/http/new-customer-service-http-binding.o \
-	sources/bindings/http/new-shipping-address-service-http-binding.o \
 	sources/bindings/http/update-customer-service-http-binding.o \
-	sources/bindings/http/update-shipping-address-service-http-binding.o \
 	sources/infrastructure/http/http.o \
 	sources/infrastructure/http/http-intern.o \
 	sources/infrastructure/http/http-toplevel.o \
@@ -526,21 +407,15 @@ link-core : sources/core/core.o
 
 sources/core/core.o : sources/core/services/delete-customer-service.o \
                       sources/core/services/get-customer-service.o \
-                      sources/core/services/get-shipping-addresses-service.o \
                       sources/core/services/new-customer-service.o \
-                      sources/core/services/new-shipping-address-service.o \
                       sources/core/services/update-customer-service.o \
-                      sources/core/services/update-shipping-address-service.o \
                       sources/core/tables/customers-table.o \
                       sources/core/tables/shipping-addresses-table.o
 	ld --relocatable \
 	sources/core/services/delete-customer-service.o \
 	sources/core/services/get-customer-service.o \
-	sources/core/services/get-shipping-addresses-service.o \
 	sources/core/services/new-customer-service.o \
-	sources/core/services/new-shipping-address-service.o \
 	sources/core/services/update-customer-service.o \
-	sources/core/services/update-shipping-address-service.o \
 	sources/core/tables/customers-table.o \
 	sources/core/tables/shipping-addresses-table.o \
 	-o sources/core/core.o
@@ -590,7 +465,6 @@ sources/infrastructure/infrastructure.o : sources/infrastructure/compare/compare
                                           sources/infrastructure/sql/sql.o \
                                           sources/infrastructure/sql/sql-convert.o \
                                           sources/infrastructure/sql/sql-intern.o \
-                                          sources/infrastructure/test/test.o \
                                           sources/infrastructure/validation/validation.o \
                                           sources/infrastructure/validation/validation-service-request.o
 	ld --relocatable \
@@ -620,42 +494,9 @@ sources/infrastructure/infrastructure.o : sources/infrastructure/compare/compare
 	sources/infrastructure/sql/sql.o \
 	sources/infrastructure/sql/sql-convert.o \
 	sources/infrastructure/sql/sql-intern.o \
-	sources/infrastructure/test/test.o \
 	sources/infrastructure/validation/validation.o \
 	sources/infrastructure/validation/validation-service-request.o \
 	-o sources/infrastructure/infrastructure.o
-
-link-tests : scheme-experimentations-tests
-
-scheme-experimentations-tests : sources/core/core.o \
-                                sources/foreign-interfaces/foreign-interfaces.o \
-                                sources/infrastructure/infrastructure.o \
-                                sources/infrastructure/test/test-runner.o \
-                                tests/core/services/delete-customer-service-test.o \
-                                tests/core/services/get-customer-service-test.o \
-                                tests/core/services/get-shipping-addresses-service-test.o \
-                                tests/core/services/new-customer-service-test.o \
-                                tests/core/services/new-shipping-address-service-test.o \
-                                tests/core/services/update-customer-service-test.o \
-                                tests/core/services/update-shipping-address-service-test.o
-	csc \
-	-lfcgi \
-	-lhungarian \
-	-ljansson \
-	-lpcre \
-	-lsqlite3 \
-	sources/core/core.o \
-	sources/foreign-interfaces/foreign-interfaces.o \
-	sources/infrastructure/infrastructure.o \
-	sources/infrastructure/test/test-runner.o \
-	tests/core/services/delete-customer-service-test.o \
-	tests/core/services/get-customer-service-test.o \
-	tests/core/services/get-shipping-addresses-service-test.o \
-	tests/core/services/new-customer-service-test.o \
-	tests/core/services/new-shipping-address-service-test.o \
-	tests/core/services/update-customer-service-test.o \
-	tests/core/services/update-shipping-address-service-test.o \
-	-o scheme-experimentations-tests
 
 install :
 	cp scheme-experimentations-bindings-http /usr/local/apache2/api/

@@ -19,22 +19,16 @@
 ;; use the application's http bindings
 (declare (uses delete-customer-service-http-binding))
 (declare (uses get-customer-service-http-binding))
-(declare (uses get-shipping-addresses-service-http-binding))
 (declare (uses new-customer-service-http-binding))
-(declare (uses new-shipping-address-service-http-binding))
 (declare (uses update-customer-service-http-binding))
-(declare (uses update-shipping-address-service-http-binding))
 
 ;; makes the application's http bindings
 (define (make-http-bindings)
   (list
     (make-delete-customer-service-http-binding)
     (make-get-customer-service-http-binding)
-    (make-get-shipping-addresses-service-http-binding)
     (make-new-customer-service-http-binding)
-    (make-new-shipping-address-service-http-binding)
-    (make-update-customer-service-http-binding)
-    (make-update-shipping-address-service-http-binding)))
+    (make-update-customer-service-http-binding)))
 
 ;; handles a http request
 (define (http-handle-request fastcgi-request*)
