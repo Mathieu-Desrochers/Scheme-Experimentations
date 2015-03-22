@@ -6,10 +6,18 @@ Sample request
     Host: localhost
 
     {
-      "student-id": 1000,
+      "customer-id": 1000,
       "first-name": "Alice",
       "last-name": "Alisson",
-      "birthdate": "2001-12-31"
+      "birthdate": "2001-12-31",
+      "shipping-addresses": [
+        {
+          "shipping-address-id": 2000,
+          "street": "456 Cloudy Boulevard",
+          "city": "Seattle",
+          "state": "Washington"
+        }
+      ]
     }
 
 Sample response
