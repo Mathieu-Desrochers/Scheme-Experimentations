@@ -9,12 +9,13 @@ Sample request
       "first-name": "Alice",
       "last-name": "Allison",
       "birthdate": "2001-12-31",
-      "shipping-address":
-      {
-        "street": "123 Sunny Street",
-        "city": "Miami",
-        "state": "Florida"
-      }
+      "shipping-addresses": [
+        {
+          "street": "123 Sunny Street",
+          "city": "Miami",
+          "state": "Florida"
+        }
+      ]
     }
 
 Sample response

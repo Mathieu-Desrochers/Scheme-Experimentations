@@ -6,7 +6,6 @@
 
 (declare (uses compare))
 (declare (uses customers-table))
-(declare (uses date-time))
 (declare (uses hash))
 (declare (uses list))
 (declare (uses shipping-addresses-table))
@@ -27,7 +26,7 @@
   (first-name string)
   (last-name string)
   (birthdate date)
-  (shipping-address get-customer-shipping-address-subresponse))
+  (shipping-addresses list (shipping-address get-customer-shipping-address-subresponse)))
 
 (define-response get-customer-shipping-address-subresponse
   (shipping-address-id integer)
@@ -50,12 +49,11 @@
       (get-customer-request-customer-id get-customer-request))
     (unknown-customer-id)
 
-    ;; select the effective shipping-address-row
-    (select-one
-      (effective-shipping-address-row
-        shipping-addresses-table-select-effective-by-customer-id
-        (get-customer-request-customer-id get-customer-request)
-        (date-now))
+    ;; select the shipping-address-rows
+    (select-many
+      (shipping-address-rows
+        shipping-addresses-table-select-by-customer-id
+        (get-customer-request-customer-id get-customer-request))
 
       ;; make the get-customer-response
       (make-get-customer-response
@@ -65,9 +63,14 @@
         (customer-row-birthdate customer-row)
 
         ;; make the get-customer
-        ;; shipping-address-subresponse
-        (make-get-customer-shipping-address-subresponse
-          (shipping-address-row-shipping-address-id effective-shipping-address-row)
-          (shipping-address-row-street effective-shipping-address-row)
-          (shipping-address-row-city effective-shipping-address-row)
-          (shipping-address-row-state effective-shipping-address-row))))))
+        ;; shipping-address-subresponses
+        (make-subresponses
+          (shipping-address-rows
+            list-sort-by-number
+            shipping-address-row-shipping-address-id)
+          (lambda (shipping-address-row)
+            (make-get-customer-shipping-address-subresponse
+              (shipping-address-row-shipping-address-id shipping-address-row)
+              (shipping-address-row-street shipping-address-row)
+              (shipping-address-row-city shipping-address-row)
+              (shipping-address-row-state shipping-address-row))))))))

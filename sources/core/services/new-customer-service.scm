@@ -6,7 +6,6 @@
 
 (declare (uses compare))
 (declare (uses customers-table))
-(declare (uses date-time))
 (declare (uses hash))
 (declare (uses list))
 (declare (uses shipping-addresses-table))
@@ -20,7 +19,7 @@
   (first-name string #t 1 50)
   (last-name string #t 1 50)
   (birthdate date #t)
-  (shipping-address new-customer-shipping-address-subrequest #t))
+  (shipping-addresses list #t 1 10 (shipping-address new-customer-shipping-address-subrequest #t)))
 
 (define-request new-customer-shipping-address-subrequest
   (street string #t 1 100)
@@ -51,17 +50,19 @@
               (new-customer-request-last-name new-customer-request)
               (new-customer-request-birthdate new-customer-request)))))
 
-    ;; insert a shipping-address-row
-    (let ((shipping-address-subrequest (new-customer-request-shipping-address new-customer-request)))
-      (shipping-addresses-table-insert
-        sql-connection
-        (make-shipping-address-row
-          0
-          customer-id
-          (date-now)
-          (new-customer-shipping-address-subrequest-street shipping-address-subrequest)
-          (new-customer-shipping-address-subrequest-city shipping-address-subrequest)
-          (new-customer-shipping-address-subrequest-state shipping-address-subrequest))))
+    ;; insert the shipping-address-rows
+    (for-each
+      (lambda (new-customer-shipping-address-subrequest)
+        (shipping-addresses-table-insert
+          sql-connection
+          (make-shipping-address-row
+            0
+            customer-id
+            (new-customer-shipping-address-subrequest-street new-customer-shipping-address-subrequest)
+            (new-customer-shipping-address-subrequest-city new-customer-shipping-address-subrequest)
+            (new-customer-shipping-address-subrequest-state new-customer-shipping-address-subrequest))))
+
+      (new-customer-request-shipping-addresses new-customer-request))
 
     ;; make the new-customer-response
     (make-new-customer-response

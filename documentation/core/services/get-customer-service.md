@@ -16,10 +16,12 @@ Sample response
       "first-name": "Alice",
       "last-name": "Allison",
       "is-vip": true,
-      "shipping-address": {
-        "shipping-address-id": 2000,
-        "street": "123 Sunny Street",
-        "city": "Miami",
-        "state": "Florida"
-      }
+      "shipping-addresses": [
+        {
+          "shipping-address-id": 2000,
+          "street": "123 Sunny Street",
+          "city": "Miami",
+          "state": "Florida"
+        }
+      ]
     }
