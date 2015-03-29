@@ -10,6 +10,7 @@ compile-bindings : compile-bindings-http
 
 compile-bindings-http : sources/bindings/http/delete-customer-service-http-binding.o \
                         sources/bindings/http/get-customer-service-http-binding.o \
+                        sources/bindings/http/get-customers-service-http-binding.o \
                         sources/bindings/http/new-customer-service-http-binding.o \
                         sources/bindings/http/update-customer-service-http-binding.o
 
@@ -22,6 +23,11 @@ sources/bindings/http/get-customer-service-http-binding.o : sources/bindings/htt
 	csc -c -extend macros/bindings/http/define-http-binding.scm \
 	sources/bindings/http/get-customer-service-http-binding.scm -o \
 	sources/bindings/http/get-customer-service-http-binding.o
+
+sources/bindings/http/get-customers-service-http-binding.o : sources/bindings/http/get-customers-service-http-binding.scm
+	csc -c -extend macros/bindings/http/define-http-binding.scm \
+	sources/bindings/http/get-customers-service-http-binding.scm -o \
+	sources/bindings/http/get-customers-service-http-binding.o
 
 sources/bindings/http/new-customer-service-http-binding.o : sources/bindings/http/new-customer-service-http-binding.scm
 	csc -c -extend macros/bindings/http/define-http-binding.scm \
@@ -38,6 +44,7 @@ compile-core : compile-core-services \
 
 compile-core-services : sources/core/services/delete-customer-service.o \
                         sources/core/services/get-customer-service.o \
+                        sources/core/services/get-customers-service.o \
                         sources/core/services/new-customer-service.o \
                         sources/core/services/update-customer-service.o
 
@@ -56,6 +63,14 @@ sources/core/services/get-customer-service.o : sources/core/services/get-custome
 	-extend macros/core/services/structure.scm \
 	sources/core/services/get-customer-service.scm -o \
 	sources/core/services/get-customer-service.o
+
+sources/core/services/get-customers-service.o : sources/core/services/get-customers-service.scm
+	csc -c \
+	-extend macros/core/services/define-request.scm \
+	-extend macros/core/services/define-response.scm \
+	-extend macros/core/services/structure.scm \
+	sources/core/services/get-customers-service.scm -o \
+	sources/core/services/get-customers-service.o
 
 sources/core/services/new-customer-service.o : sources/core/services/new-customer-service.scm
 	csc -c \
@@ -378,6 +393,7 @@ scheme-experimentations-bindings-http : sources/core/core.o \
                                         sources/infrastructure/infrastructure.o \
                                         sources/bindings/http/delete-customer-service-http-binding.o \
                                         sources/bindings/http/get-customer-service-http-binding.o \
+                                        sources/bindings/http/get-customers-service-http-binding.o \
                                         sources/bindings/http/new-customer-service-http-binding.o \
                                         sources/bindings/http/update-customer-service-http-binding.o \
                                         sources/infrastructure/http/http.o \
@@ -395,6 +411,7 @@ scheme-experimentations-bindings-http : sources/core/core.o \
 	sources/infrastructure/infrastructure.o \
 	sources/bindings/http/delete-customer-service-http-binding.o \
 	sources/bindings/http/get-customer-service-http-binding.o \
+	sources/bindings/http/get-customers-service-http-binding.o \
 	sources/bindings/http/new-customer-service-http-binding.o \
 	sources/bindings/http/update-customer-service-http-binding.o \
 	sources/infrastructure/http/http.o \
@@ -407,6 +424,7 @@ link-core : sources/core/core.o
 
 sources/core/core.o : sources/core/services/delete-customer-service.o \
                       sources/core/services/get-customer-service.o \
+                      sources/core/services/get-customers-service.o \
                       sources/core/services/new-customer-service.o \
                       sources/core/services/update-customer-service.o \
                       sources/core/tables/customers-table.o \
@@ -414,6 +432,7 @@ sources/core/core.o : sources/core/services/delete-customer-service.o \
 	ld --relocatable \
 	sources/core/services/delete-customer-service.o \
 	sources/core/services/get-customer-service.o \
+	sources/core/services/get-customers-service.o \
 	sources/core/services/new-customer-service.o \
 	sources/core/services/update-customer-service.o \
 	sources/core/tables/customers-table.o \

@@ -19,6 +19,7 @@
 ;; use the application's http bindings
 (declare (uses delete-customer-service-http-binding))
 (declare (uses get-customer-service-http-binding))
+(declare (uses get-customers-service-http-binding))
 (declare (uses new-customer-service-http-binding))
 (declare (uses update-customer-service-http-binding))
 
@@ -27,6 +28,7 @@
   (list
     (make-delete-customer-service-http-binding)
     (make-get-customer-service-http-binding)
+    (make-get-customers-service-http-binding)
     (make-new-customer-service-http-binding)
     (make-update-customer-service-http-binding)))
 
