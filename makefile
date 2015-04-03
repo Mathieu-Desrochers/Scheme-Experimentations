@@ -396,13 +396,41 @@ sources/infrastructure/validation/validation-service-request.o : sources/infrast
 
 compile-tests : compile-tests-services
 
-compile-tests-services : tests/core/services/new-customer-service-test.o
+compile-tests-services : tests/core/services/delete-customer-service-test.o \
+                         tests/core/services/get-customer-service-test.o \
+                         tests/core/services/get-customers-service-test.o \
+                         tests/core/services/new-customer-service-test.o \
+                         tests/core/services/update-customer-service-test.o
+
+tests/core/services/delete-customer-service-test.o : tests/core/services/delete-customer-service-test.scm \
+                                                     macros/infrastructure/define-test.scm
+	csc -c -extend macros/infrastructure/define-test.scm \
+	tests/core/services/delete-customer-service-test.scm -o \
+	tests/core/services/delete-customer-service-test.o
+
+tests/core/services/get-customer-service-test.o : tests/core/services/get-customer-service-test.scm \
+                                                  macros/infrastructure/define-test.scm
+	csc -c -extend macros/infrastructure/define-test.scm \
+	tests/core/services/get-customer-service-test.scm -o \
+	tests/core/services/get-customer-service-test.o
+
+tests/core/services/get-customers-service-test.o : tests/core/services/get-customers-service-test.scm \
+                                                   macros/infrastructure/define-test.scm
+	csc -c -extend macros/infrastructure/define-test.scm \
+	tests/core/services/get-customers-service-test.scm -o \
+	tests/core/services/get-customers-service-test.o
 
 tests/core/services/new-customer-service-test.o : tests/core/services/new-customer-service-test.scm \
                                                   macros/infrastructure/define-test.scm
 	csc -c -extend macros/infrastructure/define-test.scm \
 	tests/core/services/new-customer-service-test.scm -o \
 	tests/core/services/new-customer-service-test.o
+
+tests/core/services/update-customer-service-test.o : tests/core/services/update-customer-service-test.scm \
+                                                     macros/infrastructure/define-test.scm
+	csc -c -extend macros/infrastructure/define-test.scm \
+	tests/core/services/update-customer-service-test.scm -o \
+	tests/core/services/update-customer-service-test.o
 
 ctags : compile
 
@@ -551,7 +579,11 @@ scheme-experimentations-tests : sources/core/core.o \
                                 sources/foreign-interfaces/foreign-interfaces.o \
                                 sources/infrastructure/infrastructure.o \
                                 sources/infrastructure/test/test-runner.o \
-                                tests/core/services/new-customer-service-test.o
+                                tests/core/services/delete-customer-service-test.o \
+                                tests/core/services/get-customer-service-test.o \
+                                tests/core/services/get-customers-service-test.o \
+                                tests/core/services/new-customer-service-test.o \
+                                tests/core/services/update-customer-service-test.o
 	csc \
 	-lfcgi \
 	-lhungarian \
@@ -562,7 +594,11 @@ scheme-experimentations-tests : sources/core/core.o \
 	sources/foreign-interfaces/foreign-interfaces.o \
 	sources/infrastructure/infrastructure.o \
 	sources/infrastructure/test/test-runner.o \
+	tests/core/services/delete-customer-service-test.o \
+	tests/core/services/get-customer-service-test.o \
+	tests/core/services/get-customers-service-test.o \
 	tests/core/services/new-customer-service-test.o \
+	tests/core/services/update-customer-service-test.o \
 	-o scheme-experimentations-tests
 
 install :
