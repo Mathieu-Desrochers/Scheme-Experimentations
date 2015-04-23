@@ -15,8 +15,8 @@
 
 ;; downgrades a value to a column type
 ;; which can be represented in sqlite3
-(define (sql-downgrade-value value downgrade-false-to-zero)
-  (cond ((boolean? value) (if value 1 (if downgrade-false-to-zero 0 #f)))
+(define (sql-downgrade-value value boolean-type?)
+  (cond ((and (boolean? value) boolean-type?) (if value 1 0))
         ((date? value) (date->string value))
         ((date-time? value) (date-time->string value))
         ((day-of-week? value) (day-of-week->integer value))

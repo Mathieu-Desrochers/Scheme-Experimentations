@@ -69,10 +69,10 @@
       (define (sql-downgrade-row-values row-symbol columns)
         (map
           (lambda (column)
-            (let ((downgrade-false-to-zero (eq? (column-type column) 'boolean)))
+            (let ((boolean-type? (eq? (column-type column) 'boolean)))
               `(sql-downgrade-value
                 (,(symbol-append row-symbol '- (column-symbol column)) ,row-symbol)
-                ,downgrade-false-to-zero)))
+                ,boolean-type?)))
           columns))
 
       ;; parses the expression
@@ -83,7 +83,8 @@
              (id-column (car columns))
              (value-columns (cdr columns))
              (custom-selects (cdr (list-ref exp 3)))
-             (custom-executes (cdr (list-ref exp 4))))
+             (custom-single-value-selects (cdr (list-ref exp 4)))
+             (custom-executes (cdr (list-ref exp 5))))
         `(begin
 
           (declare (uses sql))
@@ -152,15 +153,11 @@
                 (,(symbol-append row-symbol '- (column-symbol id-column)) ,row-symbol))))
 
           ;; selects based on custom statements
-          ;; always downgrade false to zero, considering
-          ;; that the following clause makes no sense in SQL:
-          ;; WHERE customer-id = NULL
           ,@(map
             (lambda (custom-select)
               (let ((custom-select-symbol (car custom-select))
                     (custom-select-sql (cadr custom-select))
-                    (custom-select-parameters (cddr custom-select))
-                    (downgrade-false-to-zero #t))
+                    (custom-select-parameters (cddr custom-select)))
                 `(define (,custom-select-symbol sql-connection ,@custom-select-parameters)
                   (map ,(make-row-from-sql-read-result row-symbol columns)
                     (sql-read
@@ -171,9 +168,29 @@
                           (lambda (custom-select-parameter)
                             `(sql-downgrade-value
                               ,custom-select-parameter
-                              ,downgrade-false-to-zero))
+                              #t))
                           custom-select-parameters)))))))
             custom-selects)
+
+          ;; selects for single values based on custom statements
+          ,@(map
+            (lambda (custom-single-value-select)
+              (let ((custom-single-value-select-symbol (car custom-single-value-select))
+                    (custom-single-value-select-sql (cadr custom-single-value-select))
+                    (custom-single-value-select-parameters (cddr custom-single-value-select)))
+                `(define (,custom-single-value-select-symbol sql-connection ,@custom-single-value-select-parameters)
+                  (caar
+                    (sql-read
+                      sql-connection
+                      ,custom-single-value-select-sql
+                      (list
+                        ,@(map
+                          (lambda (custom-single-value-select-parameter)
+                            `(sql-downgrade-value
+                              ,custom-single-value-select-parameter
+                              #t))
+                          custom-single-value-select-parameters)))))))
+            custom-single-value-selects)
 
           ;; executes based on custom statements
           ,@(map

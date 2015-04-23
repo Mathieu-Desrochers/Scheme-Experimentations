@@ -20,6 +20,7 @@
         "FROM \"shipping-addresses\" "
         "WHERE \"customer-id\" = ?1;")
       customer-id))
+  (custom-single-value-selects)
   (custom-executes
     (shipping-addresses-table-delete-by-customer-id
       (string-append

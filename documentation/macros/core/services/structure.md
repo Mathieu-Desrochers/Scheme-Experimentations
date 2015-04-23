@@ -79,6 +79,31 @@ Selects many database rows and hashes them for efficient referencing.
 
       ...)
 
+select-single-value
+-------------------
+Selects a single value.
+
+    ;; select the customer-rows count
+    (select-single-value
+      (customer-rows-count
+        customers-table-select-count-by-city
+        city)
+
+      ...)
+
+select-single-value-and-validate-zero
+-------------------------------------
+Selects a single value and validates it is equal to zero.
+
+    ;; select and validate the customer-rows count
+    (select-single-value-and-validate-zero
+      (customer-rows-count
+        customers-table-select-count-by-city
+        city)
+      (cannot-delete-city-with-customers)
+
+      ...)
+
 make-subresponses
 -----------------
 Makes a list of subresponses from a list of rows.  

@@ -139,6 +139,68 @@
                 #f))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; select single value
+
+(define-syntax select-single-value
+  (er-macro-transformer
+    (lambda (exp rename compare)
+
+      ;; parses the expression
+      (let* ((single-value-expression (cadr exp))
+             (single-value-symbol (list-ref single-value-expression 0))
+             (table-select-by-symbol (list-ref single-value-expression 1))
+             (table-select-by-parameter-symbols (drop single-value-expression 2))
+             (body (cddr exp)))
+
+        ;; select the single value
+        `(let ((,(rename 'single-value)
+                 (,table-select-by-symbol
+                    sql-connection
+                    ,@table-select-by-parameter-symbols)))
+
+          ;; bring the single value into scope
+          (let ((,single-value-symbol ,(rename 'single-value)))
+
+            ;; execute the body
+            ,(if (not (null? body))
+              `(begin ,@body)
+              #f)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; select single value and validate zero
+
+(define-syntax select-single-value-and-validate-zero
+  (er-macro-transformer
+    (lambda (exp rename compare)
+
+      ;; parses the expression
+      (let* ((single-value-expression (cadr exp))
+             (single-value-symbol (list-ref single-value-expression 0))
+             (table-select-by-symbol (list-ref single-value-expression 1))
+             (table-select-by-parameter-symbols (drop single-value-expression 2))
+             (validation-error-expression (caddr exp))
+             (validation-error-symbol (list-ref validation-error-expression 0))
+             (body (cdddr exp)))
+
+        ;; select the single value
+        `(let ((,(rename 'single-value)
+                 (,table-select-by-symbol
+                    sql-connection
+                    ,@table-select-by-parameter-symbols)))
+
+          ;; validate the single value is equal to zero
+          (unless (eq? ,(rename 'single-value) 0)
+            (abort-validation-error (quote ,validation-error-symbol)))
+
+          ;; bring the single value into scope
+          (let ((,single-value-symbol ,(rename 'single-value)))
+
+            ;; execute the body
+            ,(if (not (null? body))
+              `(begin ,@body)
+              #f)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; make subresponses
 
 (define-syntax make-subresponses

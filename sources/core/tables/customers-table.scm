@@ -13,4 +13,5 @@
     ("last-name" string)
     ("birthdate" date))
   (custom-selects)
+  (custom-single-value-selects)
   (custom-executes))
